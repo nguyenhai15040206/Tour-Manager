@@ -1,0 +1,68 @@
+@import '../../Scss/global.scss', '../../Scss/variable.scss';
+.header{
+    width: 100%;
+    position: absolute;
+    top: 0;
+    color: red;
+    padding: 10px 0;
+    font-size: 15px;
+    font-weight: 600;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.02) 100%);
+
+    a:hover{
+        color: $backgound-color-menu;
+    }
+    &__top-bar{
+        @include flex(space-between, center);
+    }
+
+    &__list-menu{
+        @include flex(space-between,center);
+    }
+
+    &__item:first-child{
+        margin-right: 56px;
+    }
+
+    &__item:not(:last-child, :first-child){
+        margin-right: 24px;
+    }
+
+    &__info{
+        &--list{
+            @include flex(space-between,center);
+        }
+
+        &--item:not(:last-child){
+            margin-right: 20px;
+            cursor: pointer;
+        }
+
+        &--item:nth-child(1) i{
+            margin-right: 5px;
+        }
+        &--item:nth-child(2) i{
+            margin-right: 5px;
+        }
+
+        &--item:last-child{
+            cursor: pointer;
+            font-size: 16px;
+            
+        }
+
+        &--item{
+            i{
+                color: #ffffff;
+            }
+            a:hover{
+                color: #ffffff;
+            }
+        }
+    }
+
+    &__logo{
+        width: 120px;
+        height: 32px;
+    }
+}

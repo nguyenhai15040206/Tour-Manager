@@ -1,0 +1,43 @@
+html{
+    font-size: 62.5%;
+}
+
+*,
+*:after,
+*:before{
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+a{
+    text-decoration: none;
+    color: #ffffff;
+    width: fit-content;
+    transition: color 0.25s ease-in-out 0s;
+    /* cursor: pointer; */
+}
+
+a:hover{
+    text-decoration: none;
+    width: fit-content;
+    cursor: pointer;
+}
+body{
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    line-height: 1.4;
+    color: rgba(0, 0, 0, 0.87);
+    max-width:100%;
+    margin: 0 auto;
+    font-weight: 300;
+}
+
+.container{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0px 15px;
+}
+img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

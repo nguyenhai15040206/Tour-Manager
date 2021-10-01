@@ -1,0 +1,84 @@
+@import '../../../../scss/global.scss', '../../../../scss/variable.scss';
+
+.review{
+    margin-top: 48px;
+    margin-bottom: 100px;
+
+    &__title{
+        font-size: 24px;
+        font-weight: 600;
+        line-height: 2.9rem;
+        margin-bottom: 8px;
+    }
+
+    h6{
+        font-size: 1.4rem;
+        line-height: 1.7rem;
+        font-weight: 400;
+        color: #4A5568;
+    }
+
+    &__list{
+        @include flex(space-between, center);
+        margin-top: 73px;
+    }
+
+    &__item{
+        width: calc(33% - 20px);
+        position: relative;
+        background-color: white;
+        box-shadow: 0 4px 40px rgba(0, 0, 0,  0.1);
+        border-radius: 3.5px;
+        &--image{
+            position: absolute;
+            top: -40px;
+            left: 34px;
+            img{
+                width: 80px;
+                height: 80px;
+                border-radius:50%;
+                object-fit: cover;
+            }
+        }
+
+        &--content{
+            padding: 3rem 2rem 1rem 1rem;
+
+            .content-info{
+                padding-bottom: 1.5rem;
+                h5{
+                    font-size: 1.8rem;
+                    line-height: 1.2;
+                    margin-bottom: 0.5rem;
+                    color: #2d4271;
+                    font-weight: 600;
+                }
+
+                p{
+                    font-size: 1.3rem;
+                    color: #7d8fab;
+                    font-weight: 400;
+                }
+            }
+            h6{
+                margin: 2.5rem 0rem  2rem;
+                color: #7d8fab;
+                line-height: 21px;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: normal;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                pointer-events: none;
+            }
+        }
+
+        &--content > div{
+            margin-left: 2rem;
+        }
+        
+        
+    }
+}

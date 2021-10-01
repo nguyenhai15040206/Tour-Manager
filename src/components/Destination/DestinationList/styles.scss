@@ -1,0 +1,72 @@
+@import '../../../scss/global.scss', '../../../scss/variable.scss';
+
+.destination{
+    margin-top: 24px;
+    margin-bottom: 0px;
+    h3{
+        font-size: 2.4rem;
+        font-weight: 600;
+        line-height: 2.9rem;
+        margin-bottom: 8px;
+    }
+    h6{
+        font-size: 1.4rem;
+        line-height: 1.7rem;
+        font-weight: 400;
+        color: #4A5568;
+    }
+    &__list{
+        margin: 0 auto;
+        position: relative;
+        height: 60rem;
+        width: 100%;
+
+
+    }
+    &__item{
+        border-radius: 50%;
+        position: absolute;
+        text-align: center;
+        overflow: hidden;
+        opacity: 1;
+        transition: opacity 500ms;
+
+        
+        .image{
+            width: 100%;
+            height: 100%;
+            position: relative;
+            img{
+                border-radius: 50%;
+            }
+
+            p{
+                top: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                position: absolute;
+                padding: 0 12px;
+                font-size: 16px;
+                align-items: flex-end;
+                justify-content: center;
+                padding-bottom: 2.4rem;
+                color: white;
+                font-weight: 600;
+                background: linear-gradient(
+                    180deg, rgba(0, 0, 0, 0) 66.5%, rgba(0, 0, 0, 0.8) 100%);
+                line-height: 1.9rem;
+                
+            }
+        }
+
+        
+    }
+    &__item:hover .image{
+        opacity: 0.8;
+        color:white;
+        
+    }
+
+    
+}

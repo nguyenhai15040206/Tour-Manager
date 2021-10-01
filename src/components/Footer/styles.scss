@@ -1,0 +1,200 @@
+@import '../../scss/global.scss', '../../scss/variable.scss';
+
+.footer{
+    background: #F7FAFC;
+    width: 100%;
+    padding-top: 40px;
+
+    &__register{
+        margin-top: -95px;
+        margin-bottom: 40px;
+        width: 100%;
+        background: #fff;
+        box-sizing: border-box;
+        border: 1px solid #EDF2F7;
+        box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 1.6rem;
+        @include flex(space-between, center);
+        .promotion{
+            @include flex(flex-start, center);
+            
+            img{
+                margin: 21px 0px 21px 24px;
+                width: 64px;
+                height: 64px;
+            }
+
+            .content{
+                margin: 19px 0px 0px 29px;
+
+                h6{
+                    font-size: 16px;
+                    font-weight: 600;
+                    line-height: 20px;
+                }
+
+                p{
+                    font-size: 14px;
+                    font-weight: 400;
+                    margin-top: 6px;
+                    padding-bottom: 18px;
+                    line-height: 22px;
+                }
+            }
+
+        }
+
+        .form-register{
+            .form{
+                margin: 31px 31px 31px 58px;
+                @include flex(space-between,center);
+
+                &--input{
+                    width: 310px;
+                    height: 44px;
+                    color: #1a202c;
+                    font-size: 15px;
+                    font-weight: 600;
+                    line-height: 19px;
+                    padding-left: 12px;
+                    background: #EDF2F7;
+                    z-index: 2;
+                    border-radius: 8px;
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+
+
+                    input{
+                        display: block;
+                        width: 100%;
+                        margin: 0;
+                        font: inherit;
+                        
+                        color: currentColor;
+                        height: 100%;
+                        padding: 6px 0 7px;
+                        border: 0;
+                        outline: none;
+                        background: none;
+
+                        animation-name: mui-auto-fill-cancel;
+                        letter-spacing: inherit;
+                        animation-duration: 10ms;
+                        -webkit-tap-highlight-color: transparent;
+                    }
+                }
+
+                &--button{
+                    width: 96px;
+
+                    button{
+                        color: rgb(253, 253, 253);
+                        
+                        white-space: nowrap;
+                        width: 100%;
+                        border: none;
+                        height: 44px;
+                        font-weight: 600;
+                        margin: 0;
+                        padding: 6px 8px;
+                        font-size: 16px;
+                        min-height: 20px;
+                        border-radius: 8px;
+                        border-bottom-left-radius: 0;
+                        border-top-left-radius: 0;
+                        text-transform: none;
+                        background-color:rgb(255, 51, 102) ;
+                        
+                    }
+                }
+            }
+        }
+    }
+
+    &__content{
+        margin-top: 24px;
+        img{
+            width: 165px;
+            height: 44px;
+        }
+
+        .content--info{
+            display: flex;
+            flex-wrap: wrap;
+            width: calc(100% + 24px);
+            margin: -12px;
+            .desc, .policy, .partner{
+                margin-top: 24px;
+                padding: 12px;
+
+                h6{
+                    font-size: 14px;
+                    font-weight: 600;
+                    line-height: 1.7rem;
+                    margin-bottom: 8px;
+                }
+
+                p,a{
+                    display: block;
+                    font-size: 12px;
+                    line-height: 24px;
+                    color: #4A5568;
+                    width: fit-content;
+                    transition: none;
+                }
+
+                
+            }
+
+            .desc{
+                width: 410px;
+
+                .image{
+                    width: 100%;
+                    margin-top: 15px;
+                    display: flex;
+
+                    img{
+                        width: 160px;
+                        height: 60.1px;
+                    }
+                }
+            }
+
+            .policy, .partner{
+                width: calc((100% - 410px)/2 - 24px);
+                a:hover{
+                    color: #00B6F3;
+                }
+                
+            }
+
+        }
+    }
+
+    .hr{
+        margin-top: 20px;
+        width: 100%;
+        height: 1.5px;
+        background: #DBE8ED;
+    }
+    
+    .pos{
+        padding: 12px 0px 12px 0px;
+        width: 100%;
+        p{
+            text-align: center;
+            font-size: 12px;
+            line-height: 24px;
+        }
+        .image{
+            margin: 12px 0px 12px 0px;
+            @include flex(center,center);
+
+            img{
+                width: 392px;
+                height: 32px;
+            }
+        }
+    }
+}
