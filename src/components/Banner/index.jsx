@@ -6,15 +6,26 @@ import "./styles.scss";
 function Banner(props) {
   const { backgroundImage } = props;
   return (
-    <section className="banner">
-      <Header />
-      <div
-        className="banner__slider"
-        style={{
-          backgroundImage: `url("${backgroundImage}")`,
-        }}
-      ></div>
-      {/* <div className="banner__search-info">
+    <>
+      <Header
+        color="#ffffff"
+        position="absolute"
+        background="linear-gradient(180deg, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.02) 100%)"
+      />
+      <section className="banner">
+        <div
+          className="banner__slider"
+          style={{
+            width: "100%",
+            height: "488px",
+            background: `url("${backgroundImage}") 0% 0% / cover no-repeat white`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            transition: "background-image 1s ease-in-out",
+          }}
+        ></div>
+
+        {/* <div className="banner__search-info">
         <div className="container">
           <form action="form-search">
             <select id="chosen-departure" name="departure_place">
@@ -55,7 +66,8 @@ function Banner(props) {
           </form>
         </div>
       </div> */}
-    </section>
+      </section>
+    </>
   );
 }
 

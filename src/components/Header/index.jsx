@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Login from "../Auth/Login/Index";
+import PropTypes from "prop-types";
 import "./styles.scss";
 
 function Header(props) {
+  const { position, background, color, logo } = props;
   const [open, setOpen] = useState("closed");
 
   const handleClickShowLogin = () => {
@@ -18,17 +20,20 @@ function Header(props) {
     document.body.style.paddingRight = "0";
   };
   return (
-    <header className="header">
+    <header
+      className="header"
+      style={{
+        color: `${color}`,
+        position: `${position}`,
+        background: `${background}`,
+      }}
+    >
       <div className="container">
         <div className="header__top-bar">
           <ul className="header__list-menu">
             <li className="header__item">
               <Link to="/">
-                <img
-                  className="header__logo"
-                  src="https://storage.googleapis.com/tripi-assets/mytour/icons/icon_logo_mytour_white.svg"
-                  alt="header-logo"
-                />
+                <img className="header__logo" src={logo} alt="header-logo" />
               </Link>
             </li>
             <li className="header__item">
@@ -85,6 +90,19 @@ function Header(props) {
   );
 }
 
-Header.propTypes = {};
+Header.propTypes = {
+  color: PropTypes.string,
+  position: PropTypes.string,
+  background: PropTypes.string,
+  logo: PropTypes.string,
+};
+
+Header.defaultProps = {
+  logo: "https://storage.googleapis.com/tripi-assets/mytour/icons/icon_logo_mytour_white.svg",
+  color: "#ffffff",
+  position: "absolute",
+  background:
+    "linear-gradient(180deg, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.02) 100%)",
+};
 
 export default Header;

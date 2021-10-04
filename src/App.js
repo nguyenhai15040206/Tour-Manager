@@ -11,6 +11,9 @@ import TourList from "./components/Tours/TourList";
 const HotelBanner = React.lazy(() =>
   import("./components/Hotels/HotelBanner/Index")
 );
+const TourDetails = React.lazy(() =>
+  import("./features/Clients/TourDetails/Index")
+);
 
 function App() {
   return (
@@ -20,6 +23,7 @@ function App() {
           <Switch>
             <Route exact path="/" component={Banner} />
             <Route path="/khach-san" component={HotelBanner} />
+            <Route path="/tour-details" component={TourDetails} />
           </Switch>
         </BrowserRouter>
         <Introdce />

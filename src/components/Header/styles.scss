@@ -1,14 +1,12 @@
 @import '../../Scss/global.scss', '../../Scss/variable.scss';
 .header{
     width: 100%;
-    position: absolute;
     top: 0;
-    color: red;
     padding: 10px 0;
     font-size: 15px;
     font-weight: 600;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.02) 100%);
-
+    z-index: 10;
+    // background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.02) 100%);
     a:hover{
         color: $backgound-color-menu;
     }
@@ -53,10 +51,10 @@
 
         &--item{
             i{
-                color: #ffffff;
+                color: inherit;
             }
             a:hover{
-                color: #ffffff;
+                color: unset !important;
             }
         }
     }

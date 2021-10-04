@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 function HotelItem(props) {
   const { image, href, sale, desc, name, address, totalPrice, price } = props;
@@ -9,10 +11,7 @@ function HotelItem(props) {
         <div className="item__content">
           <div className="item__header">
             <div className="image">
-              <img
-                src={image}
-                alt=""
-              />
+              <LazyLoadImage src={image} alt="" effect="opacity" />
             </div>
             <div className="sale">
               <span className="sale__title">
@@ -24,7 +23,7 @@ function HotelItem(props) {
             </div>
           </div>
           <div className="item__info">
-             {/* Khách sạn A&Em Signature */}
+            {/* Khách sạn A&Em Signature */}
             <h6 className="item__info--title">{name}</h6>
             <div className="item__info--rating">
               <i className="fas fa-star"></i>

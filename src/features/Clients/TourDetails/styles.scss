@@ -1,0 +1,126 @@
+@import '../../../scss/global.scss','../../../scss/variable.scss';
+.tour-details{
+  
+  background: #F7FAFC;
+  margin: 0 auto;
+  border-radius: 12px;
+  width: 100%;
+  height: auto;
+  padding: 5.4rem;
+  font-weight: 400;
+  font-size: 14px;
+  margin-top: 20px;
+  &__header{
+    @include flex(space-between, stretch);
+    &--left{
+      width: 60%;
+      .tour-id{
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: $color-icon;
+        letter-spacing: 1px;
+        i{
+          padding-right: 8px;
+        }
+      }
+
+      .tour-name{
+        font-size: 20px;
+        font-weight: 700;
+        color: $backgound-color-menu;
+        line-height: 2.6rem;
+        margin-bottom: 12px;
+        max-width: 100%;
+      }
+
+      .short-rating{
+        @include flex(flex-start,stretch);
+
+        .s-rate{
+          @include flex(flex-start,stretch);
+          margin-right: 22px;
+          span{
+            font-weight: 700;
+            font-size: 25px;
+            line-height: 25px;
+            color: #ffffff;
+            background: #fdc432;
+            width: 65px;
+            height: 50px;
+            @include flex(center,center);
+            position: relative;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            margin-right: 11px;
+          }
+          span:before{
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            border-right: 10px solid transparent ;
+            border-top: 10px solid #fdc432;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 1;
+          }
+        }
+
+        .s-comments{
+          h4{
+            margin-bottom: 5px;
+            font-size: 17px;
+            color: $backgound-color-menu;
+            line-height: 20px;
+            font-weight: 700;
+          }
+          p{
+            font-size: 13px;
+            color: #7d8fab;
+            margin: 0;
+          }
+        }
+        .sale-price{
+          p{
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: #fd5056;
+            line-height: 28px;
+          }
+          .saving{
+            margin-bottom: 8px;
+          }
+        }
+      }
+      
+    }
+
+    &--right{
+      width: 40%;
+      padding-top: 22px;
+      @include flex(flex-end,stretch);
+      .add-cart{
+        color: #ffffff;
+        padding-left: 16px;
+        .add-to-cart{
+          background: linear-gradient(64.4deg,#fd5056 21.33%,#fe2214 67.61%);
+          border-radius: 5px;
+          height: 50px;
+          @include flex(center, center);
+          width: 192px;
+          font-size: 15px;
+          font-weight: 500;
+          margin-bottom: 10px;
+
+          i{
+            margin-right: 7px;
+          }
+        }
+      }
+    }
+  }
+  
+}
