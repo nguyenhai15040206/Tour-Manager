@@ -1,0 +1,85 @@
+@import "../../../scss/global.scss", "../../../scss/variable.scss";
+.main {
+  margin: 20px auto;
+  width: calc(100% - 48px);
+  font-size: 12px;
+  font-weight: normal;
+}
+span {
+  color: #00008b;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 400;
+}
+.header {
+  @include flex(flex-start, stretch);
+  padding: 0;
+  background-color: #f9f9f9;
+  height: 300px;
+  img {
+    width: 400px;
+    height: 300px;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+    margin-right: 25px;
+  }
+
+  &--title {
+    margin-top: 15px;
+    &--review {
+      display: flex;
+      line-height: 2.8rem;
+      li {
+        line-height: 2.8rem;
+        color: #9591ab;
+        margin-right: 6px;
+        margin-top: 10px;
+        span {
+          margin-left: 6px;
+        }
+      }
+    }
+    &--radius {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      background-color: #fdc432;
+      li {
+        color: white;
+        text-align: center;
+        margin: 0;
+        padding: 11px;
+      }
+    }
+
+    &--detail {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    &--ticket {
+      @include flex(flex-start);
+      li {
+        margin-left: 10px;
+      }
+      display: none;
+    }
+    &--info {
+      li {
+        margin-right: 10px;
+        line-height: 2.8rem;
+        color: #9591ab;
+      }
+    }
+  }
+}
+.container {
+  @include flex(flex-start, stretch);
+  &--left {
+    width: 70%;
+  }
+  &--right {
+    width: 30%;
+  }
+}

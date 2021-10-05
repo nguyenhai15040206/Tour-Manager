@@ -7,6 +7,7 @@ import Footer from "./components/Footer/Index";
 import HotelsList from "./components/Hotels/HotelsList/Index";
 import Introdce from "./components/Introduce";
 import TourList from "./components/Tours/TourList";
+import BookingTour from "./features/Clients/BookingTour/Index";
 
 const HotelBanner = React.lazy(() =>
   import("./components/Hotels/HotelBanner/Index")
@@ -36,5 +37,6 @@ function App() {
     </>
   );
 }
+
 
 export default App;
