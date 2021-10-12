@@ -1,85 +1,353 @@
 @import "../../../scss/global.scss", "../../../scss/variable.scss";
-.main {
+
+.booking-tour {
   margin: 20px auto;
   width: calc(100% - 48px);
-  font-size: 12px;
-  font-weight: normal;
-}
-span {
-  color: #00008b;
-}
+  font-size: 14px;
+  font-weight: 300;
 
-.title {
-  font-size: 24px;
-  font-weight: 400;
-}
-.header {
-  @include flex(flex-start, stretch);
-  padding: 0;
-  background-color: #f9f9f9;
-  height: 300px;
-  img {
-    width: 400px;
+  &__header {
+    span {
+      color: $color-text;
+    }
+    @include flex(flex-start, stretch);
+    padding: 0;
+    background-color: #f9f9f9;
     height: 300px;
-    border-bottom-left-radius: 10px;
-    border-top-left-radius: 10px;
-    margin-right: 25px;
-  }
+    img {
+      width: 400px;
+      height: 300px;
+      border-bottom-left-radius: 10px;
+      border-top-left-radius: 10px;
+      margin-right: 25px;
+    }
 
-  &--title {
-    margin-top: 15px;
-    &--review {
-      display: flex;
-      line-height: 2.8rem;
-      li {
+    &--right {
+      margin-top: 15px;
+      .tour--assess {
+        display: flex;
         line-height: 2.8rem;
-        color: #9591ab;
-        margin-right: 6px;
-        margin-top: 10px;
+        li {
+          line-height: 2.8rem;
+          color: #9591ab;
+          margin-right: 6px;
+          margin-top: 10px;
+          span {
+            margin-left: 6px;
+            font-weight: 400;
+          }
+        }
+      }
+      .tour--radius {
+        @include flex(flex-start, stretch);
+        background: #fdc432;
+        width: 65px;
+        height: 50px;
+        @include flex(center, center);
+        position: relative;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 12px;
+        margin-right: 11px;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 22px;
+        line-height: 20px;
         span {
-          margin-left: 6px;
+          position: absolute;
+          background-color: #f9f9f9;
+          width: 65px;
+          height: 20px;
+          margin-top: 60px;
+          margin-left: 0px;
+          border-top-left-radius: 10px;
+        }
+        margin-bottom: 20px;
+      }
+
+      .tour--title {
+        font-size: 20px;
+        font-weight: 700;
+      }
+      .tour--info {
+        li {
+          margin-right: 10px;
+          line-height: 2.5rem;
+          color: #9591ab;
+          span {
+            font-weight: 400;
+          }
+        }
+        &--ticket {
+          @include flex(flex-start);
+          li {
+            margin-left: 10px;
+          }
+          display: none;
         }
       }
     }
-    &--radius {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      background-color: #fdc432;
-      li {
-        color: white;
-        text-align: center;
-        margin: 0;
-        padding: 11px;
+  }
+  &__trip-overview {
+    @include flex(flex-start, baseline);
+    margin-top: 50px;
+    .trip-overview__left {
+      width: 65%;
+      span {
+        color: $color-text;
+        font-weight: 700;
+        font-size: 24px;
       }
-    }
-
-    &--detail {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    &--ticket {
-      @include flex(flex-start);
-      li {
-        margin-left: 10px;
+      .customer-detail {
+        font-weight: 400;
+        margin-top: 50px;
+        font-size: 18px;
+        margin-bottom: 30px;
+        .card {
+          margin-top: 20px;
+          background-color: #f9f9f9;
+          height: 210px;
+          label {
+            font-size: 11px;
+          }
+          span {
+            font-size: 11px;
+            color: red;
+          }
+          .form {
+            margin-left: 22px;
+            flex-wrap: wrap;
+            @include flex(space-between, left);
+            .form-group {
+              margin-top: 20px;
+              width: 50%;
+              .text-width {
+                align-items: center;
+                width: 93%;
+                height: 40px;
+                border-radius: 5px;
+                border: 1px solid #d8d8d8;
+              }
+            }
+          }
+        }
       }
-      display: none;
-    }
-    &--info {
-      li {
-        margin-right: 10px;
+      .customer {
+        .customer-ticket {
+          @include flex(space-between);
+          flex-wrap: wrap;
+          .customer-type {
+            margin-top: 20px;
+            width: 48%;
+            height: 80px;
+            border: 1px solid #d8d8d8;
+            border-radius: 10px;
+            .customer-item {
+              padding: 15px 14px;
+              @include flex(space-between, center);
+              width: 100%;
+              .age-group {
+                span {
+                  color: $color-text;
+                  font-size: 15px;
+                  font-weight: 600;
+                }
+              }
+              .button-group {
+                label {
+                  margin-top: 5px;
+                  margin: 0px 10px;
+                  font-size: 20px;
+                  font-weight: 400;
+                }
+                .button-radius {
+                  width: 28px;
+                  height: 28px;
+                  background-color: #ffffff;
+                  border: 2px solid $color-text;
+                  border-radius: 50%;
+                  span {
+                    font-size: 20px;
+                    font-weight: normal;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      .regulation-age {
+        margin-top: 20px;
+        padding: 20px;
         line-height: 2.8rem;
-        color: #9591ab;
+        background-color: #f9f9f9;
+        font-size: 12px;
+        @include flex(space-between);
+        flex-wrap: wrap;
+        li {
+          width: 50%;
+        }
+        span {
+          color: $color-text;
+          font-weight: 700;
+          font-size: 12px;
+        }
       }
     }
-  }
-}
-.container {
-  @include flex(flex-start, stretch);
-  &--left {
-    width: 70%;
-  }
-  &--right {
-    width: 30%;
+    .trip-overview__right {
+      margin-left: 15px;
+      width: 35%;
+      .group-button {
+        margin-top: 20px;
+        @include flex(flex-start, left);
+        span {
+          @include flex(start);
+          flex-wrap: row;
+        }
+        .custom-button,
+        .custom-button-two {
+          position: relative;
+          @include flex(flex-start, left);
+          i {
+            margin-right: 3px;
+          }
+          font-size: 12px;
+          border-radius: 15px;
+          padding: 18px 54px;
+        }
+        .custom-button {
+          background-color: $color-icon;
+          width: 48%;
+          height: 60px;
+          color: white;
+          z-index: 2;
+          border: 1px solid $color-icon;
+        }
+        .custom-button-two {
+          background-color: #ffffff;
+          width: 50%;
+          right: 26px;
+          height: 60px;
+          font-size: 12px;
+          z-index: 1;
+          border: 1px solid #4d4aef;
+          span {
+            color: #4d4aef;
+          }
+          i {
+            color: #4d4aef;
+          }
+        }
+      }
+      .ticket {
+        margin-top: 20px;
+        padding: 20px 15px;
+        text-align: justify;
+        border: 1px solid #d8d8d8;
+        h1 {
+          font-weight: 700;
+          font-size: 20px;
+          color: $color-text;
+          margin-bottom: 20px;
+        }
+        h4 {
+          font-weight: 600;
+          font-size: 14px;
+          color: $color-text;
+        }
+        h2 {
+          font-weight: 400;
+          font-size: 14px;
+        }
+        span {
+          font-weight: 400;
+          font-size: 12px;
+          color: #9591ab;
+        }
+        i {
+          font-size: 18px;
+          color: #4d4aef;
+        }
+
+        .header-ticket {
+          @include flex(flex-start, flex-start);
+          margin-top: 13px;
+          margin-right: 10px;
+          img {
+            width: 100px;
+            margin-right: 10px;
+            height: 60px;
+            border-radius: 15px;
+          }
+          .header-title {
+            font-weight: 400;
+          }
+        }
+        .detail-trip-ticket {
+          .detail-trip {
+            margin-top: 20px;
+
+            flex-wrap: wrap;
+
+            .calendar-ticket {
+              @include flex(flex-start, baseline);
+              width: 100%;
+            }
+            .info-trip {
+              margin-left: 20px;
+              line-height: 2.6rem;
+              margin-bottom: 30px;
+            }
+          }
+          .detail-ticket {
+            line-height: 3.2rem;
+            .row {
+              @include flex(space-between);
+              i {
+                font-size: 30px;
+              }
+              .button-custom,
+              .button-custom2 {
+                width: 92px;
+                height: 35px;
+                font-size: 14px;
+                border-radius: 5px;
+                border: 1px solid #d8d8d8;
+              }
+              .button-custom {
+                background-color: #ffffff;
+              }
+              .button-custom2 {
+                background-color: #198754;
+                color: #ffffff;
+              }
+            }
+          }
+          .sum-money {
+            border-top: 1px solid #d8d8d8;
+            margin-top: 20px;
+            padding: 20px 0px;
+            .row {
+              @include flex(space-between);
+              p {
+                color: #fd5050;
+                font-size: 20px;
+                font-weight: 700;
+              }
+            }
+            .button-custom {
+              width: 100%;
+              background-color: #fe2114;
+              height: 50px;
+              font-size: 20px;
+              color: #ffffff;
+              font-weight: 700;
+              border-radius: 10px;
+              border: none;
+            }
+          }
+        }
+      }
+    }
   }
 }
