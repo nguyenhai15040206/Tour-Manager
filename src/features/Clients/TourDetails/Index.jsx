@@ -1,10 +1,14 @@
-import React from "react";
-import PropTypes from "prop-types";
-import "./styles.scss";
+import React, { useEffect } from "react";
 import Header from "../../../components/Header";
-import Banner from "../../../components/Banner/index";
+import "./styles.scss";
 
 function TourDetails(props) {
+  useEffect(() => {
+    window.scrollTo({
+      top: 10,
+      behavior: "smooth",
+    });
+  }, []);
   return (
     <>
       <Header

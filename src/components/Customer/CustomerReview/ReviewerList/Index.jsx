@@ -1,7 +1,6 @@
 import React from "react";
-import PropTypes from "prop-types";
-import "./styles.scss";
 import ReViewItem from "../ReviewerItem/Index";
+import "./styles.scss";
 
 function ReviewerList(props) {
   return (

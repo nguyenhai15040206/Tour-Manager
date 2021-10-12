@@ -1,10 +1,22 @@
-import React from "react";
-import Header from "../Header";
 import PropTypes from "prop-types";
+import React, { useEffect } from "react";
+import addressApi from "../../apis/AddressApi";
+import Header from "../Header";
 import "./styles.scss";
 
 function Banner(props) {
   const { backgroundImage } = props;
+  useEffect(() => {
+    const fetchApiProvince = async () => {
+      try {
+        const response = await addressApi.GetProvince();
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchApiProvince();
+  }, []);
   return (
     <>
       <Header

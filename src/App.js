@@ -21,6 +21,13 @@ function App() {
       setLoading(false);
     }, 0);
   }, []);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [loading]);
   if (loading) {
     return <Loading loading={loading} />;
   }

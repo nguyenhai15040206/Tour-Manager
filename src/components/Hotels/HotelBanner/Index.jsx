@@ -1,11 +1,10 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Banner from "../../Banner";
-import "./styles.scss";
+import Destination from "../../Destination/DestinationList/Index";
 import Introdce from "../../Introduce";
 import TourList from "../../Tours/TourList";
 import HotelsList from "../HotelsList/Index";
-import Destination from "../../Destination/DestinationList/Index";
+import "./styles.scss";
 
 function HotelBanner(props) {
   return (

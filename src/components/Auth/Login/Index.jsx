@@ -1,21 +1,61 @@
+import { FastField, Form, Formik } from "formik";
 import PropTypes from "prop-types";
 import React from "react";
+import { useDispatch } from "react-redux";
+import * as yup from "yup";
+import InputField from "../../../CustomFields/InputField/Index";
+import {
+  GetToken,
+  LoginUser,
+} from "../../../features/Clients/Customers/SliceCustomer";
 import "./styles.scss";
 
 function Login(props) {
+  const dispatch = useDispatch();
   const { open, closedLogin } = props;
 
-  const handleClickClosedLogin = ()=>{
-    if(closedLogin){
+  const handleClickClosedLogin = () => {
+    if (closedLogin) {
       closedLogin();
     }
-  }
+  };
+  const initialValues = {
+    email: "",
+    password: "",
+  };
+
+  const validationShema = yup.object().shape({
+    email: yup
+      .string()
+      .required("Vui lòng nhập email!")
+      .email("Email không hợp lê!"),
+    password: yup.string().required("Vui lòng nhập mật khẩu"),
+  });
+
+  const handleLoginUser = (values) => {
+    const KhachHang = {
+      email: values.email,
+      matKhau: values.password,
+    };
+    dispatch(GetToken(KhachHang));
+    dispatch(LoginUser());
+  };
+
   return (
     <div className={`modal ${open}`}>
-      <div className="modal__overlay" onClick = {()=>{handleClickClosedLogin()}}></div>
+      <div
+        className="modal__overlay"
+        onClick={() => {
+          handleClickClosedLogin();
+        }}
+      ></div>
       <div className="modal__login">
         <div className="btn-closed">
-          <button onClick= {()=>{handleClickClosedLogin()}}>
+          <button
+            onClick={() => {
+              handleClickClosedLogin();
+            }}
+          >
             <span>
               <svg width="24" height="24" fill="none">
                 <path
@@ -69,15 +109,37 @@ function Login(props) {
           </div>
         </button>
         <p>Hoặc đăng nhập bằng số điện thoại, email</p>
-        <form className="form" action="">
-          <div className="form--input">
-            <input type="text" placeholder="Nhập số điện thoại hoặc email" />
-          </div>
-          <div className="form--input">
-            <input type="password" placeholder="Mật khẩu" />
-          </div>
-          <button className="btn btn-login">Đăng nhập</button>
-        </form>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationShema}
+          onSubmit={handleLoginUser}
+        >
+          {(formikProps) => {
+            // const { isSubmiting } = formikProps;
+            // const { values, touched, errors } = formikProps;
+            // console.log({ values, touched, errors });
+            return (
+              <Form className="form">
+                <FastField
+                  name="email"
+                  component={InputField}
+                  placeholder="Nhập số điện thoại hoặc email"
+                  className="form--input"
+                />
+                <FastField
+                  name="password"
+                  component={InputField}
+                  placeholder="Mật khẩu"
+                  className="form--input"
+                  type="password"
+                />
+                <button type="submit" className="btn btn-login">
+                  Đăng nhập
+                </button>
+              </Form>
+            );
+          }}
+        </Formik>
         <div className="password-recovery">
           <button className="btn-password-recovery">
             <span>Khôi phục mật khẩu</span>
@@ -101,7 +163,7 @@ Login.propTypes = {
 
 Login.defaultProps = {
   open: "",
-  closedLogin: null
+  closedLogin: null,
 };
 
 export default Login;

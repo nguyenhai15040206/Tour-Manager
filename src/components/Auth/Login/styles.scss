@@ -126,20 +126,20 @@
         }
     
         .form{
-            &--input{
+            &--input {
                 width: 314px;
                 height: 44px;
                 color: #1a202c;
                 font-size: 15px;
                 font-weight: 500;
                 line-height: 19px;
-                padding-left: 16px;
                 background: #EDF2F7;
                 z-index: 2;
                 border-radius: 8px;
     
     
                 input{
+                    border-radius: 8px;
                     display: block;
                     width: 100%;
                     margin: 0;
@@ -148,19 +148,23 @@
                     color: #1a202c;
                     height: 100%;
                     padding: 6px 0 7px;
-                    border: 0;
+                    border: none;
                     outline: none;
                     background: none;
-    
+                    overflow: visible;
                     animation-name: mui-auto-fill-cancel;
                     letter-spacing: inherit;
                     animation-duration: 10ms;
                     -webkit-tap-highlight-color: transparent;
                 }
             }
-    
+            
             &--input:nth-child(2){
-                margin: 16px 0px;
+                margin: 20px 0px;
+            }
+
+            &--input > input{
+                padding-left: 16px;
             }
     
             .btn-login{
@@ -172,6 +176,7 @@
                 align-items: center;
                 background-color: rgb(255, 51, 102);
                 border: none;
+                transition: background-color 0.2s ease-in-out;
             }
     
         }
