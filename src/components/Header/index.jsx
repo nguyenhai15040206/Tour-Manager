@@ -1,7 +1,7 @@
+import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Login from "../Auth/Login/Index";
-import PropTypes from "prop-types";
 import "./styles.scss";
 
 function Header(props) {
@@ -11,7 +11,7 @@ function Header(props) {
   const handleClickShowLogin = () => {
     setOpen("open");
     document.body.style.overflow = "hidden";
-    document.body.style.paddingRight = "16px";
+    document.body.style.paddingRight = "18px";
   };
 
   const handleClickClosedLogin = () => {
@@ -19,6 +19,7 @@ function Header(props) {
     document.body.style.overflow = "auto";
     document.body.style.paddingRight = "0";
   };
+
   return (
     <header
       className="header"

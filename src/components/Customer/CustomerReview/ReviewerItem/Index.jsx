@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 function ReViewItem(props) {
   const { title, name, image } = props;

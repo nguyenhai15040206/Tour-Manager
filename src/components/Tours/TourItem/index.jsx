@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 function TourItem(props) {
   const { href, image, title } = props;
@@ -12,9 +13,9 @@ function TourItem(props) {
         <div className="lable-hot">
           <img src="https://benthanhtourist.com/img/Home/hot.png" alt="" />
         </div>
-        <a className="title-tour" href={href}>
+        <Link className="title-tour" to={href}>
           {title}
-        </a>
+        </Link>
         <div className="localtion">
           <i className="fas fa-flag"></i>Hà nội
         </div>

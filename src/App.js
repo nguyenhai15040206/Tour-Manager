@@ -26,11 +26,16 @@ function App() {
       setLoading(false);
     }, 0);
   }, []);
-  if (loading) {
-    return <Loading loading={loading} />;
-  }
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [loading]);
   return (
     <>
+      {loading && <Loading loading={loading} />}
       <Suspense fallback={<Loading loading={loading} />}>
         <BrowserRouter>
           <Switch>

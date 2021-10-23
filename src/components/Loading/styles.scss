@@ -7,7 +7,9 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: #EDF6F9;
+  z-index: 100000;
+  background: rgba(0, 0, 0, 0.5);
+  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   .css-kud8pv{
     top: 0;
     left: 0;

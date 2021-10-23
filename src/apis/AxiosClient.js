@@ -1,8 +1,9 @@
 import axios from "axios";
 import queryString from "query-string";
 
+// const { TOUR_MANAGER_API_KEY } = process.env;
 const axiosClient = axios.create({
-  baseURL: "",
+  baseURL: "http://localhost:2801/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -18,7 +19,8 @@ axiosClient.interceptors.response.use(
     if (response && response.data) {
       return response.data;
     }
-    return response;
+    console.log(response.status);
+    return response.status;
   },
   (error) => {
     throw error;
