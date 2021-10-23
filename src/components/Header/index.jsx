@@ -1,7 +1,7 @@
+import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Login from "../Auth/Login/Index";
-import PropTypes from "prop-types";
 import "./styles.scss";
 
 function Header(props) {
@@ -20,7 +20,6 @@ function Header(props) {
     document.body.style.paddingRight = "0";
   };
 
-  
   return (
     <header
       className="header"

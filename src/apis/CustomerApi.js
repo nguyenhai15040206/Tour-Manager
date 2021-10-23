@@ -2,18 +2,8 @@ import axiosClient from "./AxiosClient";
 
 const customerApi = {
   PostToken: (KhachHang) => {
-    const url = "/Token";
+    const url = "/Customer/AccessToken";
     return axiosClient.post(url, KhachHang);
-  },
-
-  GetUserLogin: (token) => {
-    const url = "/Token";
-    return axiosClient.get(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
   },
 };
 

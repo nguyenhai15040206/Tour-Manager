@@ -28,11 +28,9 @@ function App() {
       behavior: "smooth",
     });
   }, [loading]);
-  if (loading) {
-    return <Loading loading={loading} />;
-  }
   return (
     <>
+      {loading && <Loading loading={loading} />}
       <Suspense fallback={<Loading loading={loading} />}>
         <BrowserRouter>
           <Switch>

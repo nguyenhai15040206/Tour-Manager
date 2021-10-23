@@ -1,14 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { ClimbingBoxLoader } from "react-spinners";
+import { FadeLoader } from "react-spinners";
 import "./styles.scss";
 
 function Loading(props) {
   const { loading } = props;
   return (
     <div className="loading">
-      <div className="container">
-        <ClimbingBoxLoader size={25} loading={loading} color={"#BBA72B"} />
+      <div className="container1">
+        <FadeLoader
+          height={15}
+          width={5}
+          radius={2}
+          margin={2}
+          loading={loading}
+          color={"white"}
+        />
       </div>
     </div>
   );

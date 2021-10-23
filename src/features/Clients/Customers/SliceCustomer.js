@@ -1,57 +1,45 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import customerApi from "../../../apis/CustomerApi";
 
-export const GetToken = createAsyncThunk("api/KhachHang", async (values) => {
-  try {
-    const response = await customerApi.PostToken(values);
-    localStorage.setItem("accessToken", response);
-    alert("Thành công!");
-    return response;
-  } catch (error) {
-    console.log(error);
+// Nguyễn Tấn Hải [23/10/2021] // Xử lý Login
+export const GetToken = createAsyncThunk(
+  "api/KhachHang",
+  async (values, thunkApi) => {
+    try {
+      const response = await customerApi.PostToken(values);
+      localStorage.setItem("accessToken", response.accessToken);
+      console.log(response.data);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({ error: error.message });
+    }
   }
-});
+);
 
-export const LoginUser = createAsyncThunk("Login/User", async () => {
-  try {
-    const token = localStorage.getItem("accessToken");
-    const response = await customerApi.GetUserLogin(token);
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-});
+
 
 const customerSlice = createSlice({
   name: "Customer",
   initialState: {
-    infoUser: {},
-    token: "",
-    status: null,
+    dataCustomer: {},
+    loading: "idle",
+    error: "",
   },
   reducers: {},
-  extraReducers: {
-    [GetToken.pending]: (state) => {
-      state.status = "loading";
-    },
-    [GetToken.fulfilled]: (state, action) => {
-      state.token = action.payload;
-      state.status = "success";
-    },
-    [GetToken.rejected]: (state) => {
-      state.status = "failed";
-    },
+  extraReducers: (builder) => {
+    builder.addCase(GetToken.pending, (state) => {
+      state.dataCustomer = {};
+      state.loading = "loading";
+    });
+    builder.addCase(GetToken.fulfilled, (state, { payload }) => {
+      state.dataCustomer = payload;
+      state.loading = "loaded";
+    });
 
-    [LoginUser.pending]: (state) => {
-      state.status = "loading";
-    },
-    [LoginUser.rejected]: (state) => {
-      state.status = "failed";
-    },
-    [LoginUser.fulfilled]: (state, action) => {
-      state.status = "success";
-      state.infoUser = action.payload;
-    },
+    builder.addCase(GetToken.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.message;
+    });
   },
 });
 
