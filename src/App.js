@@ -5,11 +5,6 @@ import Loading from "./components/Loading/Index";
 const MainClient = React.lazy(() =>
   import("./features/Clients/MainClient/Index")
 );
-const BookingTour = React.lazy(()=>
-  import("./features/Clients/BookingTour/Index")
-);
-
-
 
 function App() {
   return (
@@ -25,6 +20,5 @@ function App() {
     </>
   );
 }
-
 
 export default App;
