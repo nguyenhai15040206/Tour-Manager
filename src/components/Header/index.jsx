@@ -38,7 +38,7 @@ function Header(props) {
               </Link>
             </li>
             <li className="header__item">
-              <Link to="/khach-san">Khách sạn</Link>
+              <Link to="my-tour/khach-san">Khách sạn</Link>
             </li>
             <li className="header__item">
               <a href="index.html">Vé máy bay</a>

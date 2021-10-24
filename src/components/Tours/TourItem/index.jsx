@@ -6,9 +6,9 @@ function TourItem(props) {
   const { href, image, title } = props;
   return (
     <div className="promotion-tour__item">
-      <a href={href} title={title}>
+      <Link to={href} title={title}>
         <img src={image} alt="" />
-      </a>
+      </Link>
       <div className="caption">
         <div className="lable-hot">
           <img src="https://benthanhtourist.com/img/Home/hot.png" alt="" />

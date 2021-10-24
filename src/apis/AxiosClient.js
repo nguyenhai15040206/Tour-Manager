@@ -1,9 +1,9 @@
 import axios from "axios";
 import queryString from "query-string";
 
-// const { TOUR_MANAGER_API_KEY } = process.env;
+const { REACT_APP_TOUR_MANAGER_API_KEY } = process.env;
 const axiosClient = axios.create({
-  baseURL: "http://localhost:2801/api",
+  baseURL: REACT_APP_TOUR_MANAGER_API_KEY,
   headers: {
     "Content-Type": "application/json",
   },
