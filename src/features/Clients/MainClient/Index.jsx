@@ -1,17 +1,45 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { useEffect, useState } from "react";
+import { Route, Switch, useRouteMatch } from "react-router-dom";
+import ReviewerList from "../../../components/Customer/CustomerReview/ReviewerList/Index";
+import Footer from "../../../components/Footer/Index";
+import Loading from "../../../components/Loading/Index";
+import HomePages from "../Pages/HomePages/Index";
+
+const HotelBanner = React.lazy(() =>
+  import("../../../components/Hotels/HotelBanner/Index")
+);
+const TourDetails = React.lazy(() => import("../TourDetails/Index"));
 
 function MainClient(props) {
+  const [loading, setLoading] = useState(false);
+  const match = useRouteMatch();
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [loading]);
   return (
-    <div>
-      
-    </div>
-  )
+    <>
+      {loading && <Loading loading={true} />}
+      <Switch>
+        <Route exact path={match.url} component={HomePages} />
+        <Route path={`${match.url}/khach-san`} component={HotelBanner} />
+        <Route path={`${match.url}/tour-details`} component={TourDetails} />
+      </Switch>
+      <ReviewerList />
+      <Footer />
+    </>
+  );
 }
 
-MainClient.propTypes = {
+MainClient.propTypes = {};
 
-}
-
-export default MainClient
-
+export default MainClient;
