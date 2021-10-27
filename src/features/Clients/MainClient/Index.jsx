@@ -9,6 +9,7 @@ const HotelBanner = React.lazy(() =>
   import("../../../components/Hotels/HotelBanner/Index")
 );
 const TourDetails = React.lazy(() => import("../TourDetails/Index"));
+const TourList = React.lazy(() => import("../Pages/TourPages/TourSearch/index"));
 
 function MainClient(props) {
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,11 @@ function MainClient(props) {
       <Switch>
         <Route exact path={match.url} component={HomePages} />
         <Route path={`${match.url}/khach-san`} component={HotelBanner} />
-        <Route path={`${match.url}/tour-details`} component={TourDetails} />
+        <Route path={`${match.url}/ds-tour`} component={TourList} />
+        <Route
+          path={`${match.url}/tour-details/tourID=:tourID`}
+          component={TourDetails}
+        />
       </Switch>
       <ReviewerList />
       <Footer />

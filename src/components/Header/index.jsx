@@ -5,7 +5,7 @@ import Login from "../Auth/Login/Index";
 import "./styles.scss";
 
 function Header(props) {
-  const { position, background, color, logo } = props;
+  const { position, background, color, logo, boxShadow } = props;
   const [open, setOpen] = useState("closed");
 
   const handleClickShowLogin = () => {
@@ -27,6 +27,7 @@ function Header(props) {
         color: `${color}`,
         position: `${position}`,
         background: `${background}`,
+        boxShadow: `${boxShadow}`,
       }}
     >
       <div className="container">
@@ -96,6 +97,7 @@ Header.propTypes = {
   position: PropTypes.string,
   background: PropTypes.string,
   logo: PropTypes.string,
+  boxShadow: PropTypes.string,
 };
 
 Header.defaultProps = {
@@ -104,6 +106,7 @@ Header.defaultProps = {
   position: "absolute",
   background:
     "linear-gradient(180deg, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.02) 100%)",
+  boxShadow: "none",
 };
 
 export default Header;

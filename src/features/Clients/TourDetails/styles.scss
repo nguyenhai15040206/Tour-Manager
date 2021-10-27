@@ -114,10 +114,13 @@
           font-size: 15px;
           font-weight: 500;
           margin-bottom: 10px;
-
           i{
             margin-right: 7px;
           }
+        }
+        .add-to-cart:hover{
+          color: #ffffff;
+          transition: none;
         }
       }
     }

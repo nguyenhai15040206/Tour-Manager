@@ -24,7 +24,7 @@
 
     &__list{
         display: grid;
-        grid-template-columns: auto auto auto;
+        grid-template-columns: 370px 370px 370px;
         grid-row-gap: 20px;
         grid-column-gap: 30px;
     }
@@ -45,7 +45,7 @@
         }
         a{
             text-decoration: none;
-            color: #337ab7;
+            color: #fff;
         }
         .caption{
             line-height: 1.4;
@@ -56,7 +56,7 @@
             padding: 20px 15px 10px;
 
             .title-tour{
-                margin-bottom: 65px;
+                margin-bottom: 20px;
                 text-transform: uppercase;
                 overflow: hidden;
                 white-space: normal;
@@ -71,6 +71,11 @@
                 font-size: 20px;
                 font-weight: 600;
                 // display: block;
+            }
+
+            .rating{
+                margin-bottom: 20px;
+                color: orange;
             }
 
             .location{
@@ -113,7 +118,7 @@
                 color: red;
             }
 
-            .btn{
+            .btn-datngay{
                 position: absolute;
                 height: 100%;
                 top: 0;
@@ -122,8 +127,9 @@
                 border-radius: 0 0 4px 0;
                 font-size: 21px;
                 line-height: 40px;
-                background-color: #ffc10e;
-
+               // background-color: #ffc10e;
+                background: #fc5c7d; /* fallback for old browsers */
+                background: linear-gradient(to bottom, #5b6ece, #db5d76);
                 width: 33.8% !important;
                 text-align: center;
                 padding: 6px 12px;
@@ -131,6 +137,14 @@
                 white-space: nowrap;
                 vertical-align: middle;
                 cursor: pointer;
+            }
+            .text-center{
+                justify-content: center;
+                display: flex;
+                align-items: center;
+            }
+            .btn:hover{
+                color: white;
             }
 
             i.far{

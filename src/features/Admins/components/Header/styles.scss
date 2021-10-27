@@ -1,0 +1,75 @@
+.cr-header{
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #dee2e6;
+
+  &__nav-right{
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: auto;
+    display: flex;
+  }
+
+
+  &__avatar{
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.navbar{
+  padding: 0.5rem 1rem;
+}
+
+.text-secondary{
+  color: #fc5c7d !important;
+}
+.btn-outline-secondary{
+    color: #fc5c7d;
+    border-color: #fc5c7d;
+}
+
+.btn-outline-secondary:hover{
+    color: #fff;
+    background-color: #fc5c7d;
+    border-color: #fc5c7d;
+}
+
+// source: https://github.com/daneden/animate.css
+
+@keyframes swing {
+  20% {
+    transform: rotate3d(0, 0, 1, 15deg);
+  }
+
+  40% {
+    transform: rotate3d(0, 0, 1, -10deg);
+  }
+
+  60% {
+    transform: rotate3d(0, 0, 1, 5deg);
+  }
+
+  80% {
+    transform: rotate3d(0, 0, 1, -5deg);
+  }
+
+  to {
+    transform: rotate3d(0, 0, 1, 0deg);
+  }
+}
+
+.swing {
+  transform-origin: top center;
+  animation-name: swing;
+}
+
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+.animated.infinite {
+  animation-iteration-count: infinite;
+}
+

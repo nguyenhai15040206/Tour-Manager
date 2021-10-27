@@ -3,11 +3,15 @@ import axiosClient from "./AxiosClient";
 const url = "/Tour";
 const tourApi = {
   getTour: (params) => {
-    return axiosClient.get(url, { params });
+    return axiosClient.get(`${url}`, { params });
   },
 
-  getTourById: (params) => {
-    return axiosClient.get(url, { params });
+  GetTourTourIsSuggest: () => {
+    return axiosClient.get(`${url}/TourIsSuggest`);
+  },
+
+  getTourDetails: (tourID) => {
+    return axiosClient.get(`${url}/TourDetails/${tourID}`);
   },
 
   postTour: (Tour) => {

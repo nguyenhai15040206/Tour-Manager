@@ -1,17 +1,47 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import tourApi from "../../../apis/TourApi";
 import Header from "../../../components/Header";
+import { formatCash } from "../../../utils/format";
 import "./styles.scss";
 
 function TourDetails(props) {
+  const [tourDetails, setTourDetails] = useState({});
+  let { tourID } = useParams();
+
   useEffect(() => {
     window.scrollTo({
       top: 10,
       behavior: "smooth",
     });
   }, []);
+  useEffect(() => {
+    const fetchDataTourDetails = async () => {
+      try {
+        const response = await tourApi.getTourDetails(tourID);
+        setTourDetails(response);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchDataTourDetails();
+  }, [tourID]);
+
+  const changeDate = (number) => {
+    if (Number.isInteger(number)) {
+      if (number === 1) {
+        return `${number} ngày`;
+      }
+      if (number > 1) {
+        return `${number} ngày ${number - 1} đêm`;
+      }
+    }
+    return `${number} ngày`;
+  };
   return (
     <>
       <Header
+        boxShadow="rgb(92 149 252) 3px -7px 20px 3px"
         position="sticky"
         background="white"
         color="#1A202C"
@@ -24,11 +54,12 @@ function TourDetails(props) {
             <div className="tour-details__header--left">
               <div className="tour-id">
                 <i className="fab fa-staylinked"></i>
-                <label>NDSGN920-001-121121XE-D</label>
+                <label>{`NDSGN920-001-121121XE-D-${tourDetails.tourId}`}</label>
               </div>
               <h1 className="tour-name">
-                Phan Thiết - Lâu Đài Rượu Vang - Bàu Trắng - Bảo Tàng Làng Chài
-                Xưa
+                {/* Phan Thiết - Lâu Đài Rượu Vang - Bàu Trắng - Bảo Tàng Làng Chài
+                Xưa */}
+                {tourDetails.tourName}
               </h1>
               <div className="short-rating">
                 <div className="s-rate">
@@ -39,17 +70,17 @@ function TourDetails(props) {
                   </div>
                 </div>
                 <div className="sale-price">
-                  <p>7,990,000đ</p>
+                  <p>{formatCash(`${tourDetails.adultUnitPrice}`) + "đ"}</p>
                   <div className="saving"></div>
                 </div>
               </div>
             </div>
             <div className="tour-details__header--right">
               <div className="add-cart">
-                <a href="index.html" className="add-to-cart">
-                  <i class="fas fa-shopping-cart"></i>
+                <Link to="/my-tour/bookingtour/" className="add-to-cart">
+                  <i className="fas fa-shopping-cart"></i>
                   <label>Đặt ngay</label>
-                </a>
+                </Link>
               </div>
             </div>
           </section>
@@ -89,57 +120,66 @@ function TourDetails(props) {
             <div className="box-order">
               <div className="time">
                 <p>
-                  Khời hành: <b>05/11/2021</b>
+                  Khời hành: <b>{`${tourDetails.dateStart}`.slice(0, 10)}</b>
                 </p>
                 <p>
-                  Thời gian: <b>3 ngày</b>
+                  Thời gian: <b>{tourDetails.totalDay} ngày</b>
                 </p>
                 <p>
-                  Nơi khởi hành: <b>TP. Hồ Chí Minh</b>
+                  Nơi khởi hành: <b>{tourDetails.provinceName}</b>
                 </p>
                 <p>
-                  Số chỗ còn nhận: <b>8</b>
+                  Số chỗ còn nhận: <b>{tourDetails.quanity}</b>
                 </p>
                 <p>
-                  HDV dẫn đoàn: <b>Đang cập nhật</b>
+                  HDV dẫn đoàn:{" "}
+                  {tourDetails.touGuideName === null ? (
+                    <b>Đang cập nhật</b>
+                  ) : (
+                    <b>{`${tourDetails.touGuideName}`}</b>
+                  )}
                 </p>
               </div>
               <div className="calendar">
                 <div className="calendar__box">
-                  <i class="far fa-calendar"></i>
+                  <i className="far fa-calendar"></i>
                   <label>Ngày khác</label>
                 </div>
               </div>
             </div>
             <div className="group-services">
               <div className="group-services__item">
-                <i class="far fa-calendar"></i>
+                <i className="far fa-calendar"></i>
                 <label>Thời gian</label>
-                <p>3 ngày 2 đêm</p>
+                <p>{changeDate(tourDetails.totalDay)}</p>
+                {/* <p>3 ngày 2 đêm</p> */}
               </div>
               <div className="group-services__item">
-                <i class="fas fa-users"></i>
+                <i className="fas fa-users"></i>
                 <label>Quy mô nhóm</label>
                 <p>20 người</p>
               </div>
               <div className="group-services__item">
-                <i class="fas fa-hotel"></i>
+                <i className="fas fa-hotel"></i>
                 <label>Khách sạn</label>
                 <p>Chưa cập nhật</p>
               </div>
 
               <div className="group-services__item">
-                <i class="fas fa-map-marked-alt"></i>
+                <i className="fas fa-map-marked-alt"></i>
                 <label>Địa điểm tham quan</label>
-                <p></p>
+                {tourDetails.tourDetails &&
+                  tourDetails.tourDetails.map((item, index) => (
+                    <p key={index}>{item.touristAttrName}</p>
+                  ))}
               </div>
               <div className="group-services__item">
-                <i class="fas fa-truck"></i>
+                <i className="fas fa-truck"></i>
                 <label>Phương tiện di chuyển</label>
-                <p>Chưa cập nhật</p>
+                <p>{`${tourDetails.phuongTienXuatPhat}`}</p>
               </div>
               <div className="group-services__item">
-                <i class="fab fa-d-and-d"></i>
+                <i className="fab fa-d-and-d"></i>
                 <label>Dịch vụ đi kèm</label>
                 <p></p>
               </div>
