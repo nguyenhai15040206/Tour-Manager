@@ -41,7 +41,6 @@ function Login(props) {
     try {
       const actionResult = await dispatch(GetToken(KhachHang));
       const currentUser = unwrapResult(actionResult);
-
       console.log("Login", currentUser);
       setLogin(true);
     } catch (error) {

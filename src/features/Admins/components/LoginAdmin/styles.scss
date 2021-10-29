@@ -1,0 +1,58 @@
+
+.login-admin{
+  margin-top: 80px;
+  display: flex;
+  font-size: 13px;
+  justify-content: center;
+  align-items: center;
+  &__logo{
+    position: fixed;
+    top: 20px;
+    left: 10px;
+    img{
+      width: 150px;
+    }
+  }
+  h2{
+    font-size: 20px;
+    font-weight: 500;
+    color: #424242;
+  }
+  .form-group{
+    label{
+      float: left;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+    input{
+      font-size: 12px;
+    }
+  }
+
+  .card{
+    max-width: 400px;
+
+    p{
+      margin-left: 3px;
+    }
+  }
+
+  .btn-login-admin{
+    background: linear-gradient(to left, #6a82fb, #fc5c7d);
+    color: #fff;
+    font-weight: normal;
+    height: 35px;
+    border: 0;
+    // margin: 20px 0 0 50px;
+    padding: 7px 0;
+    border-radius: 5px;
+    width: 130px;
+    position: relative;
+    float: left;
+    text-shadow: none;
+    svg{
+      width: 15px;
+      height: 15px;
+    }
+  }
+}
