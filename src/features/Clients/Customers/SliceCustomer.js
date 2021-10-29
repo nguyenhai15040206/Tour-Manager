@@ -8,15 +8,12 @@ export const GetToken = createAsyncThunk(
     try {
       const response = await customerApi.PostToken(values);
       localStorage.setItem("accessToken", response.accessToken);
-      console.log(response.data);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue({ error: error.message });
     }
   }
 );
-
-
 
 const customerSlice = createSlice({
   name: "Customer",
