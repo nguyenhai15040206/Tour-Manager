@@ -1,0 +1,139 @@
+@import "../../../../../scss//variable.scss", "../../../../../scss/global.scss";
+
+.card-tour-item {
+  margin-top: 10px;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  position: relative;
+  &__img {
+    border-radius: 10px 10px 0px 0px;
+  }
+  &__assess {
+    position: absolute;
+    top: 20px;
+    right: 21px;
+    width: 200px;
+    .assess__title {
+      font-weight: 700;
+    }
+    span {
+      color: white;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      border-bottom-left-radius: 5px;
+      background-color: $color-item;
+      padding: 5px 13px;
+      float: right;
+      position: relative;
+    }
+    &:after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      right: 0px;
+      border-top: 5px solid $color-item;
+      border-left: 5px solid transparent;
+    }
+  }
+  &__comment {
+    position: absolute;
+    right: 0px;
+    top: 50px;
+    background-color: rgba(200, 200, 200, 0.5);
+    padding: 6px 8px;
+    border-radius: 10px;
+    filter: alpha(opacity=100);
+    .comment-title {
+      color: white;
+      font-size: 14px;
+    }
+  }
+  &__date--time {
+    .title-date-time {
+      font-size: 12px;
+    }
+  }
+  &__name-tour {
+    .title-name {
+      color: $color-black;
+      font-size: 14px;
+      font-weight: 700;
+    }
+  }
+  &__location-start {
+    .title-location-start {
+      font-size: 12px;
+    }
+  }
+  &__money-tour {
+    .title-money-tour {
+      color: $color-item-red;
+      font-weight: 700;
+      font-size: 14px;
+    }
+  }
+  &__group-btn {
+    @include flex(space-between, center);
+    .custom-btn-red {
+      align-items: center;
+      border-radius: 5px;
+      width: 100px;
+      background-color: $color-item-red;
+      height: 30px;
+      color: white;
+      .icon-cart {
+        color: white;
+        align-items: center;
+        margin-right: 3px;
+      }
+      &:hover {
+        background-color: #c33e43;
+      }
+    }
+
+    .custom-btn-out-light {
+      border: 1px solid $color-icon;
+      color: $color-icon;
+      background-color: transparent;
+      width: 100px;
+      border-radius: 5px;
+      height: 30px;
+      &:hover {
+        background-color: $color-icon;
+        color: white;
+      }
+    }
+  }
+  .card-footer {
+    background-color: white;
+    @include flex(space-between, center);
+  }
+  &__link-assess {
+    .icon-add {
+      color: $color-icon;
+    }
+    .link-title {
+      color: $color-icon;
+      font-size: 10px;
+      font-weight: 600;
+    }
+  }
+  &__number-assess {
+    @include flex(space-between, center);
+    .title-number {
+      font-size: 10px;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+    .number {
+      margin-left: 3px;
+      color: $color-item-red;
+      font-weight: 600;
+      font-size: 12px;
+    }
+  }
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 5px 10px 10px 2px #e8e8e8;
+  }
+}

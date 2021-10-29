@@ -1,3 +1,142 @@
-.tour-search{
+@import "../../../../../scss/global.scss", "../../../../../scss/variable.scss";
+.tour-search {
+  h5 {
+    color: $color-black;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  h3 {
+    color: $color-black;
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 7px;
+  }
+  h2 {
+    font-size: 14px;
+    color: white;
+    font-weight: 600;
+  }
+  h4 {
+    color: $color-black;
+    font-size: 14px;
+    font-weight: 600;
+  }
   margin-top: 54px;
+  &__sidebar-inner {
+    background-color: $background-color-gray;
+  }
+  &__all-option-filter {
+    background-color: $color-icon;
+    h3 {
+      color: white;
+    }
+  }
+  &__kd-number-date-tour {
+    .button-group__number-date {
+      @include flex(space-between, center);
+      flex-wrap: wrap;
+      .btn-option-date {
+        @include button($gray-light-color, 48%);
+        &:hover {
+          @include hover($color-icon, $gray-light-color);
+        }
+      }
+    }
+  }
+  &__kd-date-start-calendar {
+    .custom-calendar {
+      background-color: $gray-light-color;
+      @include flex(flex-start, center);
+      border-radius: 5px;
+      border: 1px solid lightgray;
+      padding: 0px 12px;
+      .icon-calendar {
+        color: $color-black;
+        margin-right: 5px;
+      }
+      .text-calendar {
+        top: 0;
+        width: 100%;
+        height: 50px;
+      }
+    }
+  }
+  &__kd-number-customers {
+    .button-group__number-customer {
+      @include flex(space-between, center);
+      flex-wrap: wrap;
+      .btn-option-number-customer {
+        @include button($gray-light-color, 48%);
+        &:hover {
+          @include hover($color-icon, $gray-light-color);
+        }
+      }
+    }
+  }
+  &__kd-transport-tour {
+    .button-group__number-customer {
+      @include flex(space-between, center);
+      flex-wrap: wrap;
+      .btn-transport-tour {
+        @include button($gray-light-color, 48%);
+        &:hover {
+          @include hover($color-icon, $gray-light-color);
+        }
+      }
+    }
+  }
+  &__kd-title {
+    .kd-title {
+      display: block;
+      text-align: center;
+    }
+  }
+  &__kd-number-result-filter {
+    @include flex(space-between, center);
+    font-size: 14px;
+    //display: none;
+  }
+  &__number-result {
+    .number-result {
+      font-weight: 700;
+      color: $color-black;
+    }
+  }
+  &__filter {
+    @include flex(flex-end, center);
+    .select-filter {
+      margin-left: 5px;
+      width: 250px;
+    }
+  }
+  &__kd-pagination {
+    margin-top: 20px;
+    margin-left: 40%;
+  }
+  &__kd-popular-tour-find {
+    .group-popular-tour {
+      .group-item-tour-popular {
+        @include button(white);
+        margin-right: 10px;
+        &:hover {
+          @include hover($color-icon, white);
+        }
+      }
+    }
+  }
+  &__kd-location-Popularity {
+    .groups-Locations-Popularity {
+      @include flex(flex-start, center);
+      .group-name-img-Location-Popularity {
+        width: 25%;
+        .img-location-popularity {
+          width: 94%;
+          height: 150px;
+          border-radius: 10px;
+        }
+      }
+    }
+  }
 }
