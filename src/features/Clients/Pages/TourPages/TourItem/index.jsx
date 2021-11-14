@@ -1,8 +1,8 @@
 import React from "react";
-import PropTypes from "prop-types";
-import "./styles.scss";
-import { BsCart3 } from "react-icons/bs";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { BsCart3 } from "react-icons/bs";
+import { Link } from "react-router-dom";
+import "./styles.scss";
 
 TourItem.propTypes = {};
 
@@ -53,9 +53,9 @@ function TourItem(props) {
       <div className="card-footer">
         <div className="card-tour-item__link-assess">
           <AiOutlinePlusCircle className="icon-add" />
-          <a href="#" className="link-title">
+          <Link to="/" className="link-title">
             Thêm vào so sánh
-          </a>
+          </Link>
         </div>
         <div className="card-tour-item__number-assess">
           <p className="title-number">Số chỗ còn nhận</p>

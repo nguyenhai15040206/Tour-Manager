@@ -23,22 +23,25 @@ a:hover{
 }
 body{
     font-family: "Poppins", sans-serif;
-    font-size: 16px;
+    font-size: 13px;
     line-height: 1.4;
     color: rgba(0, 0, 0, 0.87);
     max-width:100%;
     margin: 0 auto;
     font-weight: 300;
+    padding-right: 0px !important;
 }
 
 input,
+table,
 button,
 textarea,
 select {
-    font-family: "Poppins", sans-serif;
-  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
   outline: none;
   border: 0;
+  font-weight: 400;
 }
 
 .container{
@@ -52,12 +55,190 @@ img{
     object-fit: cover;
 }
 
-/* .fade-enter {
-    opacity: 0;
-    z-index: 1;
-  }
-  
-  .fade-enter.fade-enter-active {
-    opacity: 1;
-    transition: opacity 250ms ease-in;
-  } */
+
+/* Nguyễn Tấn Hải - 20211106  */
+.breadcrumb {
+    font-size: 13px;
+    font-weight: 400;
+    padding: 2px 2px;
+    margin-bottom: 0;
+    list-style: none;
+    border-bottom: solid 1px #D5D5D5;
+    border-radius: 0px;
+    margin-top: 2px;
+    
+}
+
+.breadcrumb-item+.breadcrumb-item label,input{
+    padding-left: 3px;
+    margin-left: 3px;
+    font-size: 12px;
+    color: #7d7d7d;
+}
+
+
+.breadcrumb-item+.breadcrumb-item::before{
+    color: #cccc;
+    content: "〉";
+}
+.breadcrumb-item.active{
+    color: #428bca;
+}
+
+.admin-widget{
+    border-radius: 0.5px;
+    background-color: #F8F8F8;
+    border-top: 1px solid #c5c5c5;
+    border-right: 1px solid #c5c5c5;
+    border-left: 1px solid #c5c5c5;
+    border-bottom: 0px solid #c5c5c5;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.commandToolBarWidge{
+    padding: 0px 2px 0px 2px;
+    display: block;
+    clear: both;
+    background-color: #F1F1F1;
+    border: 1px solid #D6D5D5;
+    border-bottom: 0px solid #D6D5D5;
+    height: auto;
+}
+
+
+/* Custom btn */
+
+.h-button{
+    display: inline-block;
+    margin: 0;
+    padding: 4px 7px 4px;
+    font-family: "Poppins", sans-serif;
+    line-height: 1.72rem !important;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 4px;
+    box-shadow: none;
+    color: #2e2e2e;
+    border-color: #c5c5c5;
+    background-color: #e3e3e3;
+    font-weight: 400;
+    font-size: 13.5px !important;
+    vertical-align: middle;
+    margin: 2px 0px;
+    white-space: normal;
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 1px;
+    -webkit-appearance: none;
+    outline: 0 in !important;
+    background-image: url('http://103.42.56.200:8081/Content/kendo/2014.1.415/textures/highlight.png');
+    background-image: none,-webkit-linear-gradient(top,rgba(255,255,255,.6) 0,rgba(255,255,255,.0) 100%);
+    background-image: none,-moz-linear-gradient(top,rgba(255,255,255,.6) 0,rgba(255,255,255,.0) 100%);
+    background-image: none,-o-linear-gradient(top,rgba(255,255,255,.6) 0,rgba(255,255,255,.0) 100%);
+    background-image: none,linear-gradient(to bottom,rgba(255,255,255,.6) 0,rgba(255,255,255,.0) 100%);
+    background-position: 50% 50%;
+    background-color: #e3e3e3;
+}
+.h-button:hover{
+    color: #2e2e2e;
+    border-color: #bcb4b0;
+    background-color: #bcb4b0;
+    background-image: url('http://103.42.56.200:8081/Content/kendo/2014.1.415/textures/highlight.png');
+    background-image: none,-webkit-linear-gradient(top,rgba(255,255,255,.4) 0,rgba(255,255,255,.0) 100%);
+    background-image: none,-moz-linear-gradient(top,rgba(255,255,255,.4) 0,rgba(255,255,255,.0) 100%);
+    background-image: none,-o-linear-gradient(top,rgba(255,255,255,.4) 0,rgba(255,255,255,.0) 100%);
+    background-image: none,linear-gradient(to bottom,rgba(255,255,255,.4) 0,rgba(255,255,255,.0) 100%);
+}
+.h-button:active{
+    background-image: none;
+    background-position: 50% 50%;
+    color: #fff;
+    background-color: #5A83B1;
+    border-color: #5A83B1;
+    background-image: url('http://103.42.56.200:8081/Content/kendo/2014.1.415/textures/highlight.png');
+    background-image: none,-webkit-linear-gradient(top,rgba(255,255,255,.2) 0,rgba(255,255,255,.0) 100%);
+    background-image: none,-moz-linear-gradient(top,rgba(255,255,255,.2) 0,rgba(255,255,255,.0) 100%);
+    background-image: none,-o-linear-gradient(top,rgba(255,255,255,.2) 0,rgba(255,255,255,.0) 100%);
+    background-image: none,linear-gradient(to bottom,rgba(255,255,255,.2) 0,rgba(255,255,255,.0) 100%);
+}
+
+/* Custom textbox */
+.form-control:focus{
+    color: #212529;
+    background-color: #fff;
+    outline: 0;
+    box-shadow: none !important;
+}
+input.h-textbox, textarea.h-textbox{
+    border-radius: 4px !important;
+    padding: 2px 7px;
+    line-height: 24px !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+}
+
+.editor-class{
+    padding: 4px 7px;
+    border-radius: 4px !important;
+    line-height: 12px !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+}
+.h-editor{
+    height: 200px !important;
+}
+
+input.form-check-input:focus{
+    box-shadow: none;
+}
+
+
+
+.h-label{
+    white-space: nowrap;
+    font-family: "Poppins", sans-serif;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+    margin-top: 4.5px !important;
+    color: #333 !important;
+}
+.h-lable-Obligatory::after{
+    content: " *";
+    color: red;
+}
+
+button.close{
+    display: inline-block;
+    margin: 0;
+    /* padding: 4px 7px 4px; */
+    width: 20px;
+    font-family: "Poppins", sans-serif;
+    line-height: 1.72rem !important;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 3px;
+    color: rgb(67, 161, 252);
+    background-color: transparent;
+    font-weight: 600;
+    font-size: 15px;
+    transition: color 0s ease-in-out 0s;
+}
+button.close:hover{
+    display: flex;
+    justify-items: center;
+    align-self: center;
+    color: rgb(231, 13, 13);
+    background-color: #5A83B1;
+}
+
+input.form-control-file{
+    cursor: pointer;
+}
+
+
+

@@ -10,14 +10,10 @@ function Header(props) {
 
   const handleClickShowLogin = () => {
     setOpen("open");
-    document.body.style.overflow = "hidden";
-    document.body.style.paddingRight = "18px";
   };
 
   const handleClickClosedLogin = () => {
     setOpen("closed");
-    document.body.style.overflow = "auto";
-    document.body.style.paddingRight = "0";
   };
 
   return (

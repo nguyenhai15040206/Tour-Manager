@@ -1,11 +1,16 @@
 import axiosClient from "./AxiosClient";
 
-const url = "/Tour";
+const url = "api/Tour";
 const tourApi = {
-  getTour: (params) => {
-    return axiosClient.get(`${url}`, { params });
+  // Lấy danh sách các tour kèm các thông tin search
+  Adm_GetTourList: (params, token) => {
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    return axiosClient.post(`${url}/Adm_GetDataTourList`, params, config);
   },
 
+  // Lấy danh sách các tour được đề xuất
   GetTourTourIsSuggest: () => {
     return axiosClient.get(`${url}/TourIsSuggest`);
   },
