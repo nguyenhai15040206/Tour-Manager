@@ -2,7 +2,7 @@ import axiosClient from "./AxiosClient";
 
 const addressApi = {
   GetProvince: () => {
-    const url = "/TinhThanh";
+    const url = "api/TinhThanh";
     return axiosClient.get(url);
   },
 };

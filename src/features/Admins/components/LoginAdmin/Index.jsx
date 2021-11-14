@@ -8,7 +8,7 @@ import { RiKey2Fill } from "react-icons/ri";
 
 function LoginAdmin(props) {
   const { initialValues, validationSchema, handleLogin, isLogin } = props;
-
+  console.log(isLogin);
   return (
     <>
       <div className="login-admin__logo">
@@ -21,7 +21,7 @@ function LoginAdmin(props) {
         <Col md={6} lg={4}>
           <Card body>
             <h2 className="text-center mb-3">Đăng nhập</h2>
-            {isLogin && (
+            {!isLogin && (
               <p className="mb-2 text-danger">
                 Sai tên đăng nhập hoặc mật khẩu!
               </p>

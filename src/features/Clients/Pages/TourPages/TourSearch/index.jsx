@@ -9,6 +9,7 @@ import {
   AiOutlineDoubleRight,
   AiOutlineSearch,
 } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 function TourSearch(props) {
   const optionsTour = [
@@ -264,7 +265,7 @@ function TourSearch(props) {
                     moneyTour="7,390,000"
                   ></TourItem>
                 </div>
-                <div className="col-4">
+                <div className="col-md-4 col-12">
                   <TourItem
                     image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
                     assess="9,1"
@@ -281,29 +282,29 @@ function TourSearch(props) {
               <div className="tour-search__kd-pagination mb-5">
                 <ul className="pagination">
                   <li className="page-item">
-                    <a className="page-link" href="#">
+                    <Link className="page-link" to="/">
                       <AiOutlineDoubleLeft />
-                    </a>
+                    </Link>
                   </li>
                   <li className="page-item">
-                    <a className="page-link" href="#">
+                    <Link className="page-link" to="/">
                       1
-                    </a>
+                    </Link>
                   </li>
                   <li className="page-item">
-                    <a className="page-link" href="#">
+                    <Link className="page-link" to="/">
                       2
-                    </a>
+                    </Link>
                   </li>
                   <li className="page-item">
-                    <a className="page-link" href="#">
+                    <Link className="page-link" to="/">
                       3
-                    </a>
+                    </Link>
                   </li>
                   <li className="page-item">
-                    <a className="page-link" href="#">
+                    <Link className="page-link" href="#">
                       <AiOutlineDoubleRight />
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>

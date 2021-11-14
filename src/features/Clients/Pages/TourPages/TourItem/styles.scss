@@ -58,6 +58,11 @@
       color: $color-black;
       font-size: 14px;
       font-weight: 700;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      text-overflow: ellipsis;
     }
   }
   &__location-start {

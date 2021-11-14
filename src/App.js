@@ -6,9 +6,7 @@ const MainClient = React.lazy(() =>
   import("./features/Clients/MainClient/Index")
 );
 
-const MainAdmin = React.lazy(() =>
-  import("./features/Admins/components/Layout/MainLayout")
-);
+const MainAdmin = React.lazy(() => import("./features/Admins/Admin"));
 
 const NotFound = React.lazy(() => {
   <div>Not found</div>;

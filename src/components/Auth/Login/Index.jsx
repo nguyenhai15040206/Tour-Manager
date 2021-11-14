@@ -51,14 +51,14 @@ function Login(props) {
   return (
     <>
       {loading === "loading" && <Loading loading={true} />}
-      <div className={`modal ${open}`}>
+      <div className={`modal-login ${open}`}>
         <div
-          className="modal__overlay"
+          className="modal-login__overlay"
           onClick={() => {
             handleClickClosedLogin();
           }}
         ></div>
-        <div className="modal__login">
+        <div className="modal-login__login">
           <div className="btn-closed">
             <button
               onClick={() => {
@@ -132,7 +132,7 @@ function Login(props) {
                   <FastField
                     name="email"
                     component={InputField}
-                    placeholder="Nhập số điện thoại hoặc email"
+                    placeholder="Nhập email"
                     className="form--input"
                   />
                   <FastField
