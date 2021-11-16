@@ -1,9 +1,9 @@
 import axiosClient from "./AxiosClient";
 
+const url = "api/Province";
 const addressApi = {
-  GetProvince: () => {
-    const url = "api/TinhThanh";
-    return axiosClient.get(url);
+  Adm_GetProvince: (params) => {
+    return axiosClient.get(`${url}/Adm_GetProvince`, { params });
   },
 };
 

@@ -3,10 +3,10 @@ import PropTypes from "prop-types";
 import React from "react";
 import { IoMdSave } from "react-icons/io";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-
+import createNotification from "../../../../utils/Notifications";
 function ModalControl(props) {
   const { showModal, children, toggle, className } = props;
-
+  let submitAction = undefined;
   return (
     <Modal
       className={className}
@@ -39,9 +39,24 @@ function ModalControl(props) {
       <Formik
         initialValues={props.initialValues}
         validationSchema={props.validationSchema}
+        onSubmit={(values, { resetForm }) => {
+          if (submitAction === "Save") {
+            props.HandleClickSave(values);
+            return;
+          }
+          if (submitAction === "SaveAndCreated") {
+            props.HandleClickSaveAndCreated(values);
+            resetForm();
+            return;
+          }
+          if (submitAction === "SaveAndClosed") {
+            props.HandleClickSaveAndClosed(values);
+            return;
+          }
+          submitAction = undefined;
+        }}
       >
         {(formikProps) => {
-          //console.log(formikProps.values);
           return (
             <Form>
               <ModalBody>{children}</ModalBody>
@@ -52,12 +67,23 @@ function ModalControl(props) {
                   backgroundColor: "#fff",
                 }}
               >
-                <button className="h-button" type="submit">
+                <button
+                  className="h-button"
+                  type="button"
+                  onClick={() => {
+                    submitAction = "Save";
+                    formikProps.submitForm();
+                  }}
+                >
                   <IoMdSave size={20} color="#3664a4" />
                   Lưu
                 </button>
                 <button
                   type="button"
+                  onClick={() => {
+                    submitAction = "SaveAndCreated";
+                    formikProps.submitForm();
+                  }}
                   className="h-button"
                   style={{ marginLeft: "4px" }}
                 >
@@ -65,7 +91,11 @@ function ModalControl(props) {
                   Lưu và tạo mới
                 </button>
                 <button
-                  type="reset"
+                  type="button"
+                  onClick={() => {
+                    submitAction = "SaveAndClosed";
+                    formikProps.submitForm();
+                  }}
                   className="h-button"
                   style={{ marginLeft: "4px" }}
                 >

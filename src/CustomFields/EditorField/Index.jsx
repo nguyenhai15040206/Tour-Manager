@@ -8,14 +8,14 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { FormGroup } from "reactstrap";
 
 function EditorField(props) {
-  // const [active, setActive] = useState();
+  const [active, setActive] = useState();
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
   const { field, form, placeholder, className } = props;
   const { name } = field;
-  //const { errors, touched } = form;
-  //const showError = errors[name] && touched[name];
+  const { errors, touched } = form;
+  const showError = errors[name] && touched[name];
 
   useEffect(() => {
     if (form.dirty) {
@@ -50,11 +50,11 @@ function EditorField(props) {
         <Editor
           name={name}
           id={name}
-          // onFocus={() => setActive(true)}
-          // onBlur={(e) => {
-          //   setActive(false);
-          //   field.onBlur(e);
-          // }}
+          onFocus={() => setActive(true)}
+          onBlur={(e) => {
+            setActive(false);
+            field.onBlur(e);
+          }}
           editorState={editorState}
           wrapperClassName="wrapper-class"
           editorClassName={`editor-class ${className}`}
@@ -64,6 +64,7 @@ function EditorField(props) {
           }
           placeholder={placeholder}
         ></Editor>
+        {showError && <div className="invalid-feedback">{errors[name]}</div>}
       </FormGroup>
     </>
   );

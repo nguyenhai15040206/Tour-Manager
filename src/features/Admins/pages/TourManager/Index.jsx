@@ -1,3 +1,4 @@
+import { unwrapResult } from "@reduxjs/toolkit";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { FastField, Form, Formik } from "formik";
@@ -5,8 +6,8 @@ import React, { useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoMdAddCircle } from "react-icons/io";
 import { RiDeleteBin6Line, RiFileExcel2Fill } from "react-icons/ri";
+import { NotificationManager } from "react-notifications";
 import { useDispatch, useSelector } from "react-redux";
-import Select from "react-select";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,19 +17,32 @@ import {
   Row,
 } from "reactstrap";
 import InputField from "../../../../CustomFields/InputField/Index";
+import SelectField from "../../../../CustomFields/SelectField/Index";
 import { tableColumnsTour } from "../../../../utils/Columns";
-import { customStyles } from "../../../../utils/constant";
 import TableGridControl from "../../components/Customs/TableGridControl";
+
 import { Adm_GetTourList } from "../../Slices/SliceTour";
+
 import TourAddEdit from "./TourAddEdit";
 
+const initialValues = {
+  TourID: "",
+  TourName: "",
+  DateStart: "",
+  DateEnd: "",
+  TravelTypeID: null,
+};
+const options = [
+  { value: "chocolate", label: "Chocolate" },
+  { value: "strawberry", label: "Strawberry" },
+  { value: "vanilla", label: "Vanilla" },
+];
 function TourManager(props) {
   const [showModal, setShowModal] = useState(false);
-
   const gridRef = useRef(null);
   const dispatch = useDispatch();
 
-  const { tourList } = useSelector((state) => state.tour);
+  const { tourList } = useSelector((state) => state?.tour);
   const onButtonClick = (e) => {
     const selectedNodes = gridRef.current.api.getSelectedNodes();
     const selectedData = selectedNodes.map((node) => node.data);
@@ -48,27 +62,23 @@ function TourManager(props) {
   };
 
   const handleClickSearchTour = async (values) => {
-    console.log(values);
-    await dispatch(Adm_GetTourList(values));
+    try {
+      await dispatch(Adm_GetTourList(values));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const initialValues = {
-    TourID: "",
-    TourName: "",
-    DateStart: "",
-    DateEnd: "",
-  };
-  const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
-
-  const handleClickShowModal = () => {
+  const handleClickShowModal = async () => {
     setShowModal(true);
   };
 
   const toggle = () => {
+    setShowModal(false);
+  };
+
+  const submitForm = (values) => {
+    console.log(values);
     setShowModal(false);
   };
 
@@ -78,7 +88,7 @@ function TourManager(props) {
         className="modal-xl"
         backdrop={"static"}
         toggle={toggle}
-        showModal={!showModal}
+        showModal={showModal}
       />
       <Container
         fluid
@@ -88,7 +98,7 @@ function TourManager(props) {
           <Col>
             <div className="admin-widget">
               <Row>
-                <Col lg="12">
+                <Col lg={12}>
                   {/* Begin sitemap */}
                   <Breadcrumb>
                     <BreadcrumbItem active>
@@ -131,17 +141,21 @@ function TourManager(props) {
                           <>
                             <Form className="mt-1">
                               <Row className="pb-2">
-                                <Col lg={4}>
-                                  <FormGroup className="mt-2 row">
+                                <Col xl={4} lg={6}>
+                                  <FormGroup className="mt-1 row">
                                     <label className="col-lg-3 h-label">
                                       Loại hình tour
                                     </label>
-                                    <div className="col-lg-8">
-                                      <Select
+                                    <div
+                                      className="col-lg-8"
+                                      style={{ marginRight: "4px" }}
+                                    >
+                                      <FastField
+                                        name="TravelTypeID"
                                         isLoading={true}
-                                        styles={customStyles}
                                         placeholder="Vui lòng chọn"
                                         options={options}
+                                        component={SelectField}
                                       />
                                     </div>
                                   </FormGroup>
@@ -151,7 +165,7 @@ function TourManager(props) {
                                     </label>
                                     <div className="col-lg-8">
                                       <FastField
-                                        className="h-textbox"
+                                        className="h-textbox h-search"
                                         name="TourID"
                                         type="number"
                                         component={InputField}
@@ -171,17 +185,18 @@ function TourManager(props) {
                                     </div>
                                   </FormGroup>
                                 </Col>
-                                <Col lg={4}>
-                                  <FormGroup className="mt-2 row">
+                                <Col xl={4} lg={6}>
+                                  <FormGroup className="mt-1 row">
                                     <label className="col-lg-3 h-label">
                                       Điểm xuất phát
                                     </label>
                                     <div className="col-lg-8">
-                                      <Select
+                                      <FastField
+                                        name="TravelTypeID"
                                         isLoading={true}
-                                        styles={customStyles}
                                         placeholder="Vui lòng chọn"
                                         options={options}
+                                        component={SelectField}
                                       />
                                     </div>
                                   </FormGroup>
