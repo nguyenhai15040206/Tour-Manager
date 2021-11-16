@@ -7,6 +7,7 @@ import Loading from "../../components/Loading/Index";
 import MainLayout from "./components/Layout/MainLayout";
 import LoginAdmin from "./components/LoginAdmin/Index";
 import { LoginEmp } from "./Slices/SliceEmployee";
+import { NotificationContainer } from "react-notifications";
 
 const TourManager = React.lazy(() =>
   import("../Admins/pages/TourManager/Index")
@@ -57,6 +58,7 @@ function Admin(props) {
           </Suspense>
         </Switch>
       </MainLayout>
+      <NotificationContainer />
     </>
   );
 }

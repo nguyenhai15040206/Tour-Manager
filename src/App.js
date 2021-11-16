@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import Loading from "./components/Loading/Index";
+import "react-notifications/lib/notifications.css";
 
 const MainClient = React.lazy(() =>
   import("./features/Clients/MainClient/Index")
