@@ -14,7 +14,6 @@ const TourManager = React.lazy(() =>
 );
 function Admin(props) {
   const dispatch = useDispatch();
-  const [isLogin, setLogin] = useState(false);
   const { loading } = useSelector((state) => state.employee);
 
   const initialValues = {
@@ -31,12 +30,13 @@ function Admin(props) {
       const actionResult = await dispatch(LoginEmp(values));
       const currentEmp = unwrapResult(actionResult);
       console.log("Login", currentEmp);
-      setLogin(true);
     } catch (err) {
-      setLogin(false);
+      console.log(err);
     }
   };
-  // if (!isLogin) {
+
+  // if (!checkLogin) {
+  //   console.log(Object.entries(dataEmp).length === 0);
   //   return (
   //     <>
   //       {/* {loading == "loading" ? <div>loading</div> : <div></div>} */}
@@ -44,7 +44,7 @@ function Admin(props) {
   //         initialValues={initialValues}
   //         validationSchema={validationSchema}
   //         handleLogin={handleClickLoginEmp}
-  //         isLogin={isLogin}
+  //         isLogin={false}
   //       />
   //     </>
   //   );

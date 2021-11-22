@@ -1,9 +1,15 @@
+import { render } from "@testing-library/react";
 import { Form, Formik } from "formik";
 import PropTypes from "prop-types";
 import React from "react";
 import { IoMdSave } from "react-icons/io";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-import createNotification from "../../../../utils/Notifications";
+
+const styles = {
+  display: "flex",
+  justifyContent: "flex-start",
+  alignItems: "stretch",
+};
 function ModalControl(props) {
   const { showModal, children, toggle, className } = props;
   let submitAction = undefined;
@@ -37,6 +43,8 @@ function ModalControl(props) {
         Tạo mới tour du lịch
       </ModalHeader>
       <Formik
+        
+        enableReinitialize={true}
         initialValues={props.initialValues}
         validationSchema={props.validationSchema}
         onSubmit={(values, { resetForm }) => {
@@ -92,9 +100,11 @@ function ModalControl(props) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     submitAction = "SaveAndClosed";
-                    formikProps.submitForm();
+                    //alert("OK");
+                    await formikProps.submitForm();
+                    toggle();
                   }}
                   className="h-button"
                   style={{ marginLeft: "4px" }}

@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { FadeLoader } from "react-spinners";
 import "./styles.scss";
+import { customStyles } from "../../utils/constant";
 
 function Loading(props) {
   const { loading } = props;
@@ -13,6 +14,7 @@ function Loading(props) {
           width={5}
           radius={2}
           margin={2}
+          styles={customStyles}
           loading={loading}
           color={"white"}
         />

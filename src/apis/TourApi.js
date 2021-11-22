@@ -3,11 +3,11 @@ import axiosClient from "./AxiosClient";
 const url = "api/Tour";
 const tourApi = {
   // Lấy danh sách các tour kèm các thông tin search
-  Adm_GetTourList: (params, token) => {
+  Adm_GetTourList: (values, token) => {
     const config = {
       headers: { Authorization: `Bearer ${token}` },
     };
-    return axiosClient.post(`${url}/Adm_GetDataTourList`, params, config);
+    return axiosClient.post(`${url}/Adm_GetDataTourList`, values, config);
   },
 
   // Lấy danh sách các tour được đề xuất
@@ -19,8 +19,12 @@ const tourApi = {
     return axiosClient.get(`${url}/TourDetails/${tourID}`);
   },
 
-  postTour: (Tour) => {
-    return axiosClient.post(url, Tour);
+  Adm_InsertTour: (Tour, token) => {
+    console.log(token);
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+    return axiosClient.post(`${url}/Adm_InsertTour`, Tour, config);
   },
 
   putTour: (tourID, Tour) => {
