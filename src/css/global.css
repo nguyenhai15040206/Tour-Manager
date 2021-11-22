@@ -257,4 +257,24 @@ input.form-control-file{
 }
 
 
+/* import Warning from "../../../../assets/logo/warning.png"; */
+.h-warning{
+    position:absolute;
+    left:10px;
+    top:7px;
+    overflow: hidden;
+    width: 32px;
+    height: 32px;
+    background-position: -64px 0;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-image: url(../assets/logo/warning.png);
+}
+
+.h-cell-editform{
+    display: flex !important;
+    justify-content: center !important;
+    align-content: center !important;
+}
+
 

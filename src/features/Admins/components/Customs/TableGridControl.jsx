@@ -3,17 +3,24 @@ import PropTypes from "prop-types";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AgGridColumn, AgGridReact } from "ag-grid-react";
-
+import { FcEditImage } from "react-icons/fc";
 function TableGridControl(props) {
   const {
     tableHeight,
     tableWidth,
     tableColoumn,
-
+    pageSize,
     gridRef,
     onGridReady,
     rowData,
+    onEditForm,
+    fieldValues,
   } = props;
+  const handleClickEdit = (id) => {
+    if (onEditForm) {
+      onEditForm(id);
+    }
+  };
   return (
     <>
       <div
@@ -22,7 +29,8 @@ function TableGridControl(props) {
       >
         <AgGridReact
           ref={gridRef}
-          paginationPageSize={20}
+          paginationPageSize={pageSize}
+          cacheBlockSize={pageSize}
           pagination={true}
           onGridReady={onGridReady}
           rowSelection="multiple"
@@ -31,27 +39,46 @@ function TableGridControl(props) {
             resizable: true,
             minWidth: 200,
           }}
-          maxBlocksInCache={1}
+          suppressRowClickSelection={true}
           rowData={rowData}
           sideBar={true}
           animateRows={true}
-          cacheBlockSize={100}
           maxConcurrentDatasourceRequests={1}
           rowHeight={35}
           resizable={true}
         >
+          <AgGridColumn
+            headerName=""
+            cellClass="h-cell-editform"
+            field={`${fieldValues}`}
+            minWidth={30}
+            cellRendererFramework={(field) => {
+              return (
+                <FcEditImage
+                  style={{ marginBottom: "10px" }}
+                  size={20}
+                  onClick={() => {
+                    handleClickEdit(field.value);
+                  }}
+                />
+              );
+            }}
+          ></AgGridColumn>
           {tableColoumn.map((item, index) => (
             <AgGridColumn
               key={index}
+              headerCheckboxSelectionFilteredOnly={
+                item.headerCheckboxSelectionFilteredOnly || false
+              }
               headerName={item?.headerName}
               field={item?.field}
-              sortable={item?.sortTable}
-              unSortIcon={item?.unSortIcon}
-              filter={item?.filter}
-              checkboxSelection={item?.checkboxSelection}
-              headerCheckboxSelection={item?.headerCheckboxSelection}
+              sortable={item?.sortTable || false}
+              unSortIcon={item?.unSortIcon || false}
+              filter={item?.filter || false}
+              checkboxSelection={item?.checkboxSelection || false}
+              headerCheckboxSelection={item?.headerCheckboxSelection || false}
               minWidth={item?.minWidth}
-              filterParams={item?.filterParams}
+              filterParams={item?.filterParam}
             ></AgGridColumn>
           ))}
         </AgGridReact>
@@ -65,23 +92,29 @@ TableGridControl.propTypes = {
   tableWidth: PropTypes.string,
   tableHeight: PropTypes.string,
   // phân trang
-  paginationPageSize: PropTypes.number,
+  pageSize: PropTypes.number,
   // chọn checkbox
   gridRef: PropTypes.object.isRequired,
   onGridReady: PropTypes.func,
   rowData: PropTypes.array,
   // số coloumn
   tableColoumn: PropTypes.array,
+
+  // handelCLickEdit
+  fieldValues: PropTypes.string,
+  onEditForm: PropTypes.func,
 };
 TableGridControl.defaultProps = {
   tableWidth: "100%",
   tableHeight: "600px",
 
-  paginationPageSize: 20,
+  pageSize: 20,
   onGridReady: null,
   rowData: null,
 
   tableColoumn: [],
+  onEditForm: null,
+  fieldValues: "",
 };
 
 export default TableGridControl;

@@ -19,9 +19,12 @@ import {
 import InputField from "../../../../CustomFields/InputField/Index";
 import SelectField from "../../../../CustomFields/SelectField/Index";
 import { tableColumnsTour } from "../../../../utils/Columns";
+import ConfirmControl from "../../components/Customs/ConfirmControl";
 import TableGridControl from "../../components/Customs/TableGridControl";
+import { Adm_GetProvince } from "../../Slices/SliceAddress";
 
 import { Adm_GetTourList } from "../../Slices/SliceTour";
+import { Adm_GetTouristAttByRegions } from "../../Slices/SliceTouristAttraction";
 
 import TourAddEdit from "./TourAddEdit";
 
@@ -38,24 +41,57 @@ const options = [
   { value: "vanilla", label: "Vanilla" },
 ];
 function TourManager(props) {
+  // state in components
   const [showModal, setShowModal] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [initialValues, setInitialValues] = useState({
+    TourImg: "",
+    TourID: "",
+    TourName: "",
+    Description: "",
+    DateStart: "",
+    DateEnd: "",
+    PhuongTienXuatPhat: "",
+
+    Schedule: "",
+    QuanityMax: 10,
+    QuanityMin: "",
+    CurrentQuanity: "",
+    Regions: null,
+    DeparturePlace: null,
+    TouristAttaction: null,
+  });
+  //end
+  //state in redux
+  const { tourList } = useSelector((state) => state?.tour);
+  const stateTourisAtt = useSelector((state) => state.touristAttraction);
+  //end
   const gridRef = useRef(null);
   const dispatch = useDispatch();
+  //
 
-  const { tourList } = useSelector((state) => state?.tour);
   const onButtonClick = (e) => {
+    e.preventDefault();
     const selectedNodes = gridRef.current.api.getSelectedNodes();
     const selectedData = selectedNodes.map((node) => node.data);
     const selectedDataStringPresentation = selectedData
-      .map((node) => `${node.athlete} ${node.age}`)
+      .map((node) => `${node.tourId}`)
       .join(", ");
-    alert(`Selected nodes: ${selectedDataStringPresentation}`);
+    if (selectedDataStringPresentation === "") {
+      return NotificationManager.warning("Chọn dòng để xóa!", "", 1500);
+    }
+    setShowConfirm(true);
+    const Ids = selectedDataStringPresentation.split(",").map(Number);
+
+    // const ask = window.confirm("Bạn có chắc muốn xóa  dòng dữ liệu?");
+    // if (ask) {
+    //   alert("OK");
+    // }
   };
 
-  const onGridReady = async (values) => {
-    values = {};
+  const onGridReady = async () => {
     try {
-      await dispatch(Adm_GetTourList(values));
+      await dispatch(Adm_GetTourList({}));
     } catch (err) {
       console.log(err);
     }
@@ -69,25 +105,60 @@ function TourManager(props) {
     }
   };
 
+  // showModel Add Edit form
   const handleClickShowModal = async () => {
-    setShowModal(true);
+    try {
+      await dispatch(Adm_GetProvince({}));
+      setShowModal(true);
+    } catch (err) {
+      return NotificationManager.error(`${err}`, "Error", 1500);
+    }
   };
 
+  // closed toggle
   const toggle = () => {
     setShowModal(false);
+    setShowConfirm(false);
   };
 
-  const submitForm = (values) => {
-    console.log(values);
-    setShowModal(false);
+  // handle click change regions => get tourRistAttr
+  const handleChangeRegions = async (e) => {
+    try {
+      const params = {
+        regions: e.value === null ? 0 : e.value,
+      };
+      await dispatch(Adm_GetTouristAttByRegions(params));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
+  // handleClick Edit tour by Id => get tourDetails
+  const handleEditTour = async (tourID) => {
+    try {
+      console.log(tourID);
+      // call api => promise
+      await dispatch(Adm_GetProvince({}));
+      setInitialValues({
+        TourID: 1,
+        TourName: "Tour ABC",
+      });
+      setShowModal(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  //-==========================
   return (
     <>
+      <ConfirmControl showModal={showConfirm} toggle={toggle} />;
       <TourAddEdit
         className="modal-xl"
         backdrop={"static"}
         toggle={toggle}
+        touristAttrByRegions={stateTourisAtt.touristAttrByRegions}
+        onGetTOuristByRegions={handleChangeRegions}
+        initialValues={initialValues}
         showModal={showModal}
       />
       <Container
@@ -299,6 +370,8 @@ function TourManager(props) {
               onGridReady={onGridReady}
               //
               tableColoumn={tableColumnsTour}
+              fieldValues="tourId"
+              onEditForm={handleEditTour}
             />
           </Col>
         </Row>

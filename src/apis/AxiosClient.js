@@ -11,6 +11,7 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use(async (config) => {
+  // Handle token here ...
   return config;
 });
 

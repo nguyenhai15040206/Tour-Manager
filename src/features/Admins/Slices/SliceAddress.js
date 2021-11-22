@@ -10,6 +10,7 @@ export const Adm_GetProvince = createAsyncThunk(
       const response = await addressApi.Adm_GetProvince(values);
       return response;
     } catch (error) {
+      //console.log(thunkApi.rejectWithValue({ error: error.message }));
       return thunkApi.rejectWithValue({ error: error.message });
     }
   }
@@ -37,7 +38,7 @@ const addressSlice = createSlice({
     builder.addCase(Adm_GetProvince.rejected, (state, action) => {
       state.loading = "error";
       state.data = [];
-      state.error = action.error.message;
+      state.error = action.payload.error;
     });
   },
 });

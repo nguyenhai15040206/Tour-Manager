@@ -8,7 +8,6 @@ import { RiKey2Fill } from "react-icons/ri";
 
 function LoginAdmin(props) {
   const { initialValues, validationSchema, handleLogin, isLogin } = props;
-  console.log(isLogin);
   return (
     <>
       <div className="login-admin__logo">
