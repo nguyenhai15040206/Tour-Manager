@@ -6,7 +6,15 @@ const touristAttractionApi = {
     // const config = {
     //   headers: { Authorization: `Bearer ${token}` },
     // };
-    return axioxClient.post(`${url}/Admin_GetTouristAttractionList`, values);
+    return axioxClient.post(`${url}/Adm_GetTouristAttractionList`, values);
+  },
+
+  Adm_CreateTouristAttr: (values) => {
+    return axioxClient.post(`${url}/Adm_CreateTourAttraction`, values);
+  },
+
+  Adm_DeleteTouristAttrList: (values) => {
+    return axioxClient.put(`${url}/Adm_deleteTouristAttraction`, values);
   },
 };
 
