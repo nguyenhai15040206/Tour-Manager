@@ -1,14 +1,11 @@
-import { unwrapResult } from "@reduxjs/toolkit";
 import { FastField, Field } from "formik";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React from "react";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import { NotificationManager } from "react-notifications";
 import ReactRating from "react-rating";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Card, CardImg, Col, FormGroup, Row } from "reactstrap";
 import * as yup from "yup";
-import imageDefaultPNG from "../../../../assets/logo/imageDefault.png";
 import Loading from "../../../../components/Loading/Index";
 import EditorField from "../../../../CustomFields/EditorField/Index";
 import InputField from "../../../../CustomFields/InputField/Index";
@@ -17,8 +14,6 @@ import SelectField from "../../../../CustomFields/SelectField/Index";
 import TextAreaField from "../../../../CustomFields/TextareaField/Index";
 import Options from "../../../../utils/Options";
 import ModalControl from "../../components/Customs/ModalControl";
-import { Adm_InsertTour } from "../../Slices/SliceTour";
-import { Adm_InsertTourDetails } from "../../Slices/SliceTourDetails";
 
 const styles = {
   display: "flex",
@@ -28,33 +23,62 @@ const styles = {
 
 function TourAddEdit(props) {
   // Begin props in component
-  const { onGetTOuristByRegions, touristAttrByRegions, initialValues } = props;
+  const {
+    onGetTOuristByRegions,
+    touristAttrByRegions,
+    initialValues,
+    onChangeRating,
+    onSubmitForm,
+    onChangeImage,
+  } = props;
   // End
-  // state in component
-  const [imageDefault, setImageDefault] = useState(`${imageDefaultPNG}`);
-  // end
   // Begin get state in store
   const stateTourisAtt = useSelector((state) => state.touristAttraction);
   const stateAddress = useSelector((state) => state.address);
-  //const stateTour = useSelector((state) => state.tour);
+  const stateTour = useSelector((state) => state.tour);
+  const stateUnitPrice = useSelector((state) => state.unitPrice);
   const stateTourDetails = useSelector((state) => state.tourDetails);
   //const stateEmployee = useSelector((state) => state.employee);
   // END
 
-  //Begin useState react HOOK
-
-  const [rating, setRating] = useState(3);
-  //END
-
-  //
-  const dispatch = useDispatch();
-  //const history = useHistory();
-
   // BEGIN Validate formik using yup
   const validationSchema = yup.object().shape({
-    Schedule: yup.string().required("[Lịch trình] không được bỏ trống!"),
+    DeparturePlace: yup
+      .string()
+      .trim()
+      .required("[Địa điểm xuất phát] không thể bỏ trống!"),
+    Regions: yup.string().trim().required("Vui lòng chọn vùng miền!"),
+    AdultUnitPrice: yup
+      .number()
+      .transform((value) => (isNaN(value) ? undefined : value))
+      .required("Vui lòng nhập đơn giá hợp lệ!"),
+    ChildrenUnitPrice: yup
+      .number()
+      .transform((value) => (isNaN(value) ? undefined : value))
+      .when(
+        "AdultUnitPrice",
+        (eventAdultUnitPrice, schema) =>
+          eventAdultUnitPrice &&
+          schema.max(eventAdultUnitPrice, "[Giá trẻ em] < [Giá người lớn]")
+      )
+      .required("Vui lòng nhập đơn giá hợp lệ!"),
+    BabyUnitPrice: yup
+      .number()
+      .transform((value) => (isNaN(value) ? undefined : value))
+      .when(
+        "ChildrenUnitPrice",
+        (eventChildrenUnitPrice, schema) =>
+          eventChildrenUnitPrice &&
+          schema.max(eventChildrenUnitPrice, "[Giá trẻ nhỏ] < [Giá trẻ em]")
+      )
+      .required("Vui lòng nhập đơn giá hợp lệ!"),
+    Schedule: yup
+      .string()
+      .required("[Lịch trình] không được bỏ trống!")
+      .min(20, "[Lịch trình] không được bỏ trống!"),
     PhuongTienXuatPhat: yup
       .string()
+      .trim()
       .required("[Phương tiện] không được để trống"),
     TouristAttaction: yup
       .array()
@@ -97,82 +121,21 @@ function TourAddEdit(props) {
   // ========================
 
   // bắt sự kiện lấy được số sao của tour khi đánh giá
-  const handleOnChangeRating = (rating) => {
-    setRating(rating);
-  };
-
-  // Nguyễn Tấn Hải - bắt sự kiện submit form
-  // Thêm mới dữ liệu TOur => call APi khi submit on success!
-  const handleClickOnSumitForm = async (values) => {
-    // thực hiện call dữ liệu
-    const tour = {
-      tourID: 0,
-      tourName: values.TourName,
-      description: values.Description,
-      tourImg: values.TourImg,
-      dateStart: values.DateStart,
-      dateEnd: values.DateEnd,
-      phuongTienXuatPhat: values.PhuongTienXuatPhat,
-      quaniTyMax: values.QuanityMax,
-      QuanityMin: values.QuanityMin,
-      CurrentQuanity: values.CurrentQuanity,
-      Schedule: values.Schedule,
-      rating: rating,
-      DeparturePlace: values.DeparturePlace,
-      tourGuideID: null,
-      empUpdate: 11,
-      suggest: true,
-      status: null,
-    };
-    try {
-      if (values.TourID !== "" || values.TourID !== 0) {
-        // edit here
-        alert("Edit đê");
-        return;
-      } else {
-        const action = await dispatch(Adm_InsertTour(tour));
-        const unwrapRuslt = unwrapResult(action);
-        const tourIDPayload = unwrapRuslt.tourId;
-        if (tourIDPayload === undefined) {
-          return NotificationManager.error(`Lỗi`, "Thêm thất bại!", 1500);
-        }
-
-        // insert tour => insert tourDetails => insert dong gia
-        
-        let arrTouristAttr = values.TouristAttaction;
-        if (Array.isArray(arrTouristAttr)) {
-          arrTouristAttr.map(async (item) => {
-            const tourDetails = {
-              tourID: tourIDPayload,
-              touristAttrID: item.value,
-              empIDInsert: 11,
-              empIDUpdate: 11,
-            };
-            return await dispatch(Adm_InsertTourDetails(tourDetails));
-          });
-          return NotificationManager.success(
-            "Success!",
-            "Thêm thành công!",
-            1500
-          );
-        }
-      }
-    } catch (err) {
-      console.log(err);
-      if ((err.status = 401)) {
-        console.log(err.status);
-        //history.push("/admin");
-        //console.log("Vui lòng đăng nhập lại");
-      }
-      return NotificationManager.error(`${err.error}`, "Thêm thất bại!", 1500);
+  const handleOnChangeRating = (e) => {
+    if (onChangeRating) {
+      onChangeRating(e);
     }
-    //
+  };
+  const handelClickOnSubmitForm = (e) => {
+    if (onSubmitForm) {
+      onSubmitForm(e);
+    }
   };
 
   // Change Image
   const handleChangeImage = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      setImageDefault(URL.createObjectURL(event.target.files[0]));
+    if (onChangeImage) {
+      onChangeImage(event);
     }
   };
 
@@ -186,6 +149,8 @@ function TourAddEdit(props) {
   return (
     <>
       {(stateAddress.loading === "loading" ||
+        stateTour.loading === "loading" ||
+        stateUnitPrice.loading === "loading" ||
         stateTourisAtt.loading === "loading") && <Loading loading={true} />}
       <ModalControl
         backdrop={props.backdrop}
@@ -193,17 +158,10 @@ function TourAddEdit(props) {
         showModal={props.showModal}
         className={props.className}
         initialValues={initialValues}
-        //validationSchema={validationSchema}
-        HandleClickSave={(values) => {
-          handleClickOnSumitForm(values);
-        }}
-        HandleClickSaveAndCreated={(values) => {
-          console.log(values);
-          handleClickOnSumitForm(values);
-        }}
-        HandleClickSaveAndClosed={(values) => {
-          handleClickOnSumitForm(values);
-        }}
+        validationSchema={validationSchema}
+        HandleClickSave={handelClickOnSubmitForm}
+        HandleClickSaveAndCreated={handelClickOnSubmitForm}
+        HandleClickSaveAndClosed={handelClickOnSubmitForm}
       >
         <Row>
           {stateTourDetails.loading === "loading" && <Loading loading={true} />}
@@ -212,10 +170,8 @@ function TourAddEdit(props) {
               <div style={{ width: "150px" }}></div>
               <div style={{ width: "calc(100% - 150px)" }}>
                 <ReactRating
-                  onChange={(rating) => {
-                    handleOnChangeRating(rating);
-                  }}
-                  initialRating={rating}
+                  onChange={handleOnChangeRating}
+                  initialRating={props.rating}
                   emptySymbol={<AiOutlineStar size={20} />}
                   fullSymbol={<AiFillStar color="orange" size={20} />}
                 />
@@ -338,7 +294,7 @@ function TourAddEdit(props) {
                   <CardImg
                     style={{ height: "218px", objectFit: "cover" }}
                     alt="Image Tour"
-                    src={imageDefault}
+                    src={`${props.imageDefault}`}
                   />
                 </Card>
                 {/* <img
@@ -518,8 +474,8 @@ function TourAddEdit(props) {
                   </div>
                   <div style={{ width: "calc(100% - 150px)" }}>
                     <FastField
-                      type="number"
-                      name="QuanityMax"
+                      type="text"
+                      name="AdultUnitPrice"
                       className="h-textbox"
                       component={InputField}
                     />
@@ -535,8 +491,8 @@ function TourAddEdit(props) {
                   </div>
                   <div style={{ width: "calc(100% - 150px)" }}>
                     <FastField
-                      type="number"
-                      name="QuanityMin"
+                      type="text"
+                      name="ChildrenUnitPrice"
                       className="h-textbox"
                       component={InputField}
                     />
@@ -552,8 +508,8 @@ function TourAddEdit(props) {
                   </div>
                   <div style={{ width: "calc(100% - 150px)" }}>
                     <FastField
-                      type="number"
-                      name="CurrentQuanity"
+                      type="text"
+                      name="BabyUnitPrice"
                       className="h-textbox"
                       component={InputField}
                     />
@@ -572,8 +528,13 @@ function TourAddEdit(props) {
                   className="h-editor form-control"
                   name="Schedule"
                   component={EditorField}
+                  placeholder="Vui lòng nhập lịch trình và format theo đúng quy định!"
                 />
               </div>
+            </FormGroup>
+            <FormGroup style={{ marginTop: "2px", ...styles }}>
+              <div style={{ width: "150px" }}></div>
+              <div style={{ width: "calc(100% - 150px)" }}></div>
             </FormGroup>
           </Col>
         </Row>
@@ -586,11 +547,17 @@ TourAddEdit.propTypes = {
   onGetTOuristByRegions: PropTypes.func,
   touristAttrByRegions: PropTypes.array,
   initialValues: PropTypes.object.isRequired,
+  onChangeRating: PropTypes.func,
+  onSubmitForm: PropTypes.func,
+  onChangeImage: PropTypes.func,
 };
 
 TourAddEdit.defaultProps = {
   onGetTOuristByRegions: null,
   touristAttrByRegions: [],
+  onChangeRating: null,
+  onSubmitForm: null,
+  onChangeImage: null,
 };
 
 export default TourAddEdit;

@@ -1,17 +1,11 @@
-import { render } from "@testing-library/react";
 import { Form, Formik } from "formik";
 import PropTypes from "prop-types";
 import React from "react";
 import { IoMdSave } from "react-icons/io";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
-const styles = {
-  display: "flex",
-  justifyContent: "flex-start",
-  alignItems: "stretch",
-};
 function ModalControl(props) {
-  const { showModal, children, toggle, className } = props;
+  const { showModal, children, toggle, className, titlePopup } = props;
   let submitAction = undefined;
   return (
     <Modal
@@ -40,10 +34,9 @@ function ModalControl(props) {
         }}
         toggle={toggle}
       >
-        Tạo mới tour du lịch
+        {`${titlePopup}`}
       </ModalHeader>
       <Formik
-        
         enableReinitialize={true}
         initialValues={props.initialValues}
         validationSchema={props.validationSchema}
@@ -59,6 +52,7 @@ function ModalControl(props) {
           }
           if (submitAction === "SaveAndClosed") {
             props.HandleClickSaveAndClosed(values);
+            toggle();
             return;
           }
           submitAction = undefined;
@@ -100,11 +94,10 @@ function ModalControl(props) {
                 </button>
                 <button
                   type="button"
-                  onClick={async () => {
+                  onClick={() => {
                     submitAction = "SaveAndClosed";
                     //alert("OK");
-                    await formikProps.submitForm();
-                    toggle();
+                    formikProps.submitForm();
                   }}
                   className="h-button"
                   style={{ marginLeft: "4px" }}
@@ -125,12 +118,14 @@ ModalControl.propTypes = {
   showModal: PropTypes.bool,
   toggle: PropTypes.func,
   className: PropTypes.string,
+  titlePopup: PropTypes.string,
 };
 
 ModalControl.defaultProps = {
   showModal: false,
   toggle: null,
   className: "",
+  titlePopup: "Tạo mới",
 };
 
 export default ModalControl;

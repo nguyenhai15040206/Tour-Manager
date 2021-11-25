@@ -4,6 +4,7 @@ import employeeReducer from "../features/Admins/Slices/SliceEmployee";
 import tourReducer from "../features/Admins/Slices/SliceTour";
 import tourDetailsReducer from "../features/Admins/Slices/SliceTourDetails";
 import touristAttrReducer from "../features/Admins/Slices/SliceTouristAttraction";
+import unitPriceReducer from "../features/Admins/Slices/SliceUnitPrice";
 import customerReducer from "../features/Clients/Customers/SliceCustomer";
 
 export default configureStore({
@@ -14,6 +15,7 @@ export default configureStore({
     touristAttraction: touristAttrReducer,
     address: addressReducer,
     tourDetails: tourDetailsReducer,
+    unitPrice: unitPriceReducer,
   },
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

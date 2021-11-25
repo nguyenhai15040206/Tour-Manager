@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Editor } from "react-draft-wysiwyg";
 import { ContentState, convertToRaw, EditorState } from "draft-js";
@@ -8,6 +8,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { FormGroup } from "reactstrap";
 
 function EditorField(props) {
+  const editorRef = useRef();
   const [active, setActive] = useState();
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
@@ -16,7 +17,9 @@ function EditorField(props) {
   const { name } = field;
   const { errors, touched } = form;
   const showError = errors[name] && touched[name];
-
+  // const str = "<p>dsadsadsadssadsad</p>\n<p>absdksds</p>\n";
+  // var str2 = str.replace(/\n|\r/g, "");
+  // console.log("OK" + str2);
   useEffect(() => {
     if (form.dirty) {
       return;
@@ -48,12 +51,13 @@ function EditorField(props) {
     <>
       <FormGroup className="mt-1">
         <Editor
+          ref={editorRef}
           name={name}
-          id={name}
-          onFocus={() => setActive(true)}
-          onBlur={(e) => {
-            setActive(false);
-            field.onBlur(e);
+          onFocus={() => {
+            setActive(true);
+          }}
+          onBlur={() => {
+            setActive(!active);
           }}
           editorState={editorState}
           wrapperClassName="wrapper-class"
