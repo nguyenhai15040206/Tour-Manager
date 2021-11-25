@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import Select from "react-select";
-import { FormGroup, Label } from "reactstrap";
+import { FormGroup } from "reactstrap";
 import { customStyles } from "../../utils/constant";
 // import "react-select/dist/react-select.css";
 
@@ -16,30 +16,23 @@ function SelectField(props) {
     isLoading,
     isMulti,
   } = props;
-  const { name, value, onChange } = field;
-  const selectedValuesChange = options.find((option) => option.value === value);
+  const { name, value } = field;
   const { errors, touched } = form;
   const showError = errors[name] && touched[name];
   const handleSelectedOptionChange = (selectedOption) => {
-    const selectedValue = selectedOption
-      ? selectedOption.value
-      : selectedOption;
-    if (!isMulti) {
-      const changeEvent = {
-        target: {
-          name: name,
-          value: selectedValue,
-        },
-      };
-      onChange(changeEvent);
+    form.setFieldValue(
+      name,
+      isMulti ? selectedOption.map((item) => item.value) : selectedOption.value
+    );
+  };
+
+  const getValue = () => {
+    if (options) {
+      return isMulti
+        ? options.filter((option) => field.value.indexOf(option.value) >= 0)
+        : options.find((option) => option.value === value);
     } else {
-      const changeEvent = {
-        target: {
-          name: name,
-          value: selectedOption,
-        },
-      };
-      onChange(changeEvent);
+      return isMulti ? [] : "";
     }
   };
 
@@ -58,7 +51,7 @@ function SelectField(props) {
         isLoading={isLoading}
         isMulti={isMulti}
         styles={customStyles}
-        value={selectedValuesChange}
+        value={getValue()}
         onChange={(e) => {
           handleSelectedOptionChange(e);
           handleChangeClick(e);
@@ -87,6 +80,7 @@ SelectField.propTypes = {
 
 SelectField.defaultProps = {
   handleChange: null,
+
   placeholder: "",
   disable: false,
   options: [],

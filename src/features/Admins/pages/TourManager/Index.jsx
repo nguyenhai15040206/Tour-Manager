@@ -22,18 +22,40 @@ import { tableColumnsTour } from "../../../../utils/Columns";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
 import TableGridControl from "../../components/Customs/TableGridControl";
 import { Adm_GetProvince } from "../../Slices/SliceAddress";
-
-import { Adm_GetTourList } from "../../Slices/SliceTour";
+import imageDefaultPNG from "../../../../assets/logo/imageDefault.png";
+import { Adm_GetTourList, Adm_InsertTour } from "../../Slices/SliceTour";
+import { Adm_InsertTourDetails } from "../../Slices/SliceTourDetails";
 import { Adm_GetTouristAttByRegions } from "../../Slices/SliceTouristAttraction";
 
 import TourAddEdit from "./TourAddEdit";
+import { Adm_InsertUnitPrice } from "../../Slices/SliceUnitPrice";
 
-const initialValues = {
+const initialValuesSearch = {
   TourID: "",
   TourName: "",
   DateStart: "",
   DateEnd: "",
   TravelTypeID: null,
+};
+
+const initialValuesInsert = {
+  TourImg: "",
+  TourID: "",
+  TourName: "",
+  Description: "",
+  DateStart: "",
+  DateEnd: "",
+  PhuongTienXuatPhat: "",
+  BabyUnitPrice: "", // đơn giá trẻ em
+  AdultUnitPrice: "", // đơn giá người lớn
+  ChildrenUnitPrice: "", // đơn giá trẻ nhỏ
+  Schedule: "", // Lịch trình
+  QuanityMax: 10,
+  QuanityMin: "",
+  CurrentQuanity: 0,
+  Regions: "",
+  DeparturePlace: "",
+  TouristAttaction: [],
 };
 const options = [
   { value: "chocolate", label: "Chocolate" },
@@ -42,25 +64,11 @@ const options = [
 ];
 function TourManager(props) {
   // state in components
+  const [rating, setRating] = useState(3);
   const [showModal, setShowModal] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [initialValues, setInitialValues] = useState({
-    TourImg: "",
-    TourID: "",
-    TourName: "",
-    Description: "",
-    DateStart: "",
-    DateEnd: "",
-    PhuongTienXuatPhat: "",
-
-    Schedule: "",
-    QuanityMax: 10,
-    QuanityMin: "",
-    CurrentQuanity: "",
-    Regions: null,
-    DeparturePlace: null,
-    TouristAttaction: null,
-  });
+  const [initialValues, setInitialValues] = useState(initialValuesInsert);
+  const [imageDefault, setImageDefault] = useState(`${imageDefaultPNG}`);
   //end
   //state in redux
   const { tourList } = useSelector((state) => state?.tour);
@@ -97,18 +105,124 @@ function TourManager(props) {
     }
   };
 
+  // ======================== Xử lý sự kiện
+  //search
   const handleClickSearchTour = async (values) => {
     try {
+      console.log(values);
       await dispatch(Adm_GetTourList(values));
     } catch (err) {
       console.log(err);
     }
   };
+  // handeCLick change rating
+  const handleClickChangeRating = (rating) => {
+    console.log(rating);
+    setRating(rating);
+  };
 
+  // onSubmitForm
+  //Nguyễn Tấn Hải - bắt sự kiện submit form
+  //Thêm mới dữ liệu TOur => call APi khi submit on success!
+  const handleClickOnSumitForm = async (values) => {
+    // thực hiện call dữ liệu
+    const tour = {
+      tourID: 0,
+      tourName: values.TourName,
+      description: values.Description,
+      tourImg: values.TourImg,
+      dateStart: values.DateStart,
+      dateEnd: values.DateEnd,
+      phuongTienXuatPhat: values.PhuongTienXuatPhat,
+      quaniTyMax: values.QuanityMax,
+      quanityMin: values.QuanityMin,
+      currentQuanity: values.CurrentQuanity,
+      Schedule: values.Schedule,
+      rating: rating,
+      travelTypeID: 2, //
+      DeparturePlace: values.DeparturePlace,
+      tourGuideID: null, //
+      empIDUpdate: 11, //
+      suggest: true, //
+      empIDInsert: 11, //
+      status: null, //
+    };
+    if (values.TourID !== "") {
+      // edit here
+      alert("Edit đê");
+      return;
+    } else {
+      dispatch(Adm_InsertTour(tour))
+        .then(unwrapResult)
+        .then((payload) => {
+          const tourIDPayload = payload.tourId;
+          if (tourIDPayload === undefined) {
+            return NotificationManager.error(`Lỗi`, "Thêm thất bại!", 1500);
+          }
+          // insert tour => insert tourDetails => insert dong gia
+          const unitPrice = {
+            tourId: tourIDPayload,
+            adultUnitPrice: values.AdultUnitPrice,
+            childrentUnitPrice: values.ChildrenUnitPrice,
+            babyUnitPrice: values.BabyUnitPrice,
+            empIDInsert: 11,
+            empIdUpdate: 11,
+          };
+          dispatch(Adm_InsertUnitPrice(unitPrice))
+            .then(unwrapResult)
+            .then(async () => {
+              let arrTouristAttr = values.TouristAttaction;
+              if (Array.isArray(arrTouristAttr)) {
+                try {
+                  arrTouristAttr.map(async (item) => {
+                    const tourDetails = {
+                      tourID: tourIDPayload,
+                      touristAttrID: item,
+                      empIDInsert: 11,
+                      empIDUpdate: 11,
+                    };
+                    return await dispatch(Adm_InsertTourDetails(tourDetails));
+                  });
+                  await dispatch(Adm_GetTourList({}));
+                  return NotificationManager.success(
+                    "Success!",
+                    "Thêm thành công!",
+                    1500
+                  );
+                } catch (err) {
+                  console.log(err);
+                }
+              }
+            })
+            .catch((err) => {
+              return NotificationManager.error(
+                `${err.error}`,
+                "Thêm thất bại!",
+                1500
+              );
+            });
+        })
+        .catch((err) => {
+          if ((err.status = 401)) {
+            console.log(err.status);
+            //history.push("/admin");
+            //console.log("Vui lòng đăng nhập lại");
+          }
+          return NotificationManager.error(
+            `${err.error}`,
+            "Thêm thất bại!",
+            1500
+          );
+        });
+    }
+    //
+  };
   // showModel Add Edit form
   const handleClickShowModal = async () => {
     try {
+      setInitialValues(initialValuesInsert);
       await dispatch(Adm_GetProvince({}));
+      setImageDefault(`${imageDefaultPNG}`);
       setShowModal(true);
     } catch (err) {
       return NotificationManager.error(`${err}`, "Error", 1500);
@@ -124,8 +238,11 @@ function TourManager(props) {
   // handle click change regions => get tourRistAttr
   const handleChangeRegions = async (e) => {
     try {
+      if (e === null || e === "") {
+        return;
+      }
       const params = {
-        regions: e.value === null ? 0 : e.value,
+        regions: e.value,
       };
       await dispatch(Adm_GetTouristAttByRegions(params));
     } catch (err) {
@@ -142,10 +259,26 @@ function TourManager(props) {
       setInitialValues({
         TourID: 1,
         TourName: "Tour ABC",
+        Regions: 1,
+        PhuongTienXuatPhat: "Xe khách",
+        DateEnd: "2021-11-24",
+        TouristAttaction: [1, 2, 3],
       });
+      const params = {
+        regions: 1,
+      };
+      console.log("Params", params);
+      await dispatch(Adm_GetTouristAttByRegions(params));
       setShowModal(true);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  // handle Change Image
+  const handleChangeImage = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      setImageDefault(URL.createObjectURL(event.target.files[0]));
     }
   };
   //-==========================
@@ -156,8 +289,18 @@ function TourManager(props) {
         className="modal-xl"
         backdrop={"static"}
         toggle={toggle}
+        rating={rating}
+        onSubmitForm={(values) => {
+          console.log(values);
+          handleClickOnSumitForm(values);
+        }}
+        onChangeRating={(rating) => {
+          handleClickChangeRating(rating);
+        }}
+        onChangeImage={handleChangeImage}
         touristAttrByRegions={stateTourisAtt.touristAttrByRegions}
         onGetTOuristByRegions={handleChangeRegions}
+        imageDefault={imageDefault}
         initialValues={initialValues}
         showModal={showModal}
       />
@@ -204,7 +347,7 @@ function TourManager(props) {
                   {/* Begin search */}
                   <div id="showSearch" className="collapse show">
                     <Formik
-                      initialValues={initialValues}
+                      initialValues={initialValuesSearch}
                       onSubmit={handleClickSearchTour}
                     >
                       {(formikProps) => {
@@ -375,7 +518,6 @@ function TourManager(props) {
             />
           </Col>
         </Row>
-        <Row></Row>
       </Container>
     </>
   );

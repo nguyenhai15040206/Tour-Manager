@@ -1,7 +1,6 @@
-import { ErrorMessage } from "formik";
 import PropTypes from "prop-types";
 import React from "react";
-import { FormFeedback, FormGroup, Input, Label } from "reactstrap";
+import { FormGroup, Input, Label } from "reactstrap";
 import "./styles.scss";
 
 function RadioField(props) {
@@ -37,7 +36,7 @@ function RadioField(props) {
           type={type}
           invalid={showError}
         />
-        {showError && <div className="invalid-feedback">{errors[name]}</div>}
+        {showError && <div className="invalid-feedback"></div>}
         {/* <ErrorMessage name={name} component={FormFeedback} /> */}
       </FormGroup>
     </>
