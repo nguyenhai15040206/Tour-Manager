@@ -1,7 +1,7 @@
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { FastField, Form, Formik } from "formik";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { IoMdAddCircle } from "react-icons/io";
 import { RiDeleteBin6Line, RiFileExcel2Fill } from "react-icons/ri";
@@ -24,10 +24,7 @@ import {
   Adm_GetEmployeeList,
 } from "../../Slices/SliceEmployee";
 import InputField from "./../../../../CustomFields/InputField/Index";
-import RadioField from "./../../../../CustomFields/InputField/RadioField";
 import EmployeeAddEdit from "./EmployeeAddEdit";
-
-//import EditForm from "./../../components/Customs/EditForm";
 import { Adm_GetEmployeeById } from "./../../Slices/SliceEmployee";
 import { unwrapResult } from "@reduxjs/toolkit";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
@@ -50,29 +47,14 @@ function EmployeeManager(props) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [values, setValues] = useState([]);
   // End
-  //
-  const gridRef = useRef(null);
-  const dispatch = useDispatch();
-  //
 
   // state in store
   const stateEmp = useSelector((state) => state?.employee);
-  //console.log(stateEmp.dataEmpList);
-  // end
-
-  //const stateEmpDelete=useState((state)=>state?.employee.)
+  //
+  const dispatch = useDispatch();
+  const gridRef = useRef(null);
 
   //
-  const onGridReady = async (values) => {
-    values = {};
-    try {
-      await dispatch(Adm_GetEmployeeList(values));
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // handle event here
 
   const handleClickShowModal = () => {
     setInitialValues(initialValuesEmp);
@@ -83,12 +65,27 @@ function EmployeeManager(props) {
     setShowModal(false);
     setShowConfirm(false);
   };
+  //
+  // end
+  //
+  //
+  const onGridReady = async (values) => {
+    values = {};
+    try {
+      await dispatch(Adm_GetEmployeeList(values));
+    } catch {
+      console.error();
+    }
+  };
+
+  //
+
+  // handle event here
 
   // start handle
-
+  ///thuc hien chon 1 dong du lieu de xoa
   const handleClickDelete = async (e) => {
     try {
-      const value = {};
       const selectedNodes = gridRef.current.api.getSelectedNodes();
       const selectedData = selectedNodes.map((node) => node.data);
       const selectedDataStringPresentation = selectedData
@@ -99,14 +96,12 @@ function EmployeeManager(props) {
       // nếu là chưa chọn => vui lòng chọn dòng cần xóa
       if (Ids[0] === 0) {
         return NotificationManager.error(
-          "Error!",
           "Chọn một dòng để xóa",
+          "Error!",
           1500
         );
       }
-      console.log("click");
       setValues(Ids);
-      console.log(values);
       setShowConfirm(true);
     } catch (err) {
       console.log(err);
@@ -114,18 +109,25 @@ function EmployeeManager(props) {
     }
   };
 
+  //thuc hien xoa di 1 dong du lieu
   const ConfirmDelete = async () => {
-    try {
-      const value = {};
-      await dispatch(Adm_DeleteEmployee(values));
-      await dispatch(Adm_GetEmployeeList(value));
-      setShowConfirm(false);
-      return NotificationManager.success("Success!", "Xóa thành công");
-    } catch (err) {
-      return NotificationManager.error(`${err}`, "Xóa thất bại");
-    }
+    const value = {};
+    dispatch(Adm_DeleteEmployee(values))
+      .then(unwrapResult)
+      .then((payload) => {
+        dispatch(Adm_GetEmployeeList(value))
+          .unwrap()
+          .then(() => {
+            setShowConfirm(false);
+            return NotificationManager.success("Xóa thành công", "Success!");
+          });
+      })
+      .catch((err) => {
+        return NotificationManager.error(`${err}`, "Xóa thất bại");
+      });
   };
 
+  //thuc hien get dữ liệu
   const handleClickEdit = async (empID) => {
     try {
       const params = {
@@ -176,7 +178,7 @@ function EmployeeManager(props) {
     }
   };*/
 
-  // try +> catch
+  // tim kiem
   const handelClickSearchTour = async (value) => {
     //console.log(value);
     try {
@@ -187,7 +189,7 @@ function EmployeeManager(props) {
     //console.log("");
   };
 
-  // handleClick On submit form
+  // handleClick On submit form edit/add
   const handleClickOnSubmitForm = async (values) => {
     console.log(values);
     const employee = {
@@ -204,19 +206,25 @@ function EmployeeManager(props) {
     const params = {};
     if (values.empId !== "") {
       console.log(values.empId);
-      try {
-        // edit xong e làm gi nưa khong, khong lam thi khoi lay unwrapRS
-        await dispatch(Adm_EditEmployee(values));
-        await dispatch(Adm_GetEmployeeList(params));
-        return NotificationManager.success(
-          "Success!",
-          "Edit thành công!",
-          1500
-        );
-      } catch (err) {
-        console.log(err);
-        return NotificationManager.error("Error!", "Edit thất bại!", 1500);
-      }
+      // edit xong e làm gi nưa khong, khong lam thi khoi lay unwrapRS
+      dispatch(Adm_EditEmployee(values))
+        .then(unwrapResult)
+        .then((payload) => {
+          console.log(payload);
+          dispatch(Adm_GetEmployeeList(params))
+            .unwrap()
+            .then(() => {
+              return NotificationManager.success(
+                "Edit thành công!!",
+                "Success",
+                1500
+              );
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          return NotificationManager.error(`${err.error}`, "Error!", 1500);
+        });
     } else {
       dispatch(Adm_CreateEmployee(employee))
         .then(unwrapResult)
@@ -450,8 +458,8 @@ function EmployeeManager(props) {
               rowData={stateEmp.dataEmpList}
               tableHeight="450px"
               tableColoumn={tableColumnEmployee}
-              gridRef={gridRef}
               onGridReady={onGridReady}
+              gridRef={gridRef}
               /////
               onEditForm={handleClickEdit}
               fieldValues="empId"

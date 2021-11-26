@@ -18,11 +18,11 @@ export const LoginEmp = createAsyncThunk(
 
 ///get employee
 export const Adm_GetEmployeeList = createAsyncThunk(
-  "api/Employee/Adm_GetEmployeeList",
+  "api/Employee/Adm_GetEmployee",
   async (values, thunkApi) => {
     try {
       const response = await employeeApi.Adm_GetEmployeeList(values);
-      //console.log(response.data);
+      console.log(response);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue({ error: error.message });
@@ -87,7 +87,6 @@ export const Adm_EditEmployee = createAsyncThunk(
 const employeeSlice = createSlice({
   name: "Employee",
   initialState: {
-    // lam gi cos state nao laf payload em
     employeeByID: null,
     dataEmpList: null,
     dataEmp: JSON.stringify(localStorage.getItem("accessTokenEmp")) || {},
@@ -126,7 +125,7 @@ const employeeSlice = createSlice({
     builder.addCase(Adm_GetEmployeeList.rejected, (state, action) => {
       state.dataEmpList = [];
       state.loading = "error";
-      state.error = action.error.error;
+      state.error = action.error.message;
     });
 
     ///get employee by id

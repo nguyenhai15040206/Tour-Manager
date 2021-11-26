@@ -114,21 +114,30 @@ function TourAttrManager() {
   };
   const ConfirmDelete = async () => {
     console.log(values);
-    try {
-      const value = {};
-      await dispatch(Adm_DeleteTouristAttr(values));
-      await dispatch(Adm_GetTouristAttr(value));
-      setShowConfirm(false);
-      return NotificationManager.success("Success!", "Xóa thành công!", 1500);
-    } catch {
-      return NotificationManager.error("Error!", "Xóa thất bại!", 1500);
-    }
+    const value = {};
+    dispatch(Adm_DeleteTouristAttr(values))
+      .then(unwrapResult)
+      .then((payload) => {
+        dispatch(Adm_GetTouristAttr(value))
+          .unwrap()
+          .then(() => {
+            setShowConfirm(false);
+            return NotificationManager.success(
+              "Success!",
+              "Xóa thành công!",
+              1500
+            );
+          });
+      })
+      .catch((err) => {
+        return NotificationManager.error(`${err}`, "Xóa thất bại!", 1500);
+      });
   };
 
   const handleClickSubmitForm = async (values) => {
     console.log(values);
     const touristAttr = {
-      touristAttrId: values.touristAttrId,
+      touristAttrId: values.touristAttrId === "" ? 0 : values.touristAttrId,
       touristAttrName: values.touristAttrName,
       provinceId: values.provinceId,
       description: values.description,
@@ -136,28 +145,40 @@ function TourAttrManager() {
     };
     const params = {};
     if (values.touristAttrId !== "") {
-      console.log(values.touristAttrId);
-      try {
-        await dispatch(Adm_EditTouristAttr(values));
-        await dispatch(Adm_GetTouristAttr(params));
-        return NotificationManager.success("Success!", "Edit thành công");
-      } catch (err) {
-        console.log(err);
-        return NotificationManager.error("Error!", "Edit thất bại");
-      }
+      dispatch(Adm_EditTouristAttr(values))
+        .then(unwrapResult)
+        .then((payload) => {
+          dispatch(Adm_GetTouristAttr(params))
+            .unwrap()
+            .then(() => {
+              return NotificationManager.success(
+                " Edit thành công!",
+                "Success"
+              );
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          return NotificationManager.error(`${err}`, "Edit thất bại");
+        });
     } else {
-      try {
-        await dispatch(Adm_CreateTourAttr(touristAttr));
-        await dispatch(Adm_GetTouristAttr(params));
-        return NotificationManager.success(
-          "Success!",
-          "Thêm thành công!",
-          1500
-        );
-      } catch (err) {
-        console.log(err);
-        return NotificationManager.error("Error!", "Thêm thất bại!", 1500);
-      }
+      dispatch(Adm_CreateTourAttr(touristAttr))
+        .then(unwrapResult)
+        .then((payload) => {
+          dispatch(Adm_GetTouristAttr(params))
+            .unwrap()
+            .then(() => {
+              return NotificationManager.success(
+                "Thêm thành công!",
+                " Success!",
+                1500
+              );
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          return NotificationManager.error(`${err}`, "Thêm thất bại!", 1500);
+        });
     }
   };
 
@@ -332,16 +353,18 @@ function TourAttrManager() {
                                       />
                                       Tìm kiếm
                                     </button>
-                                    <button
-                                      className="h-button"
-                                      onClick={(e) => {
-                                        handleClickDelete(e);
-                                      }}
-                                      style={{ marginLeft: "3px" }}
-                                    >
-                                      <RiDeleteBin6Line size={15} />
-                                      Xóa
-                                    </button>
+                                    <div style={{ float: "right" }}>
+                                      <button
+                                        className="h-button"
+                                        onClick={(e) => {
+                                          handleClickDelete(e);
+                                        }}
+                                        style={{ marginLeft: "3px" }}
+                                      >
+                                        <RiDeleteBin6Line size={15} />
+                                        Xóa
+                                      </button>
+                                    </div>
                                   </div>
                                 </Col>
                               </Row>
