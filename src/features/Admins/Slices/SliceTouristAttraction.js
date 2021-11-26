@@ -83,8 +83,9 @@ export const Adm_EditTouristAttr = createAsyncThunk(
 const touristAttrSlice = createSlice({
   name: "TouristAttraction",
   initialState: {
+    touristAttID: null,
     touristAttrByRegions: [],
-    data: [],
+    data: null,
     loading: "idle",
     error: "",
   },
@@ -92,7 +93,7 @@ const touristAttrSlice = createSlice({
   extraReducers: (builder) => {
     // Start Get all tour Attraction
     builder.addCase(Adm_GetTouristAttr.pending, (state) => {
-      state.data = [];
+      state.data = null;
       state.loading = "loading";
     });
 
@@ -104,7 +105,7 @@ const touristAttrSlice = createSlice({
     builder.addCase(Adm_GetTouristAttr.rejected, (state, action) => {
       state.loading = "error";
       state.data = [];
-      state.error = action.error.message;
+      state.error = action.error.error;
     });
     //end
     // Start Get  tour Attraction by regions
@@ -156,6 +157,7 @@ const touristAttrSlice = createSlice({
       state.loading = "loading";
     });
     builder.addCase(Adm_GetTouristAttrById.fulfilled, (state, { payload }) => {
+      state.touristAttID = payload;
       state.loading = "loaded";
     });
     builder.addCase(Adm_GetTouristAttrById.rejected, (state, action) => {
