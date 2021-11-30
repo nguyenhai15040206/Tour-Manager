@@ -8,6 +8,9 @@ import touristAttrReducer from "../features/Admins/Slices/SliceTouristAttraction
 import travelTypeReducer from "../features/Admins/Slices/SliceTravelType";
 import unitPriceReducer from "../features/Admins/Slices/SliceUnitPrice";
 import customerReducer from "../features/Clients/Customers/SliceCustomer";
+import districtReducer from "../features/Admins/Slices/SliceDistrict";
+import wardsReducer from "../features/Admins/Slices/SliceWards";
+import tourGuideReducer from "../features/Admins/Slices/SliceTourGuide";
 
 export default configureStore({
   reducer: {
@@ -20,6 +23,9 @@ export default configureStore({
     unitPrice: unitPriceReducer,
     imagesUpload: imagesUploadReducer,
     travelType: travelTypeReducer,
+    district: districtReducer,
+    wards: wardsReducer,
+    tourGuide: tourGuideReducer,
   },
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

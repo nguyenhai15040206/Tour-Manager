@@ -16,6 +16,44 @@ export const Adm_GetTouristAttr = createAsyncThunk(
     }
   }
 );
+
+///theem
+export const Adm_CreateTourAttr = createAsyncThunk(
+  "api/TouristAttraction/Admin_CreateTourAttraction",
+  async (values, thunkApi) => {
+    try {
+      await touristAttractionApi.Adm_CreateTouristAttr(values);
+    } catch (err) {
+      return thunkApi.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+///xóa một địa điểm du lịch
+export const Adm_DeleteTouristAttr = createAsyncThunk(
+  "api/TouristAttraction/Adm_DeleteTouristAttr",
+  async (values, thunkApi) => {
+    try {
+      await touristAttractionApi.Adm_DeleteTouristAttrList(values);
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//get information touristAttr
+export const Adm_GetTouristAttrById = createAsyncThunk(
+  "api/TouristAttraction/Adm_GetTouristAttrById",
+  async (params, thunkApi) => {
+    try {
+      const response = await touristAttractionApi.Adm_GetTouristAttById(params);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const Adm_GetTouristAttByRegions = createAsyncThunk(
   "api/TouristAttraction/Adm_GetTouristAttByRegions",
   async (params, thunkApi) => {
@@ -30,11 +68,24 @@ export const Adm_GetTouristAttByRegions = createAsyncThunk(
   }
 );
 
+export const Adm_EditTouristAttr = createAsyncThunk(
+  "api/TouristAttr/Adm_EditTouristAttr",
+  async (values, thunkApi) => {
+    try {
+      const response = await touristAttractionApi.Adm_EditTouristAttr(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const touristAttrSlice = createSlice({
   name: "TouristAttraction",
   initialState: {
+    touristAttID: null,
     touristAttrByRegions: [],
-    data: [],
+    data: null,
     loading: "idle",
     error: "",
   },
@@ -42,7 +93,7 @@ const touristAttrSlice = createSlice({
   extraReducers: (builder) => {
     // Start Get all tour Attraction
     builder.addCase(Adm_GetTouristAttr.pending, (state) => {
-      state.data = [];
+      state.data = null;
       state.loading = "loading";
     });
 
@@ -54,7 +105,7 @@ const touristAttrSlice = createSlice({
     builder.addCase(Adm_GetTouristAttr.rejected, (state, action) => {
       state.loading = "error";
       state.data = [];
-      state.error = action.error.message;
+      state.error = action.error.error;
     });
     //end
     // Start Get  tour Attraction by regions
@@ -76,6 +127,55 @@ const touristAttrSlice = createSlice({
       state.error = action.error.message;
     });
     //end
+
+    ///them
+    builder.addCase(Adm_CreateTourAttr.pending, (state) => {
+      state.loading = "loading";
+    });
+    builder.addCase(Adm_CreateTourAttr.fulfilled, (state, { payload }) => {
+      state.loading = "loaded";
+    });
+    builder.addCase(Adm_CreateTourAttr.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.error;
+    });
+
+    ///xóa
+    builder.addCase(Adm_DeleteTouristAttr.pending, (state) => {
+      state.loading = "loading";
+    });
+    builder.addCase(Adm_DeleteTouristAttr.fulfilled, (state, { payload }) => {
+      state.loading = "loaded";
+    });
+    builder.addCase(Adm_DeleteTouristAttr.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.error;
+    });
+
+    //get by id
+    builder.addCase(Adm_GetTouristAttrById.pending, (state) => {
+      state.loading = "loading";
+    });
+    builder.addCase(Adm_GetTouristAttrById.fulfilled, (state, { payload }) => {
+      state.touristAttID = payload;
+      state.loading = "loaded";
+    });
+    builder.addCase(Adm_GetTouristAttrById.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.error;
+    });
+
+    //edit
+    builder.addCase(Adm_EditTouristAttr.pending, (state) => {
+      state.loading = "loading";
+    });
+    builder.addCase(Adm_EditTouristAttr.fulfilled, (state, { payload }) => {
+      state.loading = "loaded";
+    });
+    builder.addCase(Adm_EditTouristAttr.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.error;
+    });
   },
 });
 

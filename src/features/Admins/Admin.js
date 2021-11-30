@@ -12,6 +12,25 @@ import { NotificationContainer } from "react-notifications";
 const TourManager = React.lazy(() =>
   import("../Admins/pages/TourManager/Index")
 );
+const Employee = React.lazy(() =>
+  import("../Admins/pages/EmployeeManager/index")
+);
+const TouristAttr = React.lazy(() =>
+  import("../Admins/pages/TourAttrManager/index.jsx")
+);
+const Province = React.lazy(() =>
+  import("../Admins/pages/ProvinceManager/index")
+);
+const District = React.lazy(() =>
+  import("../Admins/pages/DistrictManager/index")
+);
+const Wards = React.lazy(() =>
+  import("../Admins/pages/WardsManager/index.jsx")
+);
+const TourGuide = React.lazy(() =>
+  import("../Admins/pages/TourGuideManager/index")
+);
+
 function Admin(props) {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.employee);
@@ -55,6 +74,12 @@ function Admin(props) {
         <Switch>
           <Suspense fallback={<Loading loading={true} />}>
             <Route exact={true} path="/admin" component={TourManager} />
+            <Route path="/admin/employee" component={Employee} />
+            <Route path="/admin/touristAttr" component={TouristAttr} />
+            <Route path="/admin/province" component={Province} />
+            <Route path="/admin/district" component={District} />
+            <Route path="/admin/wards" component={Wards} />
+            <Route path="/admin/tourguide" component={TourGuide} />
           </Suspense>
         </Switch>
       </MainLayout>
