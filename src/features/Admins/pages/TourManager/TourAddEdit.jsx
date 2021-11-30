@@ -38,6 +38,7 @@ function TourAddEdit(props) {
   const stateTour = useSelector((state) => state.tour);
   const stateUnitPrice = useSelector((state) => state.unitPrice);
   const stateTourDetails = useSelector((state) => state.tourDetails);
+  const stateImagesUpload = useSelector((state) => state?.imagesUpload);
   //const stateEmployee = useSelector((state) => state.employee);
   // END
 
@@ -76,7 +77,7 @@ function TourAddEdit(props) {
       .string()
       .required("[Lịch trình] không được bỏ trống!")
       .min(20, "[Lịch trình] không được bỏ trống!"),
-    PhuongTienXuatPhat: yup
+    Transport: yup
       .string()
       .trim()
       .required("[Phương tiện] không được để trống"),
@@ -149,6 +150,7 @@ function TourAddEdit(props) {
   return (
     <>
       {(stateAddress.loading === "loading" ||
+        stateImagesUpload.loading === "loading" ||
         stateTour.loading === "loading" ||
         stateUnitPrice.loading === "loading" ||
         stateTourisAtt.loading === "loading") && <Loading loading={true} />}
@@ -180,22 +182,20 @@ function TourAddEdit(props) {
             <Row>
               <Col xl={8} lg={12}>
                 <Row>
-                  <Col xl={6} lg={6}>
-                    <FormGroup style={styles}>
-                      <div style={{ width: "150px" }}>
-                        <label className="h-label">Mã tour</label>
-                      </div>
-                      <div style={{ width: "calc(100% - 150px)" }}>
-                        <FastField
-                          disabled={true}
-                          className="h-textbox"
-                          name="TourID"
-                          type="number"
-                          component={InputField}
-                        />
-                      </div>
-                    </FormGroup>
-                  </Col>
+                  <FormGroup style={styles}>
+                    <div style={{ width: "150px" }}>
+                      <label className="h-label">Mã tour</label>
+                    </div>
+                    <div style={{ width: "calc(100% - 150px)" }}>
+                      <FastField
+                        disabled={true}
+                        className="h-textbox"
+                        name="TourID"
+                        type="text"
+                        component={InputField}
+                      />
+                    </div>
+                  </FormGroup>
                   <FormGroup style={styles}>
                     <div style={{ width: "150px" }}>
                       <label className="h-label h-lable-Obligatory">
@@ -255,7 +255,7 @@ function TourAddEdit(props) {
                           width: "calc(100% - 150px)",
                         }}
                       >
-                        <FastField
+                        <Field
                           className="h-textbox"
                           isLoading={
                             stateAddress?.loading === "loaded" ? false : true
@@ -376,7 +376,7 @@ function TourAddEdit(props) {
                       >
                         <FastField
                           styles={{ width: "15px", height: "15px" }}
-                          name="PhuongTienXuatPhat"
+                          name="Transport"
                           id="Máy bay"
                           defaultChecked={"Máy bay"}
                           className="h-textbox"
@@ -400,7 +400,7 @@ function TourAddEdit(props) {
                         <FastField
                           styles={{ width: "15px", height: "15px" }}
                           id="Xe khách"
-                          name="PhuongTienXuatPhat"
+                          name="Transport"
                           className="h-textbox"
                           component={RadioField}
                         />

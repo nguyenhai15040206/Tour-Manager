@@ -17,7 +17,7 @@ export const Adm_GetProvince = createAsyncThunk(
 );
 
 const addressSlice = createSlice({
-  name: "TouristAttraction",
+  name: "Address",
   initialState: {
     data: [],
     loading: "idle",

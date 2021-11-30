@@ -6,11 +6,10 @@ export const Adm_GetTourList = createAsyncThunk(
   "api/Tour/Adm_GetTourList",
   async (values, thunkApi) => {
     try {
-      const token = "";
-      const response = await tourApi.Adm_GetTourList(values, token);
+      const response = await tourApi.Adm_GetTourList(values);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );
@@ -19,12 +18,33 @@ export const Adm_InsertTour = createAsyncThunk(
   "api/Tour/Adm_InsertTour",
   async (values, thunkApi) => {
     try {
-      const token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJUb3VyTWFuYWdlckFzc2Nlc3NUb2tlbiIsImp0aSI6IjNiNGM3NjFmLWE1MmItNDBkYS1iZTAxLTk0NDMxYTkyZWNjNSIsImlhdCI6IjExLzE4LzIwMjEgNDo0NTo1NCBQTSIsIkVtcElEIjoiMTEiLCJFbXBOYW1lIjoiTmd1eeG7hW4gVOG6pW4gSOG6o2kiLCJQaG9uZU51bWJlciI6IjAzNTc4NjY4NDgiLCJFbWFpbCI6Im5ndXllbmhhaTE1MDQwMjA2QGdtYWlsLmNvbSIsImV4cCI6MTYzNzI2MTE1NCwiaXNzIjoiVG91ck1hbmFnZXJBdXRoZW50aWNhdGlvblNlcnZlciIsImF1ZCI6IlRvdXJNYW5hZ2VyU2VydmljZVBvc3RtYW5DbGllbnQifQ.lSJRxEaKKaykNWHg33dvfFSfpLRDtCNs3qKsFo9La1M";
-      const response = await tourApi.Adm_InsertTour(values, token);
+      const response = await tourApi.Adm_InsertTour(values);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const Adm_DeleteTourByIds = createAsyncThunk(
+  "api/Tour/Adm_DeleteTourByIds",
+  async (values, thunkApi) => {
+    try {
+      const response = await tourApi.Adm_DeleteTourByIds(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
+export const Adm_GetTourById = createAsyncThunk(
+  "api/Tour/Adm_GetTourDetails",
+  async (params, thunkApi) => {
+    try {
+      const response = await tourApi.Adm_GetTourDetails(params);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );
@@ -32,6 +52,7 @@ export const Adm_InsertTour = createAsyncThunk(
 const tourSlice = createSlice({
   name: "Tour",
   initialState: {
+    tourByID: null,
     dataInsert: {},
     tourList: null,
     loading: "idle",
@@ -74,6 +95,37 @@ const tourSlice = createSlice({
     });
 
     // kết thúc thêm
+
+    // Xóa
+    builder.addCase(Adm_DeleteTourByIds.pending, (state) => {
+      state.loading = "loading";
+    });
+
+    builder.addCase(Adm_DeleteTourByIds.fulfilled, (state, { payload }) => {
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Adm_DeleteTourByIds.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.payload.error;
+    });
+
+    // Get tour by id
+    builder.addCase(Adm_GetTourById.pending, (state) => {
+      state.tourByID = null;
+      state.loading = "loading";
+    });
+
+    builder.addCase(Adm_GetTourById.fulfilled, (state, { payload }) => {
+      state.tourByID = payload;
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Adm_GetTourById.rejected, (state, action) => {
+      state.tourByID = {};
+      state.loading = "error";
+      state.error = action.payload.error;
+    });
   },
 });
 

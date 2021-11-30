@@ -3,11 +3,8 @@ import axiosClient from "./AxiosClient";
 const url = "api/Tour";
 const tourApi = {
   // Lấy danh sách các tour kèm các thông tin search
-  Adm_GetTourList: (values, token) => {
-    const config = {
-      headers: { Authorization: `Bearer ${token}` },
-    };
-    return axiosClient.post(`${url}/Adm_GetDataTourList`, values, config);
+  Adm_GetTourList: (values) => {
+    return axiosClient.post(`${url}/Adm_GetDataTourList`, values);
   },
 
   // Lấy danh sách các tour được đề xuất
@@ -19,20 +16,15 @@ const tourApi = {
     return axiosClient.get(`${url}/TourDetails/${tourID}`);
   },
 
-  Adm_InsertTour: (Tour, token) => {
-    console.log(token);
-    const config = {
-      headers: { Authorization: `Bearer ${token}` },
-    };
-    return axiosClient.post(`${url}/Adm_InsertTour`, Tour, config);
+  Adm_GetTourDetails: (params) => {
+    return axiosClient.get(`${url}/Adm_GetTourDetails`, { params });
   },
 
-  putTour: (tourID, Tour) => {
-    return axiosClient.put(`${url}/${tourID}`, Tour);
+  Adm_InsertTour: (Tour) => {
+    return axiosClient.post(`${url}/Adm_InsertTour`, Tour);
   },
-
-  deleteTour: (tourID) => {
-    return axiosClient.delete(`${url}/${tourID}`);
+  Adm_DeleteTourByIds: (DeleteModels) => {
+    return axiosClient.put(`${url}/Adm_DeleteTourByIds`, DeleteModels);
   },
 };
 

@@ -1,30 +1,4 @@
 // Nguyễn Tấn Hải 2021-11-11
-
-//
-// const filterParamsDate = {
-//   comparator: function (filterLocalDateAtMidnight, cellValue) {
-//     var dateAsString = cellValue;
-//     if (dateAsString == null) return -1;
-//     var dateParts = dateAsString.split("/");
-//     var cellDate = new Date(
-//       Number(dateParts[2]),
-//       Number(dateParts[1]) - 1,
-//       Number(dateParts[0])
-//     );
-//     if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-//       return 0;
-//     }
-//     if (cellDate < filterLocalDateAtMidnight) {
-//       return -1;
-//     }
-//     if (cellDate > filterLocalDateAtMidnight) {
-//       return 1;
-//     }
-//   },
-//   browserDatePicker: true,
-//   minValidYear: 2000,
-// };
-
 // Tour
 export const tableColumnsTour = [
   {
@@ -32,14 +6,13 @@ export const tableColumnsTour = [
     headerName: "Mã tour",
     sortTable: true,
     unSortIcon: true,
-    filter: true,
     headerSelect: true,
     checkboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     headerCheckboxSelection: true,
-    minWidth: 170,
-    with: 170,
+    minWidth: 250,
   },
+
   {
     field: "tourName",
     headerName: "Tên tour",
@@ -57,10 +30,9 @@ export const tableColumnsTour = [
     minWidth: 190,
   },
   {
-    field: "phuongTienXuatPhat",
-    headerName: "Phương tiện xuất phát",
-    filter: true,
-    minWidth: 220,
+    field: "transport",
+    headerName: "Phương tiện x/phát",
+    minWidth: 190,
   },
   {
     field: "provinceName",
@@ -99,6 +71,24 @@ export const tableColumnsTour = [
     sortTable: true,
     unSortIcon: true,
     filter: "agNumberColumnFilter",
+    minWidth: 150,
+  },
+  {
+    field: "suggest",
+    headerName: "Đề xuất",
+    sortTable: true,
+    unSortIcon: true,
+    cellRenderer: (params) => {
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      //input.className = "form-check-input";
+      input.checked = params.value;
+      // input.addEventListener("click", function (event) {
+      //   params.value = !params.value;
+      //   params.node.data.fieldName = params.value;
+      // });
+      return input;
+    },
     minWidth: 150,
   },
 ];

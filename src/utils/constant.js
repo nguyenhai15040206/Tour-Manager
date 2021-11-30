@@ -143,7 +143,7 @@ export const customStyles = {
     background: "#fff",
     borderColor: "#ced4da",
     minHeight: "30px",
-    height: "30px",
+    //height: "30px",
     marginRight: "3px !important",
     marginLeft: "3px",
     width: "100%",
@@ -153,7 +153,7 @@ export const customStyles = {
   valueContainer: (provided, state) => ({
     ...provided,
     fontSize: "13px",
-    height: "30px",
+    //height: "30px",
     padding: "0 6px",
   }),
 

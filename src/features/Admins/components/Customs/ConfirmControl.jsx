@@ -35,7 +35,7 @@ function ConfirmControl(props) {
         <ModalBody style={{ fontSize: "12px", fontWeight: "400" }}>
           <div className="h-warning"></div>
           <div style={{ display: "inline-block", marginLeft: "45px" }}>
-            {`Bạn có chắc muốn xóa ${1} dòng dữ liệu?`}
+            {`Bạn có chắc muốn xóa ${props.count} dòng dữ liệu?`}
           </div>
         </ModalBody>
         <ModalFooter
