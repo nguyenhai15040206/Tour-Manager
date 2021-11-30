@@ -29,6 +29,12 @@ function InputField(props) {
       handleOnBlur(e);
     }
   };
+
+  const handleOnChange = (e) => {
+    if (handleChange) {
+      handleChange(e);
+    }
+  };
   return (
     <>
       <FormGroup className="mt-1">
@@ -46,7 +52,7 @@ function InputField(props) {
           onChange={(e) => {
             onChange(e);
             if (type === "file") {
-              handleChange(e);
+              handleOnChange(e);
             }
           }}
           type={type}

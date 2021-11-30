@@ -7,14 +7,24 @@ export const Adm_InsertTourDetails = createAsyncThunk(
   "api/TourDetails/Adm_InsertTourDetails",
   async (values, thunkApi) => {
     try {
-      const token = "";
-      const response = await tourDetailsApi.Adm_InsertTourDetails(
-        values,
-        token
+      const response = await tourDetailsApi.Adm_InsertTourDetails(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.payload.data);
+    }
+  }
+);
+
+export const Adm_DeleteTourDetailsByTourIds = createAsyncThunk(
+  "api/TourDetails/Adm_DeleteTourDetailsByTourIds",
+  async (values, thunkApi) => {
+    try {
+      const response = await tourDetailsApi.Adm_DeleteTourDetailsByTourIds(
+        values
       );
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue(error.payload.data);
     }
   }
 );
@@ -46,6 +56,28 @@ const tourDetailsSlice = createSlice({
     });
 
     // kết thúc thêm
+
+    // Xóa Tour Details Multi row By Tour Ids
+    builder.addCase(Adm_DeleteTourDetailsByTourIds.pending, (state) => {
+      state.loading = "loading";
+    });
+
+    builder.addCase(
+      Adm_DeleteTourDetailsByTourIds.fulfilled,
+      (state, { payload }) => {
+        state.loading = "loaded";
+      }
+    );
+
+    builder.addCase(
+      Adm_DeleteTourDetailsByTourIds.rejected,
+      (state, action) => {
+        state.loading = "error";
+        state.error = action.payload.error;
+      }
+    );
+
+    //end
   },
 });
 

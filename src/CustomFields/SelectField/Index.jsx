@@ -22,7 +22,7 @@ function SelectField(props) {
   const handleSelectedOptionChange = (selectedOption) => {
     form.setFieldValue(
       name,
-      isMulti ? selectedOption.map((item) => item.value) : selectedOption.value
+      isMulti ? selectedOption.map((item) => item.value) : selectedOption?.value
     );
   };
 

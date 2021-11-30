@@ -29,7 +29,7 @@ export const Adm_GetProvinceAndSearch = createAsyncThunk(
 );
 
 const addressSlice = createSlice({
-  name: "TouristAttraction",
+  name: "Address",
   initialState: {
     data: null,
     dataSearch: [],

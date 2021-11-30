@@ -21,6 +21,7 @@ function TableGridControl(props) {
       onEditForm(id);
     }
   };
+
   return (
     <>
       <div
@@ -70,6 +71,7 @@ function TableGridControl(props) {
               headerCheckboxSelectionFilteredOnly={
                 item.headerCheckboxSelectionFilteredOnly || false
               }
+              cellRenderer= {item.cellRenderer}
               headerName={item?.headerName}
               field={item?.field}
               sortable={item?.sortTable || false}
