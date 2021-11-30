@@ -10,7 +10,10 @@ import {
 } from "reactstrap";
 import InputField from "./../../../../CustomFields/InputField/Index";
 import { useDispatch, useSelector } from "react-redux";
-import { Adm_GetProvince } from "./../../Slices/SliceAddress";
+import {
+  Adm_GetProvince,
+  Adm_GetProvinceAndSearch,
+} from "./../../Slices/SliceAddress";
 import SelectField from "./../../../../CustomFields/SelectField/Index";
 import {
   Adm_CreateTourAttr,
@@ -32,9 +35,7 @@ import ConfirmControl from "../../components/Customs/ConfirmControl";
 const initialValuesTourAttr = {
   touristAttrId: "",
   touristAttrName: "",
-  imagesList: "",
-  provinceId: "",
-  description: "",
+  provinceId: [],
 };
 function TourAttrManager() {
   //state in component
@@ -50,8 +51,9 @@ function TourAttrManager() {
   const dispatch = useDispatch();
   const gridRef = useRef(null);
 
-  const handleClickShowModal = async () => {
-    await dispatch(Adm_GetProvince);
+  const handleClickShowModal = async (values) => {
+    console.log(values);
+    await dispatch(Adm_GetProvinceAndSearch(values));
     setInitialValues(initialValuesTourAttr);
     setShowModal(true);
   };
@@ -65,8 +67,8 @@ function TourAttrManager() {
   useEffect(() => {
     const fetchApi = async () => {
       try {
-        await dispatch(Adm_GetProvince());
-        //await dispatch(Adm_GetTouristAttr(value));
+        const values = {};
+        await dispatch(Adm_GetProvince(values));
       } catch {
         throw console.error();
       }
@@ -74,10 +76,9 @@ function TourAttrManager() {
     fetchApi();
   }, [dispatch]);
 
-  const onGridReady = async (values) => {
-    values = {};
+  const onGridReady = async () => {
     try {
-      await dispatch(Adm_GetTouristAttr(values));
+      await dispatch(Adm_GetTouristAttr(initialValuesTourAttr));
     } catch (err) {
       console.log(err);
     }
@@ -86,8 +87,9 @@ function TourAttrManager() {
   //tìm kiếm
   const handelClickSearch = async (values) => {
     try {
+      const Ids = values.provinceId;
+      console.log(Ids);
       await dispatch(Adm_GetTouristAttr(values));
-      console.log(values);
     } catch (err) {
       console.log(err);
     }
@@ -100,7 +102,7 @@ function TourAttrManager() {
     const selectedDataStringPresentation = selectedData
       .map((node) => `${node.touristAttrId}`)
       .join(",");
-    const Ids = selectedDataStringPresentation.split(",").map(Number);
+    const Ids = selectedDataStringPresentation.split(",").map(String);
     console.log(Ids[0]);
     if (Ids[0] === 0) {
       return NotificationManager.error(
@@ -118,7 +120,7 @@ function TourAttrManager() {
     dispatch(Adm_DeleteTouristAttr(values))
       .then(unwrapResult)
       .then((payload) => {
-        dispatch(Adm_GetTouristAttr(value))
+        dispatch(Adm_GetTouristAttr(initialValuesTourAttr))
           .unwrap()
           .then(() => {
             setShowConfirm(false);
@@ -135,24 +137,22 @@ function TourAttrManager() {
   };
 
   const handleClickSubmitForm = async (values) => {
-    console.log(values);
     const touristAttr = {
-      touristAttrId: values.touristAttrId === "" ? 0 : values.touristAttrId,
+      //touristAttrId: values.touristAttrId === "" ? 0 : values.touristAttrId,
       touristAttrName: values.touristAttrName,
       provinceId: values.provinceId,
       description: values.description,
       imagesList: values.imagesList,
     };
-    const params = {};
     if (values.touristAttrId !== "") {
       dispatch(Adm_EditTouristAttr(values))
         .then(unwrapResult)
         .then((payload) => {
-          dispatch(Adm_GetTouristAttr(params))
+          dispatch(Adm_GetTouristAttr(initialValuesTourAttr))
             .unwrap()
             .then(() => {
               return NotificationManager.success(
-                " Edit thành công!",
+                "Cập nhật thành công!",
                 "Success"
               );
             });
@@ -162,10 +162,11 @@ function TourAttrManager() {
           return NotificationManager.error(`${err}`, "Edit thất bại");
         });
     } else {
+      console.log(touristAttr);
       dispatch(Adm_CreateTourAttr(touristAttr))
         .then(unwrapResult)
         .then((payload) => {
-          dispatch(Adm_GetTouristAttr(params))
+          dispatch(Adm_GetTouristAttr(initialValuesTourAttr))
             .unwrap()
             .then(() => {
               return NotificationManager.success(
@@ -273,20 +274,6 @@ function TourAttrManager() {
                             <Form className="mt-1">
                               <Row className="pb-2">
                                 <Col xl={4} lg={6}>
-                                  <FormGroup className="mt-2 row">
-                                    <label className="col-lg-3 h-label">
-                                      Mã địa điểm
-                                    </label>
-                                    <div className="col-lg-8">
-                                      <FastField
-                                        className="h-textbox"
-                                        name="touristAttrId"
-                                        type="number"
-                                        component={InputField}
-                                      ></FastField>
-                                    </div>
-                                  </FormGroup>
-
                                   <FormGroup className="row">
                                     <label className="col-lg-3 h-label">
                                       Tên địa điểm
@@ -305,6 +292,7 @@ function TourAttrManager() {
                                     </label>
                                     <div className="col-lg-8">
                                       <Field
+                                        isMulti={true}
                                         className="h-textbox"
                                         isLoading={
                                           stateProvince?.loading === "loaded"
@@ -313,14 +301,7 @@ function TourAttrManager() {
                                         }
                                         placeholder="Vui lòng chọn"
                                         name="provinceId"
-                                        options={stateProvince.data.map(
-                                          (item) => {
-                                            return {
-                                              value: item.value,
-                                              label: item.label,
-                                            };
-                                          }
-                                        )}
+                                        options={stateProvince?.data}
                                         component={SelectField}
                                       />
                                     </div>

@@ -1,30 +1,5 @@
 // Nguyễn Tấn Hải 2021-11-11
 
-//
-// const filterParamsDate = {
-//   comparator: function (filterLocalDateAtMidnight, cellValue) {
-//     var dateAsString = cellValue;
-//     if (dateAsString == null) return -1;
-//     var dateParts = dateAsString.split("/");
-//     var cellDate = new Date(
-//       Number(dateParts[2]),
-//       Number(dateParts[1]) - 1,
-//       Number(dateParts[0])
-//     );
-//     if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-//       return 0;
-//     }
-//     if (cellDate < filterLocalDateAtMidnight) {
-//       return -1;
-//     }
-//     if (cellDate > filterLocalDateAtMidnight) {
-//       return 1;
-//     }
-//   },
-//   browserDatePicker: true,
-//   minValidYear: 2000,
-// };
-
 // Tour
 export const tableColumnsTour = [
   {
@@ -256,6 +231,274 @@ export const tableColumnTouristAttr = [
     unSortIcon: false,
     filter: false,
     headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+];
+
+//tinhr thanh
+export const tableColumnProvince = [
+  {
+    field: `provinceId`,
+    headerName: "Mã tỉnh/ thành",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `divisionType`,
+    headerName: "Loại tỉnh/ thành",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 290,
+  },
+  {
+    field: `provinceName`,
+    headerName: "Tên tỉnh/ thành",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 290,
+  },
+  {
+    field: `count`,
+    headerName: "Số địa điểm du lịch",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `regions`,
+    headerName: "Miền",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 290,
+  },
+];
+
+//quận huyện
+export const tableColumnDistrict = [
+  {
+    field: `districtId`,
+    headerName: "Mã quận/ huyện",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `divisionType`,
+    headerName: "Loại quận/ huyện",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 300,
+  },
+  {
+    field: `districtName`,
+    headerName: "Tên quận/ huyện",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 300,
+  },
+  {
+    field: `provinceName`,
+    headerName: "Tên tỉnh/ thành",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 300,
+  },
+  {
+    field: `count`,
+    headerName: "số lượng phường/ xã",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+];
+//phường
+export const tableColumnWard = [
+  {
+    field: `wardId`,
+    headerName: "Mã phường/xã",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 290,
+  },
+  {
+    field: `divisionType`,
+    headerName: "Loại",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 290,
+  },
+  {
+    field: `wardName`,
+    headerName: "Tên phường/ xã",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 290,
+  },
+  {
+    field: `districtName`,
+    headerName: "Tên quận/ huyện",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: false,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 290,
+  },
+];
+
+///export column tourGuide
+export const tableColumnTourGuide = [
+  {
+    field: `tourGuideId`,
+    headerName: "Mã nhân viên",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    minWidth: 200,
+  },
+  {
+    field: `tourGuideName`,
+    headerName: "Tên nhân viên",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `gender`,
+    headerName: "Giới tính",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 100,
+  },
+  {
+    field: `dateOfBirth`,
+    headerName: "Ngày sinh",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 170,
+  },
+  {
+    field: `address`,
+    headerName: "Địa chỉ",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 300,
+  },
+  {
+    field: `phoneNumber`,
+    headerName: "Số điện thoại",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 170,
+  },
+  {
+    field: `email`,
+    headerName: "Email",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `dateUpdate`,
+    headerName: "Ngày cập nhật",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 150,
+  },
+  {
+    field: `empName`,
+    headerName: "Nhân viên",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
     checkboxSelection: false,
     headerCheckboxSelection: false,
     minWidth: 200,

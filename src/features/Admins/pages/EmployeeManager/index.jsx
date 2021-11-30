@@ -35,6 +35,7 @@ const initialValuesEmp = {
   empName: "",
   gender: "",
   dateOfBirth: "",
+  workingDate: "",
   phoneNumber: "",
   email: "",
   userName: "",
@@ -91,7 +92,7 @@ function EmployeeManager(props) {
       const selectedDataStringPresentation = selectedData
         .map((node) => `${node.empId}`)
         .join(",");
-      const Ids = selectedDataStringPresentation.split(",").map(Number);
+      const Ids = selectedDataStringPresentation.split(",").map(String);
       console.log("Ids", Ids);
       // nếu là chưa chọn => vui lòng chọn dòng cần xóa
       if (Ids[0] === 0) {
@@ -127,6 +128,16 @@ function EmployeeManager(props) {
       });
   };
 
+  // tim kiem
+  const handelClickSearchEmployee = async (value) => {
+    console.log(value);
+    try {
+      await dispatch(Adm_GetEmployeeList(value));
+    } catch (err) {
+      console.log(err);
+    }
+    //console.log("");
+  };
   //thuc hien get dữ liệu
   const handleClickEdit = async (empID) => {
     try {
@@ -134,13 +145,15 @@ function EmployeeManager(props) {
         empId: empID,
         // neu conf tiep
       };
-      console.log(params);
       const rs = await dispatch(Adm_GetEmployeeById(params));
+
       const unwrapRS = unwrapResult(rs);
+      console.log(unwrapRS);
       setInitialValues({
         empId: unwrapRS.empId,
         empName: unwrapRS?.empName === null ? "" : unwrapRS.empName, // Input defaulValues là "" không bằng null check chỗ này
         gender: "true",
+        // "2021-11-20" :))
         dateOfBirth: unwrapRS.dateOfBirth,
         phoneNumber: unwrapRS.phoneNumber,
         email: unwrapRS.email,
@@ -152,6 +165,66 @@ function EmployeeManager(props) {
       setShowModal(true);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  // handleClick On submit form edit/add
+  const handleClickOnSubmitForm = async (values) => {
+    console.log(values);
+    const employee = {
+      empName: values.empName === null ? "" : values.empName,
+      gender: values?.gender,
+      dateOfBirth: values.dateOfBirth,
+      phoneNumber: values.phoneNumber,
+      email: values.email,
+      userName: values.userName,
+      passWord: values.passWord,
+      avatar: values.avatar,
+    };
+    const params = {};
+    if (values.empId !== "") {
+      // edit xong e làm gi nưa khong, khong lam thi khoi lay unwrapRS
+      dispatch(
+        Adm_EditEmployee(Object.assign({ empId: values.empId }, employee))
+      )
+        .then(unwrapResult)
+        .then((payload) => {
+          console.log(payload);
+          dispatch(Adm_GetEmployeeList(params))
+            .unwrap()
+            .then(() => {
+              return NotificationManager.success(
+                "Cập nhật thành công!!",
+                "Success",
+                1500
+              );
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          return NotificationManager.error(`${err}`, "Error!", 1500);
+        });
+    } else {
+      dispatch(Adm_CreateEmployee(employee))
+        .then(unwrapResult)
+        .then((payload) => {
+          console.log(payload);
+          dispatch(Adm_GetEmployeeList(params))
+            .unwrap()
+            .then(() => {
+              return NotificationManager.success(
+                "Thêm thành công!",
+                "Success!",
+                1500
+              );
+            })
+            .catch((err) => {
+              return NotificationManager.error(`${err}`, "Error!", 1500);
+            });
+        })
+        .catch((err) => {
+          return NotificationManager.error(`${err}`, "Error!", 1500);
+        });
     }
   };
 
@@ -178,79 +251,6 @@ function EmployeeManager(props) {
     }
   };*/
 
-  // tim kiem
-  const handelClickSearchTour = async (value) => {
-    //console.log(value);
-    try {
-      await dispatch(Adm_GetEmployeeList(value));
-    } catch (err) {
-      console.log(err);
-    }
-    //console.log("");
-  };
-
-  // handleClick On submit form edit/add
-  const handleClickOnSubmitForm = async (values) => {
-    console.log(values);
-    const employee = {
-      empId: values.empId === "" ? 0 : values.empId,
-      empName: values.empName === null ? "" : values.empName,
-      gender: values?.gender,
-      dateOfBirth: values.dateOfBirth,
-      phoneNumber: values.phoneNumber,
-      email: values.email,
-      userName: values.userName,
-      passWord: values.passWord,
-      avatar: values.avatar,
-    };
-    const params = {};
-    if (values.empId !== "") {
-      console.log(values.empId);
-      // edit xong e làm gi nưa khong, khong lam thi khoi lay unwrapRS
-      dispatch(Adm_EditEmployee(values))
-        .then(unwrapResult)
-        .then((payload) => {
-          console.log(payload);
-          dispatch(Adm_GetEmployeeList(params))
-            .unwrap()
-            .then(() => {
-              return NotificationManager.success(
-                "Edit thành công!!",
-                "Success",
-                1500
-              );
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-          return NotificationManager.error(`${err.error}`, "Error!", 1500);
-        });
-    } else {
-      dispatch(Adm_CreateEmployee(employee))
-        .then(unwrapResult)
-        .then((payload) => {
-          console.log(payload);
-          dispatch(Adm_GetEmployeeList(params))
-            .unwrap()
-            .then(() => {
-              return NotificationManager.success(
-                "Thêm thành công!",
-                "Success!",
-                1500
-              );
-            })
-            .catch((err) => {
-              console.log(err);
-              return NotificationManager.error(`${err.error}`, "Error!", 1500);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-          return NotificationManager.error(`${err.error}`, "Error!", 1500);
-        });
-    }
-  };
-
   return (
     <>
       <ConfirmControl
@@ -263,8 +263,8 @@ function EmployeeManager(props) {
         toggle={toggle}
         showModal={showModal}
         initialValues={initialValues}
-        onSubmitForm={(e, values) => {
-          handleClickOnSubmitForm(e, values);
+        onSubmitForm={(values) => {
+          handleClickOnSubmitForm(values);
         }}
       />
       <Container
@@ -275,7 +275,7 @@ function EmployeeManager(props) {
           <Col>
             <div className="admin-widget">
               <Row>
-                <Col lg="12">
+                <Col lg={12}>
                   {/*Begin sitemap */}
                   <Breadcrumb>
                     <BreadcrumbItem active>
@@ -311,7 +311,7 @@ function EmployeeManager(props) {
                   <div id="showSearch" className="collapse show">
                     <Formik
                       initialValues={initialValues}
-                      onSubmit={handelClickSearchTour}
+                      onSubmit={handelClickSearchEmployee}
                     >
                       {(formikProps) => {
                         return (
@@ -319,19 +319,6 @@ function EmployeeManager(props) {
                             <Form className="mt-1">
                               <Row className="pb-2">
                                 <Col xl={4} lg={6}>
-                                  <FormGroup className="mt-2 row">
-                                    <label className="col-lg-3 h-label">
-                                      Mã nhân viên
-                                    </label>
-                                    <div className="col-lg-8">
-                                      <FastField
-                                        className="h-textbox"
-                                        name="empId"
-                                        type="number"
-                                        component={InputField}
-                                      ></FastField>
-                                    </div>
-                                  </FormGroup>
                                   <FormGroup className="row">
                                     <label className="col-lg-3 h-label">
                                       Tên nhân viên
@@ -357,8 +344,6 @@ function EmployeeManager(props) {
                                       ></FastField>
                                     </div>
                                   </FormGroup>
-                                </Col>
-                                <Col xl={4} lg={6}>
                                   <FormGroup className="mt-2 row">
                                     <label className="col-lg-3 h-label">
                                       Số điện thoại
@@ -371,6 +356,8 @@ function EmployeeManager(props) {
                                       ></FastField>
                                     </div>
                                   </FormGroup>
+                                </Col>
+                                <Col xl={4} lg={6}>
                                   <FormGroup className="row">
                                     <label className="col-lg-3 h-label">
                                       Email

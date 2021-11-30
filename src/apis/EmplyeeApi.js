@@ -22,7 +22,7 @@ const employeeApi = {
 
   //Update thông tin một nhân viên
   Adm_UpdateEmployee: (values) => {
-    return axiosClient.put(`${url}/Adm_UpdateEmployee/`, values);
+    return axiosClient.put(`${url}/Adm_UpdateEmployee`, values);
   },
 
   ///Xóa một nhân viên

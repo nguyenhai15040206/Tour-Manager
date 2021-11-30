@@ -24,7 +24,7 @@ export const Adm_CreateTourAttr = createAsyncThunk(
     try {
       await touristAttractionApi.Adm_CreateTouristAttr(values);
     } catch (err) {
-      return thunkApi.rejectWithValue({ error: err.message });
+      return thunkApi.rejectWithValue(err.response.data);
     }
   }
 );
@@ -36,7 +36,7 @@ export const Adm_DeleteTouristAttr = createAsyncThunk(
     try {
       await touristAttractionApi.Adm_DeleteTouristAttrList(values);
     } catch (error) {
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );
@@ -49,7 +49,7 @@ export const Adm_GetTouristAttrById = createAsyncThunk(
       const response = await touristAttractionApi.Adm_GetTouristAttById(params);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );
@@ -75,7 +75,7 @@ export const Adm_EditTouristAttr = createAsyncThunk(
       const response = await touristAttractionApi.Adm_EditTouristAttr(values);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );
