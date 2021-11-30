@@ -51,8 +51,8 @@ export const Adm_CreateEmployee = createAsyncThunk(
       const response = await employeeApi.Adm_CreateEmployee(values);
       return response;
     } catch (error) {
-      console.log(JSON.stringify(error));
-      return thunkApi.rejectWithValue({ error: error.message });
+      console.log(error.response.data);
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );
@@ -66,7 +66,7 @@ export const Adm_DeleteEmployee = createAsyncThunk(
       console.log("response.data", response.data);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue(error.response.data);
     }
   }
 );
@@ -79,7 +79,7 @@ export const Adm_EditEmployee = createAsyncThunk(
       const response = await employeeApi.Adm_UpdateEmployee(values);
       return response;
     } catch (err) {
-      return thunkApi.rejectWithValue({ error: err.message });
+      return thunkApi.rejectWithValue(err.response.data);
     }
   }
 );
@@ -146,19 +146,12 @@ const employeeSlice = createSlice({
       state.loading = "loading";
     });
     builder.addCase(Adm_CreateEmployee.fulfilled, (state, { payload }) => {
-      //state.dataEmpList = payload;
-      // tạo mới thì payload trả về là một obj vừa tạo
-      // e set state.dataEmpList = payload =>> v là dỡ rồi, anh nói rồi mà he
-      // khúc này khi thêm dữ liệu, mình cần trả về một nhân viên, nếu cần thưc hiện gì liên qua tới nhân viên thì lấy ID mà ayload trả về
-      // không thì thôi
-      // ví dụ thêm một tour => payload trả về Tour, tôi cần thêm tour trước, xong rồi mới thêm chi tiết,
-      // thì payload trả về pbjTOur, mình lây ID => thực hiện việc tiếp theo
       state.loading = "loaded";
     });
     builder.addCase(Adm_CreateEmployee.rejected, (state, action) => {
       // rớt ra lỗi, em set luôn listData = [] thif table khong co du lieu, maf trong khi table minh chua tac dong toi
       state.loading = "error";
-      state.error = action.error.error;
+      state.error = action.error.message;
     });
 
     ///delete employee

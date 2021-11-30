@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import ModalControl from "./../../components/Customs/ModalControl";
 import { Card, CardImg, Col, FormGroup, Row } from "reactstrap";
-import { FastField } from "formik";
+import { FastField, Field } from "formik";
 import InputField from "./../../../../CustomFields/InputField/Index";
 import SelectField from "./../../../../CustomFields/SelectField/Index";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import TextAreaField from "./../../../../CustomFields/TextareaField/Index";
 import * as yup from "yup";
 import Loading from "./../../../../components/Loading/Index";
@@ -27,6 +27,11 @@ function TouristAttrAddEdit(props) {
       .string()
       .trim()
       .required("[Tên địa điểm] không được để trống"),
+    provinceId: yup
+      .array()
+      .min(1, "[Tỉnh thành] không được để trống")
+      .required("[Tỉnh thành] không được để trống")
+      .nullable(),
   });
 
   const handleClickOnSubmit = async (e) => {
@@ -40,12 +45,13 @@ function TouristAttrAddEdit(props) {
       {stateTouristAttr.loading === "loading" && <Loading loading={true} />}
       <ModalControl
         initialValues={initialValues}
-        //validationSchema={validationSchema}
+        validationSchema={validationSchema}
         backdrop={"static"}
         toggle={props.toggle}
         className={props.className}
         showModal={props.showModal}
         /////
+        titlePopup="Thêm mới một địa điểm"
         HandleClickSave={handleClickOnSubmit}
         HandleClickSaveAndCreated={handleClickOnSubmit}
         HandleClickSaveAndClosed={handleClickOnSubmit}
@@ -53,23 +59,21 @@ function TouristAttrAddEdit(props) {
         <Row>
           <Col lg={12} xl={8}>
             <Row>
-              <Col xl={8} lg={12}>
-                <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
-                    <label className="h-label h-lable-Obligatory">
-                      Mã địa điểm
-                    </label>
-                  </div>
-                  <div style={{ width: "calc(100% - 150px" }}>
-                    <FastField
-                      className="h-textbox"
-                      name="touristAttrId"
-                      disabled={true}
-                      component={InputField}
-                    />
-                  </div>
-                </FormGroup>
-              </Col>
+              <FormGroup style={styles}>
+                <div style={{ width: "150px" }}>
+                  <label className="h-label h-lable-Obligatory">
+                    Mã địa điểm
+                  </label>
+                </div>
+                <div style={{ width: "calc(100% - 150px" }}>
+                  <FastField
+                    className="h-textbox"
+                    name="touristAttrId"
+                    disabled={true}
+                    component={InputField}
+                  />
+                </div>
+              </FormGroup>
               <FormGroup style={styles}>
                 <div style={{ width: "150px" }}>
                   <label className="h-label h-lable-Obligatory">
@@ -77,17 +81,14 @@ function TouristAttrAddEdit(props) {
                   </label>
                 </div>
                 <div style={{ width: "calc(100% - 150px" }}>
-                  <FastField
-                    className="h-h-textbox"
+                  <Field
+                    className="h-textbox"
                     component={SelectField}
-                    isMulti={false}
                     name="provinceId"
                     isLoading={
                       stateProvince?.loading === "loaded" ? false : true
                     }
-                    options={stateProvince.data.map((item) => {
-                      return { value: item.value, label: item.label };
-                    })}
+                    options={stateProvince?.data}
                   />
                 </div>
               </FormGroup>
@@ -130,7 +131,6 @@ function TouristAttrAddEdit(props) {
               ></CardImg>
             </Card>
           </Col>
-
           <FormGroup style={styles}>
             <div style={{ width: "150px" }}>
               <label className="h-label">Mô tả chi tiết</label>
@@ -140,6 +140,7 @@ function TouristAttrAddEdit(props) {
                 className="h-textbox"
                 component={TextAreaField}
                 name="description"
+                height="150px"
               />
             </div>
           </FormGroup>

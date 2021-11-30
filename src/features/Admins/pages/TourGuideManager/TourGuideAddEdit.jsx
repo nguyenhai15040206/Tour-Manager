@@ -1,44 +1,74 @@
-import { FastField } from "formik";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import React from "react";
-import { useSelector } from "react-redux";
+import ModalControl from "./../../components/Customs/ModalControl";
 import { Card, CardImg, Col, FormGroup, Row } from "reactstrap";
-import * as yup from "yup";
-import Loading from "./../../../../components/Loading/Index";
+import { FastField, Field } from "formik";
 import InputField from "./../../../../CustomFields/InputField/Index";
 import RadioField from "./../../../../CustomFields/InputField/RadioField";
-import ModalControl from "./../../components/Customs/ModalControl";
+import SelectField from "./../../../../CustomFields/SelectField/Index";
+import * as yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import Loading from "./../../../../components/Loading/Index";
+
 const styles = {
   display: "flex",
   justifyContent: "flex-start",
   alignItem: "center",
 };
 
-//thai tran kieu diem
-function EmployeeAddEdit(props) {
-  const { initialValues, onSubmitForm } = props;
+function TourGuideAddEdit(props) {
+  /////
+  const {
+    initialValues,
+    onSubmitForm,
+    onChangeProvince,
+    onChangeDistrict,
+    onChangeWards,
+  } = props;
+  ///
+  const stateProvince = useSelector((state) => state?.address);
+  const stateDistrict = useSelector((state) => state?.district);
+  const stateTourGuide = useSelector((state) => state?.tourGuide);
+  const stateWards = useSelector((state) => state?.wards);
+  ///console.log(stateWards?.dataWardsCbb);
+  ///
+  const dispatch = useDispatch();
 
-  //
-
-  const stateEmployee = useSelector((state) => state?.employee);
-
-  // handle bên tg cha
   const handleClickOnSubmit = async (e) => {
     if (onSubmitForm) {
       onSubmitForm(e);
     }
   };
 
-  // regex
+  const handleChangeProvince = async (e) => {
+    //console.log(e.value);
+    if (onChangeProvince) {
+      onChangeProvince(e);
+    }
+  };
+
+  const handleChangeDistrict = async (e) => {
+    console.log(e);
+    if (onChangeDistrict) {
+      onChangeDistrict(e);
+    }
+  };
+
+  const handleChangeWards = (e) => {
+    // kiem tra khac null ms handle  su kien, khong laf ben kia no ms vao nhan func null => errr
+    if (onChangeWards) {
+      onChangeWards(e);
+    }
+  };
+
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
-  // test xong bỏ shema vao
   const validationSchema = yup.object().shape({
-    empName: yup
+    tourGuideName: yup
       .string()
       .trim()
-      .required("[Tên nhân viên] không được để trống"),
+      .required("[Tên hướng dẫn viên] không được để trống"),
     //gender: yup.bool().required("[Giới tính] không hợp lệ"),
     dateOfBirth: yup
       .date()
@@ -51,31 +81,28 @@ function EmployeeAddEdit(props) {
       .matches(phoneRegExp, "[Số điện thoại không hợp lệ]")
       .min(10, "[Số điện thoại] quá ngắn")
       .max(10, "[Số điện thoại] quá dài"),
+    provinceId: yup
+      .array()
+      .min(1, "[Tỉnh thành] không được để trống")
+      .nullable(),
+    districtId: yup
+      .array()
+      .min(1, "[Quận/ Huyện] không được để trống")
+      .nullable(),
+    wardId: yup.array().min(1, "[Phường/ Xã] không được để trống").nullable(),
+    address: yup.string().trim().required("[Địa chỉ] không được để trống"),
     email: yup.string().email().required("[Email] không để trống"),
-    userName: yup
-      .string()
-      .trim()
-      .required("[Tên đăng nhập] không để trống")
-      .max(15, "[Tên đăng nhập] quá dài")
-      .min(8, "[Tên đăng nhập] quá ngắn"),
-    passWord: yup
-      .string()
-      .trim()
-      .required("[Mật khẩu] không để trống")
-      .max(15, "[Mật khẩu] quá dài")
-      .min(8, "[Mật khẩu] quá ngắn"),
     gender: yup.string().trim().required("[Giới tính] không được để trống"),
   });
-
   return (
     <>
-      {stateEmployee.loading === "loading" && <Loading loading={true} />}
+      {stateTourGuide.loading === "loading" && <Loading loading={true} />}
       <ModalControl
         backdrop={"static"}
         toggle={props.toggle}
         showModal={props.showModal}
         className={props.className}
-        initialValues={initialValues} // init nay la cai props
+        initialValues={initialValues}
         validationSchema={validationSchema}
         HandleClickSave={handleClickOnSubmit}
         HandleClickSaveAndCreated={handleClickOnSubmit}
@@ -83,33 +110,31 @@ function EmployeeAddEdit(props) {
         titlePopup="Thêm mới một nhân viên"
       >
         <Row>
-          {/**employeeID */}
-          <Col xl={8} lg={12}>
+          <Col xl={9} lg={12}>
             <Row>
               <FormGroup style={styles}>
                 <div style={{ width: "150px" }}>
                   <label className="h-label">Mã nhân viên</label>
                 </div>
-                <div style={{ width: "calc(100% - 150px" }}>
+                <div style={{ width: "calc(100% - 150px)" }}>
                   <FastField
-                    disabled={true}
                     className="h-textbox"
-                    name="empId"
+                    name="tourGuideId"
                     component={InputField}
+                    disabled={true}
                   ></FastField>
                 </div>
               </FormGroup>
-
               <FormGroup style={styles}>
                 <div style={{ width: "150px" }}>
                   <label className="h-label h-lable-Obligatory">
                     Tên nhân viên
                   </label>
                 </div>
-                <div style={{ width: "calc(100% - 150px" }}>
+                <div style={{ width: "calc(100% - 150px)" }}>
                   <FastField
                     className="h-textbox"
-                    name="empName"
+                    name="tourGuideName"
                     component={InputField}
                   ></FastField>
                 </div>
@@ -127,6 +152,7 @@ function EmployeeAddEdit(props) {
                         display: "flex",
                         justifyContent: "flex-start",
                         alignItems: "center",
+                        marginRight: "10px",
                       }}
                     >
                       <FastField
@@ -168,20 +194,16 @@ function EmployeeAddEdit(props) {
                 <div style={{ width: "150px" }}>
                   <label className="h-label">Avatar</label>
                 </div>
-                <div style={{ width: "calc(100% - 150px" }}>
+                <div style={{ width: "calc(100% - 150px)" }}>
                   <FastField
+                    component={InputField}
+                    name="avatar"
+                    className="h-textbox form-control"
                     type="file"
                     accept="image/*"
-                    name="avatar"
-                    handleChange={() => {
-                      alert("OK");
-                    }}
-                    className="h-textbox form-control"
-                    component={InputField}
-                  ></FastField>
+                  />
                 </div>
               </FormGroup>
-
               <FormGroup style={styles}>
                 <div style={{ width: "150px" }}>
                   <label className="h-label h-lable-Obligatory">
@@ -197,69 +219,107 @@ function EmployeeAddEdit(props) {
                   />
                 </div>
               </FormGroup>
-
-              <FormGroup style={styles}>
-                <div style={{ width: "150px" }}>
-                  <label className="h-label h-lable-Obligatory">
-                    Số điện thoại
-                  </label>
-                </div>
-                <div style={{ width: "calc(100% - 150px" }}>
-                  <FastField
-                    name="phoneNumber"
-                    className="h-textbox"
-                    component={InputField}
-                  ></FastField>
-                </div>
-              </FormGroup>
             </Row>
           </Col>
-          <Col xl={4} lg={12}>
-            <Card style={{ height: "191px" }} inverse>
+          <Col xl={3} lg={12}>
+            <Card style={{ height: "159px" }} inverse>
               <CardImg
-                style={{ height: "190px", objectFit: "cover" }}
+                style={{ height: "158px", objectfic: "cover" }}
                 alt="avatar"
               ></CardImg>
             </Card>
           </Col>
           <FormGroup style={styles}>
             <div style={{ width: "150px" }}>
-              <label className="h-label h-lable-Obligatory">Email</label>
+              <label className="h-label h-lable-Obligatory">
+                Tên tỉnh thành
+              </label>
             </div>
             <div style={{ width: "calc(100% - 150px" }}>
-              <FastField
-                type="email"
-                name="email"
+              <Field
+                className="h-textbox"
+                component={SelectField}
+                name="provinceId"
+                handleChange={handleChangeProvince}
+                isLoading={stateProvince?.loading === "loaded" ? false : true}
+                options={stateProvince?.data}
+              />
+            </div>
+          </FormGroup>
+          <Col xl={6} lg={12}>
+            <FormGroup style={styles}>
+              <div style={{ width: "150px" }}>
+                <label className="h-label h-lable-Obligatory">
+                  Tên Quận/ Huyện
+                </label>
+              </div>
+              <div style={{ width: "calc(100% - 150px" }}>
+                <Field
+                  className="h-textbox"
+                  component={SelectField}
+                  name="districtId"
+                  handleChange={handleChangeDistrict}
+                  isLoading={stateDistrict?.loading === "loaded" ? false : true}
+                  options={stateDistrict?.dataDistrictCbb}
+                />
+              </div>
+            </FormGroup>
+          </Col>
+          <Col xl={6} lg={12}>
+            <FormGroup style={styles}>
+              <div style={{ width: "150px" }}>
+                <label className="h-label h-lable-Obligatory">
+                  Tên Phường/ Xã
+                </label>
+              </div>
+              <div style={{ width: "calc(100% - 150px" }}>
+                <Field
+                  handleChange={handleChangeWards}
+                  className="h-textbox"
+                  component={SelectField}
+                  name="wardId"
+                  isLoading={stateWards?.loading === "loaded" ? false : true}
+                  options={stateWards?.dataWardsCbb}
+                />
+              </div>
+            </FormGroup>
+          </Col>
+          <FormGroup style={styles}>
+            <div style={{ width: "150px" }}>
+              <label className="h-label h-lable-Obligatory">Địa chỉ</label>
+            </div>
+            <div style={{ width: "calc(100% - 150px)" }}>
+              <Field
                 component={InputField}
                 className="h-textbox"
-              ></FastField>
+                name="address"
+              />
             </div>
           </FormGroup>
           <FormGroup style={styles}>
             <div style={{ width: "150px" }}>
               <label className="h-label h-lable-Obligatory">
-                Tên đăng nhập
+                Số điện thoại
               </label>
             </div>
-            <div style={{ width: "calc(100% - 150px" }}>
-              <FastField
-                className="h-textbox"
-                name="userName"
+            <div style={{ width: "calc(100% - 150px)" }}>
+              <Field
                 component={InputField}
-              ></FastField>
+                className="h-textbox"
+                name="phoneNumber"
+              />
             </div>
           </FormGroup>
           <FormGroup style={styles}>
             <div style={{ width: "150px" }}>
-              <label className="h-label h-lable-Obligatory">Mật khẩu</label>
+              <label className="h-label h-lable-Obligatory">Email</label>
             </div>
-            <div style={{ width: "calc(100% - 150px" }}>
-              <FastField
-                type="password"
-                className="h-textbox"
+            <div style={{ width: "calc(100% - 150px)" }}>
+              <Field
                 component={InputField}
-                name="passWord"
-              ></FastField>
+                className="h-textbox"
+                name="email"
+              />
             </div>
           </FormGroup>
         </Row>
@@ -268,14 +328,19 @@ function EmployeeAddEdit(props) {
   );
 }
 
-// khai bao props
-EmployeeAddEdit.propTypes = {
-  onSubmitForm: PropTypes.func,
+TourGuideAddEdit.propTypes = {
   initialValues: PropTypes.object.isRequired,
+  onSubmitForm: PropTypes.func,
+  // kieu func laf null nha em,l
+  onChangeProvince: PropTypes.func,
+  onChangeDistrict: PropTypes.func,
+  onChangeWards: PropTypes.func,
 };
-
-EmployeeAddEdit.defaultProps = {
+TourGuideAddEdit.defaultProps = {
   onSubmitForm: null,
+  onChangeProvince: null,
+  onChangeDistrict: null,
+  onChangeWards: null,
 };
 
-export default EmployeeAddEdit;
+export default TourGuideAddEdit;
