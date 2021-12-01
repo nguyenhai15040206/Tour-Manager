@@ -3,11 +3,11 @@ import React, { Suspense, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Switch, Route } from "react-router-dom";
 import * as yup from "yup";
-import Loading from "../../components/Loading/Index";
 import MainLayout from "./components/Layout/MainLayout";
 import LoginAdmin from "./components/LoginAdmin/Index";
 import { LoginEmp } from "./Slices/SliceEmployee";
 import { NotificationContainer } from "react-notifications";
+import { Spinner } from "reactstrap";
 
 const TourManager = React.lazy(() =>
   import("../Admins/pages/TourManager/Index")
@@ -72,14 +72,14 @@ function Admin(props) {
     <>
       <MainLayout>
         <Switch>
-          <Suspense fallback={<Loading loading={true} />}>
+          <Suspense fallback={<Spinner color={"secondary"} />}>
             <Route exact={true} path="/admin" component={TourManager} />
-            <Route path="/admin/employee" component={Employee} />
-            <Route path="/admin/touristAttr" component={TouristAttr} />
-            <Route path="/admin/province" component={Province} />
-            <Route path="/admin/district" component={District} />
-            <Route path="/admin/wards" component={Wards} />
-            <Route path="/admin/tourguide" component={TourGuide} />
+            <Route path="/admin/Employee" component={Employee} />
+            <Route path="/admin/TouristAttraction" component={TouristAttr} />
+            <Route path="/admin/Province" component={Province} />
+            <Route path="/admin/District" component={District} />
+            <Route path="/admin/Village" component={Wards} />
+            <Route path="/admin/Tourguide" component={TourGuide} />
           </Suspense>
         </Switch>
       </MainLayout>

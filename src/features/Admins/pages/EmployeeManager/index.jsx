@@ -344,7 +344,7 @@ function EmployeeManager(props) {
                                       ></FastField>
                                     </div>
                                   </FormGroup>
-                                  <FormGroup className="mt-2 row">
+                                  <FormGroup className="row">
                                     <label className="col-lg-3 h-label">
                                       Số điện thoại
                                     </label>
@@ -356,8 +356,6 @@ function EmployeeManager(props) {
                                       ></FastField>
                                     </div>
                                   </FormGroup>
-                                </Col>
-                                <Col xl={4} lg={6}>
                                   <FormGroup className="row">
                                     <label className="col-lg-3 h-label">
                                       Email
@@ -371,6 +369,7 @@ function EmployeeManager(props) {
                                     </div>
                                   </FormGroup>
                                 </Col>
+                                <Col xl={4} lg={6}></Col>
                               </Row>
                               {/**Start toolbar widget */}
                               <Row>

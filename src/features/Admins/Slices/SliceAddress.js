@@ -39,7 +39,7 @@ const addressSlice = createSlice({
 
   extraReducers: (builder) => {
     builder.addCase(Adm_GetProvince.pending, (state) => {
-      state.data = null;
+      state.data = [];
       state.loading = "loading";
     });
 
@@ -56,7 +56,7 @@ const addressSlice = createSlice({
 
     ///
     builder.addCase(Adm_GetProvinceAndSearch.pending, (state) => {
-      state.dataSearch = [];
+      state.dataSearch = null;
       state.loading = "loading";
     });
     builder.addCase(

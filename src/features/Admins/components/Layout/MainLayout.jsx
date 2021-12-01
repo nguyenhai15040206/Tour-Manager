@@ -16,7 +16,7 @@ function MainLayout(props) {
     const addNotification = () => {
       setTimeout(() => {
         const notification = notificationSystem.current;
-        notification.addNotification({
+        notification?.addNotification({
           title: <MdImportantDevices />,
           message: "Welome to page Admin!",
           level: "info",
@@ -24,7 +24,7 @@ function MainLayout(props) {
       }, 1500);
     };
     addNotification();
-  }, [notificationSystem]);
+  }, []);
 
   return (
     <>

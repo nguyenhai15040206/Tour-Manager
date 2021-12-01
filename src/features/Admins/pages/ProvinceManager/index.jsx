@@ -58,9 +58,6 @@ function ProvinceManager(props) {
   //tìm kiếm
   const handleClickSearch = async (values) => {
     try {
-      const Ids = values.provinceId;
-      console.log(values);
-      console.log(Ids);
       await dispatch(Adm_GetProvinceAndSearch(values));
     } catch (err) {
       console.log(err);
@@ -68,17 +65,6 @@ function ProvinceManager(props) {
   };
 
   //get change value
-  const handleChangeClick = async (e) => {
-    console.log(e[0]?.label);
-    if (e[0]?.label !== null) {
-    }
-    const values = { provinceId: [] };
-    try {
-      await dispatch(Adm_GetProvinceAndSearch(values));
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   return (
     <>
@@ -94,12 +80,12 @@ function ProvinceManager(props) {
                   {/**begin */}
                   <Breadcrumb>
                     <BreadcrumbItem active>
-                      <a href="/admin/address">Home</a>
+                      <a href="/admin/address">Trang chủ</a>
                     </BreadcrumbItem>
                     <BreadcrumbItem active>
-                      <a href="/admin/address">Library</a>
+                      <a href="/admin/address">Địa lý - xã hội</a>
                     </BreadcrumbItem>
-                    <BreadcrumbItem active>Data</BreadcrumbItem>
+                    <BreadcrumbItem active>Tỉnh thành</BreadcrumbItem>
                     <li className="breadcrumb-item">
                       <FormGroup
                         style={{
@@ -132,9 +118,9 @@ function ProvinceManager(props) {
                         return (
                           <>
                             <Form className="mt-1">
-                              <Row style={{ marginBottom: "9px" }}>
+                              <Row className="pb-2">
                                 <Col xl={4} lg={6}>
-                                  <FormGroup className="mt-2 row">
+                                  <FormGroup className="mt-1 row">
                                     <label className="col-lg-3 h-label">
                                       Tên tỉnh thành
                                     </label>
@@ -161,18 +147,7 @@ function ProvinceManager(props) {
                               <Row>
                                 <Col>
                                   <div className="commandToolBarWidge">
-                                    <button type="button" className="h-button">
-                                      <IoMdAddCircle
-                                        color="#2b6e44"
-                                        size={15}
-                                      />{" "}
-                                      Tạo mới
-                                    </button>
-                                    <button
-                                      type="submit"
-                                      className="h-button"
-                                      style={{ marginLeft: "3px" }}
-                                    >
+                                    <button type="submit" className="h-button">
                                       <FaSearch
                                         color="rgb(180 173 30)"
                                         size={15}
@@ -199,7 +174,7 @@ function ProvinceManager(props) {
             rowData={stateProvince.dataSearch}
             tableColoumn={tableColumnProvince}
             gridRef={gridRef}
-            tableHeight="450px"
+            tableHeight="395px"
             ///
             fieldValues="districtId"
           ></TableGridControl>

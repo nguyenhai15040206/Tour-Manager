@@ -17,13 +17,14 @@ import TableGridControl from "../../components/Customs/TableGridControl";
 import { FaSearch } from "react-icons/fa";
 import { tableColumnDistrict } from "../../../../utils/Columns";
 import { Adm_GetDisTrictByIdPro } from "./../../Slices/SliceDistrict";
+import * as yup from "yup";
+import { NotificationManager } from "react-notifications";
 
-const initialValuesAddress = {
-  provinceId: "",
+const initialValues = {
+  provinceId: [],
 };
 
 function DistrictManager(props) {
-  const [initialValues, setInitialValues] = useState(initialValuesAddress);
   //state store
   const stateProvince = useSelector((state) => state?.address);
   const stateDistrict = useSelector((state) => state?.district);
@@ -47,14 +48,17 @@ function DistrictManager(props) {
   const handleClickSearch = async (values) => {
     try {
       const Ids = values.provinceId;
+      if (Ids.length === 0) {
+        return NotificationManager.warning(
+          "Vui lòng chọn tỉnh/thành!",
+          "Warning!",
+          1500
+        );
+      }
       await dispatch(Adm_GetDisTrictByIdPro(Ids));
     } catch (err) {
       console.log(err);
     }
-  };
-
-  const handleClickAdd = (values) => {
-    alert("a");
   };
 
   return (
@@ -71,12 +75,12 @@ function DistrictManager(props) {
                   {/**begin */}
                   <Breadcrumb>
                     <BreadcrumbItem active>
-                      <a href="/admin/address">Home</a>
+                      <a href="/admin/address">Trang chủ</a>
                     </BreadcrumbItem>
                     <BreadcrumbItem active>
-                      <a href="/admin/address">Library</a>
+                      <a href="/admin/address">Địa lý - xã hội</a>
                     </BreadcrumbItem>
-                    <BreadcrumbItem active>Data</BreadcrumbItem>
+                    <BreadcrumbItem active>Quận/huyện</BreadcrumbItem>
                     <li className="breadcrumb-item">
                       <FormGroup
                         style={{
@@ -109,10 +113,10 @@ function DistrictManager(props) {
                         return (
                           <>
                             <Form className="mt-1">
-                              <Row style={{ marginBottom: "9px" }}>
+                              <Row className="pb-2">
                                 <Col xl={4} lg={6}>
-                                  <FormGroup className="mt-2 row">
-                                    <label className="col-lg-3 h-label">
+                                  <FormGroup className="mt-1 row">
+                                    <label className="col-lg-3 h-label h-lable-Obligatory">
                                       Tên tỉnh thành
                                     </label>
                                     <div className="col-lg-8">
@@ -137,19 +141,6 @@ function DistrictManager(props) {
                               <Row>
                                 <Col>
                                   <div className="commandToolBarWidge">
-                                    <button
-                                      type="button"
-                                      onClick={(values) => {
-                                        handleClickAdd(values);
-                                      }}
-                                      className="h-button"
-                                    >
-                                      <IoMdAddCircle
-                                        color="#2b6e44"
-                                        size={15}
-                                      />{" "}
-                                      Tạo mới
-                                    </button>
                                     <button
                                       type="submit"
                                       className="h-button"
@@ -181,7 +172,7 @@ function DistrictManager(props) {
             rowData={stateDistrict.dataDistrict}
             tableColoumn={tableColumnDistrict}
             gridRef={gridRef}
-            tableHeight="450px"
+            tableHeight="390px"
             ///
             fieldValues="districtId"
           ></TableGridControl>

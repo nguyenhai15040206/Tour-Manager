@@ -28,7 +28,7 @@ export const Adm_GetWardsByIdDistrictCbb = createAsyncThunk(
 const wardsSlice = createSlice({
   name: "Wards",
   initialState: {
-    dataWards: null,
+    dataWards: [],
     dataWardsCbb: [],
     loading: "idle",
     error: "",

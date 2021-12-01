@@ -29,7 +29,7 @@ const districtSlice = createSlice({
   name: "District",
   initialState: {
     dataDistrictCbb: [],
-    dataDistrict: null,
+    dataDistrict: [],
     loading: "idle",
     error: "",
   },

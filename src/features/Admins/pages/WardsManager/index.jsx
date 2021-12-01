@@ -1,5 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
+import { Field, Form, Formik } from "formik";
+import React, { useEffect, useRef } from "react";
+import { FaSearch } from "react-icons/fa";
+import { NotificationManager } from "react-notifications";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,28 +11,24 @@ import {
   FormGroup,
   Row,
 } from "reactstrap";
-import { Field, Form, Formik } from "formik";
-import SelectField from "./../../../../CustomFields/SelectField/Index";
-import { useDispatch, useSelector } from "react-redux";
-import { Adm_GetProvince } from "./../../Slices/SliceAddress";
-import { Adm_GetDistrictByProvinceCBB } from "./../../Slices/SliceDistrict";
-import TableGridControl from "./../../components/Customs/TableGridControl";
 import { tableColumnWard } from "../../../../utils/Columns";
 import { Adm_GetWardsByIdPro } from "../../Slices/SliceWards";
+import SelectField from "./../../../../CustomFields/SelectField/Index";
+import TableGridControl from "./../../components/Customs/TableGridControl";
+import { Adm_GetProvince } from "./../../Slices/SliceAddress";
+import { Adm_GetDistrictByProvinceCBB } from "./../../Slices/SliceDistrict";
 
-const initialValuesWards = {
-  provinceId: "",
-  districtId: "",
+const initialValues = {
+  provinceId: null,
+  districtId: null,
 };
 function WardsManager(props) {
   //state store
   const stateProvince = useSelector((state) => state.address);
   const stateDistrict = useSelector((state) => state.district);
   const stateWards = useSelector((state) => state.wards);
-  console.log(stateWards.dataWards);
 
   ///
-  const [initialValues, setInitialValues] = useState(initialValuesWards);
   ///
   const gridRef = useRef(null);
   const dispatch = useDispatch();
@@ -62,13 +61,24 @@ function WardsManager(props) {
   };
 
   ///get values click district
-  const handleChangClickDistrict = async (e) => {
+  const handleOnSubmitForm = async (values) => {
     try {
-      if (e === null || e === "") {
-        return;
+      if (values.provinceId === "" || values.provinceId === null) {
+        return NotificationManager.warning(
+          "Vui lòng nhập tỉnh/thành",
+          "Warning!",
+          1500
+        );
+      }
+      if (values.districtId === "" || values.districtId === null) {
+        return NotificationManager.warning(
+          "Vui lòng nhập quận/huyện",
+          "Warning!",
+          1500
+        );
       }
       const params = {
-        districtID: e.value,
+        districtID: values.districtId,
       };
       await dispatch(Adm_GetWardsByIdPro(params));
     } catch (error) {
@@ -89,12 +99,12 @@ function WardsManager(props) {
                   {/**begin */}
                   <Breadcrumb>
                     <BreadcrumbItem active>
-                      <a href="admin/wards">Home</a>
+                      <a href="admin/wards">Trang chủ</a>
                     </BreadcrumbItem>
                     <BreadcrumbItem active>
-                      <a href="admin/wards">Library</a>
+                      <a href="admin/wards">Địa lý - xã hội</a>
                     </BreadcrumbItem>
-                    <BreadcrumbItem active>Data</BreadcrumbItem>
+                    <BreadcrumbItem active>Phường/xã</BreadcrumbItem>
                     <li className="breadcrumb-item">
                       <FormGroup
                         style={{
@@ -119,14 +129,17 @@ function WardsManager(props) {
                 <Col lg={12}>
                   {/**begin search */}
                   <div id="showSearch" className="collapse show">
-                    <Formik initialValues={initialValues}>
+                    <Formik
+                      initialValues={initialValues}
+                      onSubmit={handleOnSubmitForm}
+                    >
                       {(fromilk) => {
                         return (
                           <>
                             <Form className="mt-1">
-                              <Row style={{ marginBottom: "9px" }}>
+                              <Row className="pb-2">
                                 <Col xl={4} lg={6}>
-                                  <FormGroup className="mt-2 row">
+                                  <FormGroup className="mt-1 row">
                                     <label className="col-lg-3 h-label h-lable-Obligatory">
                                       Tỉnh/ Thành
                                     </label>
@@ -163,13 +176,27 @@ function WardsManager(props) {
                                             ? false
                                             : true
                                         }
-                                        handleChange={(e) => {
-                                          handleChangClickDistrict(e);
-                                        }}
                                         options={stateDistrict?.dataDistrictCbb}
                                       ></Field>
                                     </div>
                                   </FormGroup>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col>
+                                  <div className="commandToolBarWidge">
+                                    <button
+                                      type="submit"
+                                      className="h-button"
+                                      style={{ marginLeft: "3px" }}
+                                    >
+                                      <FaSearch
+                                        color="rgb(180 173 30)"
+                                        size={15}
+                                      />
+                                      {""} Tìm kiếm
+                                    </button>
+                                  </div>
                                 </Col>
                               </Row>
                             </Form>
@@ -189,7 +216,7 @@ function WardsManager(props) {
             <TableGridControl
               rowData={stateWards.dataWards}
               gridRef={gridRef}
-              tableHeight="450px"
+              tableHeight="361px"
               tableColoumn={tableColumnWard}
               fieldValues="wardsId"
             ></TableGridControl>

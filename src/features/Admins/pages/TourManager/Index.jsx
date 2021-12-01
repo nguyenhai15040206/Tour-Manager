@@ -397,7 +397,6 @@ function TourManager(props) {
         showModal={showConfirm}
         toggle={toggle}
       />
-      ;
       <TourAddEdit
         className="modal-xl"
         backdrop={"static"}
@@ -505,14 +504,7 @@ function TourManager(props) {
                                             : false
                                         }
                                         placeholder="Vui lòng chọn"
-                                        options={stateAddress?.data.map(
-                                          (item) => {
-                                            return {
-                                              value: item.value,
-                                              label: item.label,
-                                            };
-                                          }
-                                        )}
+                                        options={stateAddress.data}
                                         component={SelectField}
                                       />
                                     </div>

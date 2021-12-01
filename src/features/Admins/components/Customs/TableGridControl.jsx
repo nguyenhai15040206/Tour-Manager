@@ -53,6 +53,7 @@ function TableGridControl(props) {
             cellClass="h-cell-editform"
             field={`${fieldValues}`}
             minWidth={30}
+            maxWidth={30}
             cellRendererFramework={(field) => {
               return (
                 <FcEditImage
@@ -71,7 +72,7 @@ function TableGridControl(props) {
               headerCheckboxSelectionFilteredOnly={
                 item.headerCheckboxSelectionFilteredOnly || false
               }
-              cellRenderer= {item.cellRenderer}
+              cellRenderer={item.cellRenderer}
               headerName={item?.headerName}
               field={item?.field}
               sortable={item?.sortTable || false}

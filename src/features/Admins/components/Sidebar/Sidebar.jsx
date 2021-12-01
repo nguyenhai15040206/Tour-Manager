@@ -16,6 +16,9 @@ import {
   MdWeb,
   MdWidgets,
 } from "react-icons/md";
+import { FaMapMarkedAlt, FaCanadianMapleLeaf } from "react-icons/fa";
+import { SiOpenstreetmap } from "react-icons/si";
+import { RiMapPin2Fill } from "react-icons/ri";
 import { Link, NavLink } from "react-router-dom";
 import {
   Collapse,
@@ -35,12 +38,31 @@ const sidebarBackground = {
 };
 
 const navItems = [
-  { to: "/admin/abc", name: "dashboard", exact: true, Icon: MdDashboard },
-  { to: "/admin/cde", name: "cards", exact: false, Icon: MdWeb },
-  { to: "/admin/edv", name: "charts", exact: false, Icon: MdInsertChart },
+  { to: "/admin", name: "dashboard", exact: true, Icon: MdDashboard },
+  { to: "/admin/TouristAttraction", name: "cards", exact: false, Icon: MdWeb },
+  { to: "/admin/Employee", name: "charts", exact: false, Icon: MdInsertChart },
   { to: "/admin/anh", name: "widgets", exact: false, Icon: MdWidgets },
 ];
-
+const navGeographySocial = [
+  {
+    to: "/admin/Province",
+    name: "DS Tỉnh/thành phố",
+    exact: false,
+    Icon: FaMapMarkedAlt,
+  },
+  {
+    to: "/admin/District",
+    name: "DS Quận/huyện",
+    exact: false,
+    Icon: SiOpenstreetmap,
+  },
+  {
+    to: "/admin/Village",
+    name: "DS Phường/xã",
+    exact: false,
+    Icon: RiMapPin2Fill,
+  },
+];
 const navComponents = [
   {
     to: "/admin/buttons",
@@ -85,8 +107,12 @@ function Sidebar(props) {
   //   isOpenPages: true,
   // };
   const [isOpenComponents, setOpenComponent] = useState(false);
+  const [isOpenGeographySocial, setOpenGeographySocial] = useState(false);
   const handleClick = () => {
     setOpenComponent(!isOpenComponents);
+  };
+  const handleClickGeographySocial = () => {
+    setOpenGeographySocial(!isOpenGeographySocial);
   };
   return (
     <aside
@@ -151,6 +177,46 @@ function Sidebar(props) {
                 <BsNavLink
                   id={`navItem-${name}-${index}`}
                   className="text-uppercase"
+                  tag={NavLink}
+                  to={to}
+                  activeClassName="active"
+                  exact={exact}
+                >
+                  <Icon className="cr-sidebar__nav-item-icon" />
+                  <span className="">{name}</span>
+                </BsNavLink>
+              </NavItem>
+            ))}
+          </Collapse>
+          <NavItem
+            className="cr-sidebar__nav-item"
+            onClick={() => {
+              handleClickGeographySocial();
+            }}
+          >
+            <BsNavLink className="cr-sidebar__nav-item-collapse">
+              <div className="d-flex">
+                <FaCanadianMapleLeaf className="cr-sidebar__nav-item-icon" />
+                <span className=" align-self-start">Địa lý - xã hội</span>
+              </div>
+              <MdKeyboardArrowDown
+                className="cr-sidebar__nav-item-icon"
+                style={{
+                  padding: 0,
+                  transform: isOpenGeographySocial
+                    ? "rotate(0deg)"
+                    : "rotate(-90deg)",
+                  transition: "transform 0.3s",
+                }}
+              />
+            </BsNavLink>
+          </NavItem>
+          <Collapse isOpen={isOpenGeographySocial}>
+            {navGeographySocial.map(({ to, name, exact, Icon }, index) => (
+              <NavItem key={index} className="cr-sidebar__nav-item">
+                <BsNavLink
+                  id={`navItem-${name}-${index}`}
+                  className=""
                   tag={NavLink}
                   to={to}
                   activeClassName="active"

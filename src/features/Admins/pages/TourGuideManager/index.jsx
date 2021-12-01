@@ -66,7 +66,6 @@ function TourGuideManager(props) {
   ///search
   const handelSubmitSearch = async (values) => {
     try {
-      console.log(values);
       await dispatch(Adm_GetDataTourGuide(values));
     } catch (error) {
       console.log(error);
@@ -86,7 +85,6 @@ function TourGuideManager(props) {
       empIDInsert: "ed763673-e493-4edd-bfda-dc910d16cba1",
       empIDUpdate: "ed763673-e493-4edd-bfda-dc910d16cba1",
     };
-    console.log(TourGiudObj);
     try {
       await dispatch(Adm_CreateTourGuide(TourGiudObj));
       return NotificationManager.success("Thêm thành công!", "Success!", 1500);
@@ -97,7 +95,6 @@ function TourGuideManager(props) {
 
   //
   const handelChangeProvice = async (e) => {
-    console.log(e);
     // onChange thi chan chan kohng null roi em
     try {
       const params = {
