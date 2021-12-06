@@ -9,6 +9,10 @@ const MainClient = React.lazy(() =>
 
 const MainAdmin = React.lazy(() => import("./features/Admins/Admin"));
 
+const Booking = React.lazy(() =>
+  import("./features/Clients/BookingTour/Index")
+);
+
 const NotFound = React.lazy(() => {
   <div>Not found</div>;
 });
@@ -23,6 +27,7 @@ function App() {
             <Route path="/my-tour" component={MainClient} />
             <Route path="/admin" component={MainAdmin} />
             <Route path="/index.html" component={NotFound} />
+            <Route path="/bookingtour" component={Booking} />
             {/* <Route path="/my-tour/index.html" component={NotFound} />
             <Redirect from="*" to="/my-tour/index.html" /> */}
           </Switch>

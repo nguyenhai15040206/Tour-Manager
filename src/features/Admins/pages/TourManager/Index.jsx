@@ -21,6 +21,7 @@ import imageDefaultPNG from "../../../../assets/logo/imageDefault.png";
 import InputField from "../../../../CustomFields/InputField/Index";
 import SelectField from "../../../../CustomFields/SelectField/Index";
 import { tableColumnsTour } from "../../../../utils/Columns";
+import validationSchema from "../../../../utils/ValidateShema";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
 import TableGridControl from "../../components/Customs/TableGridControl";
 import { Adm_GetProvince } from "../../Slices/SliceAddress";
@@ -30,18 +31,22 @@ import {
   Adm_GetTourById,
   Adm_GetTourList,
   Adm_InsertTour,
+  Adm_UpdateTour,
 } from "../../Slices/SliceTour";
 import {
   Adm_DeleteTourDetailsByTourIds,
   Adm_InsertTourDetails,
+  Adm_UpdateTourDetails,
 } from "../../Slices/SliceTourDetails";
 import { Adm_GetTouristAttByRegions } from "../../Slices/SliceTouristAttraction";
 import { Adm_GetTravelTypeCbo } from "../../Slices/SliceTravelType";
 import {
   Adm_DeleteUnitPriceByTourIds,
   Adm_InsertUnitPrice,
+  Adm_UpdateUnitPrice,
 } from "../../Slices/SliceUnitPrice";
 import TourAddEdit from "./TourAddEdit";
+import { useHistory } from "react-router-dom";
 
 const initialValuesSearch = {
   TourName: "",
@@ -80,6 +85,8 @@ function TourManager(props) {
   const [imageDefault, setImageDefault] = useState(`${imageDefaultPNG}`);
   const [imageUpload, setImageUpload] = useState(null);
   const [selectedTourByIds, setSelectedTourByIds] = useState([]);
+  const [validateShemaTourAddEdit, setValidateShemaTourAddEdit] =
+    useState(null);
   //end
   //state in redux
   const { tourList } = useSelector((state) => state?.tour);
@@ -89,6 +96,7 @@ function TourManager(props) {
   //end
   const gridRef = useRef(null);
   const dispatch = useDispatch();
+  const history = useHistory();
   //
   useEffect(() => {
     const fetchApiDepacturePlace = async () => {
@@ -161,7 +169,6 @@ function TourManager(props) {
     dispatch(Adm_UploadImageTour(formData))
       .then(unwrapResult)
       .then((payload) => {
-        console.log({ ...tour, tourImg: payload.fileName });
         dispatch(Adm_InsertTour({ ...tour, tourImg: payload.fileName }))
           .then(unwrapResult)
           .then((payload) => {
@@ -171,13 +178,16 @@ function TourManager(props) {
             }
             // insert tour => insert tourDetails => insert dong gia
             console.log(tourIDPayload);
+            console.log(values);
             const unitPrice = {
               tourId: tourIDPayload,
               adultUnitPrice: values.AdultUnitPrice,
-              childrentUnitPrice: 0,
+              childrenUnitPrice: 5000,
               babyUnitPrice: values.BabyUnitPrice,
-              empIDInsert: "3f94669c-23fe-4e3a-88cf-00456ace4e4f",
-              empIdUpdate: "3f94669c-23fe-4e3a-88cf-00456ace4e4f",
+              empIDInsert: JSON.parse(localStorage.getItem("accessTokenEmp"))
+                .data.empId,
+              empIdUpdate: JSON.parse(localStorage.getItem("accessTokenEmp"))
+                .data.empId,
             };
             dispatch(Adm_InsertUnitPrice(unitPrice))
               .then(unwrapResult)
@@ -189,8 +199,12 @@ function TourManager(props) {
                       const tourDetails = {
                         tourID: tourIDPayload,
                         touristAttrID: item,
-                        empIDInsert: "3f94669c-23fe-4e3a-88cf-00456ace4e4f",
-                        empIDUpdate: "3f94669c-23fe-4e3a-88cf-00456ace4e4f",
+                        empIDInsert: JSON.parse(
+                          localStorage.getItem("accessTokenEmp")
+                        ).data.empId,
+                        empIDUpdate: JSON.parse(
+                          localStorage.getItem("accessTokenEmp")
+                        ).data.empId,
                       };
                       return await dispatch(Adm_InsertTourDetails(tourDetails));
                     });
@@ -201,11 +215,7 @@ function TourManager(props) {
                       1500
                     );
                   } catch (err) {
-                    return NotificationManager.success(
-                      `${err}`,
-                      "Error!",
-                      1500
-                    );
+                    return NotificationManager.error(`${err}`, "Error!", 1500);
                   }
                 }
               })
@@ -230,9 +240,67 @@ function TourManager(props) {
         return NotificationManager.error(`${err}`, "Thêm thất bại!", 1500);
       });
   };
+
+  const onEditTour = async (tour, values) => {
+    let tourImageEdit = "";
+    try {
+      if (values.TourImg !== "") {
+        let formData = new FormData();
+        formData.append("file", imageUpload);
+        tourImageEdit = unwrapResult(
+          await dispatch(Adm_UploadImageTour(formData))
+        ).fileName;
+      }
+      dispatch(
+        Adm_UpdateTour({
+          ...tour,
+          tourImg: tourImageEdit,
+          tourId: values.TourID,
+        })
+      )
+        .then(unwrapResult)
+        .then(async (payload) => {
+          const unitPrice = {
+            tourId: payload.tourId,
+            adultUnitPrice: values.AdultUnitPrice,
+            childrenUnitPrice: values.ChildrenUnitPrice,
+            babyUnitPrice: values.BabyUnitPrice,
+            empIDUpdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+              .empId,
+          };
+          await dispatch(Adm_UpdateUnitPrice(unitPrice));
+          const dataUpdateTourDetails = {
+            TourID: payload.tourId,
+            TourAttrIds: values.TouristAttaction,
+            EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+              .empId,
+          };
+          await dispatch(Adm_UpdateTourDetails(dataUpdateTourDetails));
+          await dispatch(Adm_GetTourList(initialValuesSearch));
+          return NotificationManager.success(
+            "Cập nhật thành công!",
+            "Success!",
+            1500
+          );
+        })
+        .catch((error) => {
+          if (error.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            return history.push("/admin/login");
+          }
+          return NotificationManager.error(
+            `${error.error}`,
+            "Thêm thất bại!",
+            1500
+          );
+        });
+    } catch (err) {
+      console.log(err);
+      return NotificationManager.error(`${err}`, "Thêm thất bại!", 1500);
+    }
+  };
   const handleClickOnSumitForm = async (values) => {
     //thực hiện call dữ liệu
-    console.log(values);
     const tour = {
       tourName: values.TourName,
       description: values.Description,
@@ -247,15 +315,16 @@ function TourManager(props) {
       travelTypeID: "972c5fc0-a815-41a2-8de1-1fe5301fb76c", //
       DeparturePlace: values.DeparturePlace,
       tourGuideID: null, //
-      empIDUpdate: "3f94669c-23fe-4e3a-88cf-00456ace4e4f", //
       suggest: true, //
-      empIDInsert: "3f94669c-23fe-4e3a-88cf-00456ace4e4f", //
+      EmpIDInsert: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+        .empId,
+      EmpIdupdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+        .empId,
       status: null, //
     };
     if (values.TourID !== "") {
       // edit here
-      alert("Edit đê");
-      return;
+      onEditTour(tour, values);
     } else {
       onInsertTour(tour, values);
     }
@@ -264,6 +333,7 @@ function TourManager(props) {
   const handleClickShowModal = async () => {
     try {
       setInitialValues(initialValuesInsert);
+      setValidateShemaTourAddEdit(validationSchema.TourManagerAdd);
       await dispatch(Adm_GetProvince({}));
       setImageDefault(`${imageDefaultPNG}`);
       setShowModal(true);
@@ -296,44 +366,52 @@ function TourManager(props) {
   // handleClick Edit tour by Id => get tourDetails
   const handleEditTour = async (tourId) => {
     try {
-      console.log(tourId);
       const params = {
         tourId: tourId,
       };
-
+      setValidateShemaTourAddEdit(validationSchema.TourManagerEdit);
       dispatch(Adm_GetTourById(params))
         .then(unwrapResult)
         .then((payload) => {
-          console.log(payload);
+          setImageDefault(`${payload.tourImg}`);
           setInitialValues({
             TourID: payload.tourId,
             TourName: payload.tourName,
+            TourImg: "",
             Description: payload.description,
             DeparturePlace: payload.departurePlace,
             QuanityMax: payload.quanityMax,
             QuanityMin: payload.quanityMin,
             CurrentQuanity: payload.currentQuanity,
-            Regions: 1,
+            AdultUnitPrice:
+              payload.adultUnitPrice == null ? 0 : payload.adultUnitPrice,
+            ChildrenUnitPrice:
+              payload.childrenUnitPrice == null ? 0 : payload.childrenUnitPrice,
+            BabyUnitPrice:
+              payload.babyUnitPrice == null ? 0 : payload.babyUnitPrice,
+            Regions: payload.regions,
             Transport: payload.transport.trim(),
             DateStart: payload.dateStart.slice(0, 10),
             DateEnd: payload.dateEnd.slice(0, 10),
-            TouristAttaction: [1, 2, 3],
+            TouristAttaction:
+              payload.tourDetails == null ? [] : payload.tourDetails,
+            Schedule: payload.schedule,
           });
           setRating(payload.rating);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-      dispatch(Adm_GetProvince())
-        .then(unwrapResult)
-        .then((payload) => {
-          const params = {
-            regions: 1,
-          };
-          dispatch(Adm_GetTouristAttByRegions(params))
+          dispatch(Adm_GetProvince())
             .then(unwrapResult)
-            .then((payload) => {
-              setShowModal(true);
+            .then(() => {
+              const params = {
+                regions: payload.regions,
+              };
+              dispatch(Adm_GetTouristAttByRegions(params))
+                .then(unwrapResult)
+                .then(() => {
+                  setShowModal(true);
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
             })
             .catch((err) => {
               console.log(err);
@@ -342,7 +420,9 @@ function TourManager(props) {
         .catch((err) => {
           console.log(err);
         });
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
   };
   // handle Change Image
   const handleChangeImage = (event) => {
@@ -413,6 +493,7 @@ function TourManager(props) {
         onGetTOuristByRegions={handleChangeRegions}
         imageDefault={`${imageDefault}`}
         initialValues={initialValues}
+        validationSchema={validateShemaTourAddEdit}
         showModal={showModal}
       />
       <Container

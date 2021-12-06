@@ -12,8 +12,8 @@ const tourApi = {
     return axiosClient.get(`${url}/TourIsSuggest`);
   },
 
-  getTourDetails: (tourID) => {
-    return axiosClient.get(`${url}/TourDetails/${tourID}`);
+  getTourDetails: (params) => {
+    return axiosClient.get(`${url}/TourDetails`, { params });
   },
 
   Adm_GetTourDetails: (params) => {
@@ -22,6 +22,9 @@ const tourApi = {
 
   Adm_InsertTour: (Tour) => {
     return axiosClient.post(`${url}/Adm_InsertTour`, Tour);
+  },
+  Adm_UpdateTourById: (tour) => {
+    return axiosClient.put(`${url}/Adm_UpdateTourById`, tour);
   },
   Adm_DeleteTourByIds: (DeleteModels) => {
     return axiosClient.put(`${url}/Adm_DeleteTourByIds`, DeleteModels);

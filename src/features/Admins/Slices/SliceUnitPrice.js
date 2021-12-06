@@ -13,6 +13,17 @@ export const Adm_InsertUnitPrice = createAsyncThunk(
     }
   }
 );
+export const Adm_UpdateUnitPrice = createAsyncThunk(
+  "api/UnitPrice/Adm_UpdateUnitPrice",
+  async (values, thunkApi) => {
+    try {
+      const response = await unitPriceApi.Adm_UpdateUnitPrice(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data);
+    }
+  }
+);
 
 export const Adm_DeleteUnitPriceByTourIds = createAsyncThunk(
   "api/UnitPrice/Adm_DeleteUnitPriceByTourIds",
@@ -47,6 +58,24 @@ const unitPriceSlice = createSlice({
     });
 
     builder.addCase(Adm_InsertUnitPrice.rejected, (state, action) => {
+      state.dataInsert = {};
+      state.loading = "error";
+      state.error = action.payload.error;
+    });
+
+    // kết thúc thêm
+    // Cap nhat du lieu - TanHai 20211116
+    builder.addCase(Adm_UpdateUnitPrice.pending, (state) => {
+      state.dataInsert = {};
+      state.loading = "loading";
+    });
+
+    builder.addCase(Adm_UpdateUnitPrice.fulfilled, (state, { payload }) => {
+      state.dataInsert = payload;
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Adm_UpdateUnitPrice.rejected, (state, action) => {
       state.dataInsert = {};
       state.loading = "error";
       state.error = action.payload.error;
