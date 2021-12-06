@@ -27,5 +27,5 @@ export default configureStore({
     wards: wardsReducer,
     tourGuide: tourGuideReducer,
   },
-  //middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+  //middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

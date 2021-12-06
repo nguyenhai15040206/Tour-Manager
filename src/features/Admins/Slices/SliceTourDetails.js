@@ -14,6 +14,17 @@ export const Adm_InsertTourDetails = createAsyncThunk(
     }
   }
 );
+export const Adm_UpdateTourDetails = createAsyncThunk(
+  "api/TourDetails/Adm_UpdateTourDetails",
+  async (values, thunkApi) => {
+    try {
+      const response = await tourDetailsApi.Adm_UpdateTourDetails(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.payload.data);
+    }
+  }
+);
 
 export const Adm_DeleteTourDetailsByTourIds = createAsyncThunk(
   "api/TourDetails/Adm_DeleteTourDetailsByTourIds",
@@ -50,6 +61,24 @@ const tourDetailsSlice = createSlice({
     });
 
     builder.addCase(Adm_InsertTourDetails.rejected, (state, action) => {
+      state.dataInsert = {};
+      state.loading = "error";
+      state.error = action.payload.error;
+    });
+
+    // kết thúc thêm
+    // Cap nhat du lieu - TanHai 20211116
+    builder.addCase(Adm_UpdateTourDetails.pending, (state) => {
+      state.dataInsert = {};
+      state.loading = "loading";
+    });
+
+    builder.addCase(Adm_UpdateTourDetails.fulfilled, (state, { payload }) => {
+      state.dataInsert = payload;
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Adm_UpdateTourDetails.rejected, (state, action) => {
       state.dataInsert = {};
       state.loading = "error";
       state.error = action.payload.error;

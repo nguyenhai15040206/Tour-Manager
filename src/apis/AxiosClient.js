@@ -10,10 +10,21 @@ const axiosClient = axios.create({
   paramsSerializer: (params) => queryString.stringify(params),
 });
 
-axiosClient.interceptors.request.use(async (config) => {
-  // Handle token here ...
-  return config;
-});
+axiosClient.interceptors.request.use(
+  async (config) => {
+    // Handle token here ...
+    const checkToken = localStorage.getItem("accessTokenEmp") != null;
+    let token = "";
+    if (checkToken) {
+      token = JSON.parse(localStorage.getItem("accessTokenEmp")).accessTokenEmp;
+    }
+    config.headers["Authorization"] = "bearer " + token;
+    return config;
+  },
+  (error) => {
+    Promise.reject(error);
+  }
+);
 
 axiosClient.interceptors.response.use(
   (response) => {

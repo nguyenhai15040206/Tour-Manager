@@ -5,7 +5,6 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import ReactRating from "react-rating";
 import { useSelector } from "react-redux";
 import { Card, CardImg, Col, FormGroup, Row } from "reactstrap";
-import * as yup from "yup";
 import Loading from "../../../../components/Loading/Index";
 import EditorField from "../../../../CustomFields/EditorField/Index";
 import InputField from "../../../../CustomFields/InputField/Index";
@@ -13,6 +12,7 @@ import RadioField from "../../../../CustomFields/InputField/RadioField";
 import SelectField from "../../../../CustomFields/SelectField/Index";
 import TextAreaField from "../../../../CustomFields/TextareaField/Index";
 import Options from "../../../../utils/Options";
+import validationShema from "../../../../utils/ValidateShema";
 import ModalControl from "../../components/Customs/ModalControl";
 
 const styles = {
@@ -27,6 +27,7 @@ function TourAddEdit(props) {
     onGetTOuristByRegions,
     touristAttrByRegions,
     initialValues,
+    validationSchema,
     onChangeRating,
     onSubmitForm,
     onChangeImage,
@@ -40,83 +41,6 @@ function TourAddEdit(props) {
   const stateTourDetails = useSelector((state) => state.tourDetails);
   const stateImagesUpload = useSelector((state) => state?.imagesUpload);
   //const stateEmployee = useSelector((state) => state.employee);
-  // END
-
-  // BEGIN Validate formik using yup
-  const validationSchema = yup.object().shape({
-    DeparturePlace: yup
-      .string()
-      .trim()
-      .required("[Địa điểm xuất phát] không thể bỏ trống!"),
-    Regions: yup.string().trim().required("Vui lòng chọn vùng miền!"),
-    AdultUnitPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .required("Vui lòng nhập đơn giá hợp lệ!"),
-    ChildrenUnitPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .when(
-        "AdultUnitPrice",
-        (eventAdultUnitPrice, schema) =>
-          eventAdultUnitPrice &&
-          schema.max(eventAdultUnitPrice, "[Giá trẻ em] < [Giá người lớn]")
-      )
-      .required("Vui lòng nhập đơn giá hợp lệ!"),
-    BabyUnitPrice: yup
-      .number()
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .when(
-        "ChildrenUnitPrice",
-        (eventChildrenUnitPrice, schema) =>
-          eventChildrenUnitPrice &&
-          schema.max(eventChildrenUnitPrice, "[Giá trẻ nhỏ] < [Giá trẻ em]")
-      )
-      .required("Vui lòng nhập đơn giá hợp lệ!"),
-    Schedule: yup
-      .string()
-      .required("[Lịch trình] không được bỏ trống!")
-      .min(20, "[Lịch trình] không được bỏ trống!"),
-    Transport: yup
-      .string()
-      .trim()
-      .required("[Phương tiện] không được để trống"),
-    TouristAttaction: yup
-      .array()
-      .min(1, "[Địa điểm du lịch] không được để trống!")
-      .required("[Địa điểm du lịch] không được để trống!")
-      .nullable(),
-    TourName: yup.string().required("[Tên tour] không được để trống!"),
-    Description: yup.string().required("[Mô tả] không được để trống"),
-    TourImg: yup.string().required("[Ảnh tour] không được để trống!"),
-    QuanityMax: yup
-      .number()
-      .min(10, "[Số lượng] phải lớn hơn 10!")
-      .required("[Số lượng] không được để trống!"),
-    QuanityMin: yup
-      .number()
-      .when(
-        "QuanityMax",
-        (eventQuanityMax, schema) =>
-          eventQuanityMax &&
-          schema.max(eventQuanityMax, "[Số lượng min] < [Số lượng max]")
-      )
-      .required("[Số lượng] không được để trống!"),
-    DateStart: yup
-      .date()
-      .min(new Date(), "[Ngày bắt đầu] không hợp lệ!")
-      .required("[Ngày bắt đầu] không được trống!"),
-    DateEnd: yup
-      .date()
-      .when(
-        "DateStart",
-        (eventDateStart, schema) =>
-          eventDateStart &&
-          schema.min(eventDateStart, "[Ngày kết thúc] không hợp lệ!")
-      )
-      // .min(initialValues.DateStart, "[Ngày kết thúc] không hợp lệ!")
-      .required("[Ngày kết thúc] không được trống!"),
-  });
   // END
 
   // ========================
@@ -164,13 +88,14 @@ function TourAddEdit(props) {
         HandleClickSave={handelClickOnSubmitForm}
         HandleClickSaveAndCreated={handelClickOnSubmitForm}
         HandleClickSaveAndClosed={handelClickOnSubmitForm}
+        titlePopup="Tạo mới tour du lịch"
       >
         <Row>
           {stateTourDetails.loading === "loading" && <Loading loading={true} />}
           <Col lg={12}>
             <FormGroup style={styles}>
-              <div style={{ width: "150px" }}></div>
-              <div style={{ width: "calc(100% - 150px)" }}>
+              <div style={{ width: "153px" }}></div>
+              <div style={{ width: "calc(100% - 153px)" }}>
                 <ReactRating
                   onChange={handleOnChangeRating}
                   initialRating={props.rating}
@@ -183,10 +108,10 @@ function TourAddEdit(props) {
               <Col xl={8} lg={12}>
                 <Row>
                   <FormGroup style={styles}>
-                    <div style={{ width: "150px" }}>
+                    <div style={{ width: "153px" }}>
                       <label className="h-label">Mã tour</label>
                     </div>
-                    <div style={{ width: "calc(100% - 150px)" }}>
+                    <div style={{ width: "calc(100% - 153px)" }}>
                       <FastField
                         disabled={true}
                         className="h-textbox"
@@ -197,12 +122,12 @@ function TourAddEdit(props) {
                     </div>
                   </FormGroup>
                   <FormGroup style={styles}>
-                    <div style={{ width: "150px" }}>
+                    <div style={{ width: "153px" }}>
                       <label className="h-label h-lable-Obligatory">
                         Tên tour
                       </label>
                     </div>
-                    <div style={{ width: "calc(100% - 150px)" }}>
+                    <div style={{ width: "calc(100% - 153px)" }}>
                       <FastField
                         className="h-textbox"
                         name="TourName"
@@ -211,14 +136,14 @@ function TourAddEdit(props) {
                     </div>
                   </FormGroup>
                   <FormGroup style={styles}>
-                    <div style={{ width: "150px" }}>
+                    <div style={{ width: "153px" }}>
                       <label className="h-label h-lable-Obligatory">
                         Mô tả tour
                       </label>
                     </div>
-                    <div style={{ width: "calc(100% - 150px)" }}>
+                    <div style={{ width: "calc(100% - 153px)" }}>
                       <FastField
-                        marginLeft="3px"
+                        // marginLeft="3px"
                         name="Description"
                         className="h-textbox"
                         component={TextAreaField}
@@ -226,10 +151,10 @@ function TourAddEdit(props) {
                     </div>
                   </FormGroup>
                   <FormGroup style={styles}>
-                    <div style={{ width: "150px" }}>
+                    <div style={{ width: "153px" }}>
                       <label className="h-label h-lable-Obligatory">Ảnh </label>
                     </div>
-                    <div style={{ width: "calc(100% - 150px)" }}>
+                    <div style={{ width: "calc(100% - 153px)" }}>
                       <FastField
                         type="file"
                         // multiple="multiple"
@@ -245,14 +170,14 @@ function TourAddEdit(props) {
                 <Row>
                   <Col xl={12} lg={12}>
                     <FormGroup style={styles}>
-                      <div style={{ width: "150px" }}>
+                      <div style={{ width: "153px" }}>
                         <label className="h-label h-lable-Obligatory">
                           Địa điểm Xuất phát
                         </label>
                       </div>
                       <div
                         style={{
-                          width: "calc(100% - 150px)",
+                          width: "calc(100% - 153px)",
                         }}
                       >
                         <Field
@@ -268,12 +193,12 @@ function TourAddEdit(props) {
                       </div>
                     </FormGroup>
                     <FormGroup style={styles}>
-                      <div style={{ width: "150px" }}>
+                      <div style={{ width: "153px" }}>
                         <label className="h-label h-lable-Obligatory">
                           Vùng miền
                         </label>
                       </div>
-                      <div style={{ width: "calc(100% - 150px)" }}>
+                      <div style={{ width: "calc(100% - 153px)" }}>
                         <FastField
                           handleChange={(e) => {
                             handleChangeRegions(e);
@@ -290,7 +215,7 @@ function TourAddEdit(props) {
                 </Row>
               </Col>
               <Col xl={4} lg={12}>
-                <Card style={{ height: "219px" }} inverse>
+                <Card style={{ height: "219px", marginTop: "2px" }} inverse>
                   <CardImg
                     style={{ height: "218px", objectFit: "cover" }}
                     alt="Image Tour"
@@ -305,12 +230,12 @@ function TourAddEdit(props) {
               </Col>
             </Row>
             <FormGroup style={styles}>
-              <div style={{ width: "150px" }}>
+              <div style={{ width: "153px" }}>
                 <label className="h-label h-lable-Obligatory">
                   Địa điểm du lịch
                 </label>
               </div>
-              <div style={{ width: "calc(100% - 150px)" }}>
+              <div style={{ width: "calc(100% - 153px)" }}>
                 <Field
                   isMulti={true}
                   className="h-textbox"
@@ -326,12 +251,12 @@ function TourAddEdit(props) {
             <Row>
               <Col lg={6} xl={4}>
                 <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
+                  <div style={{ width: "153px" }}>
                     <label className="h-label h-lable-Obligatory">
                       Ngày bắt đầu
                     </label>
                   </div>
-                  <div style={{ width: "calc(100% - 150px)" }}>
+                  <div style={{ width: "calc(100% - 153px)" }}>
                     <FastField
                       type="date"
                       name="DateStart"
@@ -343,12 +268,12 @@ function TourAddEdit(props) {
               </Col>
               <Col lg={6} xl={4}>
                 <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
+                  <div style={{ width: "153px" }}>
                     <label className="h-label h-lable-Obligatory">
                       Ngày kết thúc
                     </label>
                   </div>
-                  <div style={{ width: "calc(100% - 150px)" }}>
+                  <div style={{ width: "calc(100% - 153px)" }}>
                     <FastField
                       type="date"
                       name="DateEnd"
@@ -360,12 +285,12 @@ function TourAddEdit(props) {
               </Col>
               <Col lg={6} xl={4}>
                 <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
+                  <div style={{ width: "153px" }}>
                     <label className="h-label h-lable-Obligatory">
                       Phương tiện x/phát
                     </label>
                   </div>
-                  <div style={{ width: "calc(100% - 150px)" }}>
+                  <div style={{ width: "calc(100% - 153px)" }}>
                     <div style={styles}>
                       <FormGroup
                         style={{
@@ -417,12 +342,12 @@ function TourAddEdit(props) {
               </Col>
               <Col xl={4} lg={6}>
                 <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
+                  <div style={{ width: "153px" }}>
                     <label className="h-label h-lable-Obligatory">
                       Số lượng tối đa
                     </label>
                   </div>
-                  <div style={{ width: "calc(100% - 150px)" }}>
+                  <div style={{ width: "calc(100% - 153px)" }}>
                     <FastField
                       type="number"
                       name="QuanityMax"
@@ -434,12 +359,12 @@ function TourAddEdit(props) {
               </Col>
               <Col xl={4} lg={6}>
                 <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
+                  <div style={{ width: "153px" }}>
                     <label className="h-label h-lable-Obligatory">
                       Số lượng tối thiểu
                     </label>
                   </div>
-                  <div style={{ width: "calc(100% - 150px)" }}>
+                  <div style={{ width: "calc(100% - 153px)" }}>
                     <FastField
                       type="number"
                       name="QuanityMin"
@@ -451,10 +376,10 @@ function TourAddEdit(props) {
               </Col>
               <Col xl={4} lg={6} style={{ display: "block" }}>
                 <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
+                  <div style={{ width: "153px" }}>
                     <label className="h-label">Số lượng hiện tại</label>
                   </div>
-                  <div style={{ width: "calc(100% - 150px)" }}>
+                  <div style={{ width: "calc(100% - 153px)" }}>
                     <FastField
                       disabled={true}
                       type="number"
@@ -467,12 +392,12 @@ function TourAddEdit(props) {
               </Col>
               <Col xl={4} lg={6}>
                 <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
+                  <div style={{ width: "153px" }}>
                     <label className="h-label h-lable-Obligatory">
                       Đơn giá người lớn
                     </label>
                   </div>
-                  <div style={{ width: "calc(100% - 150px)" }}>
+                  <div style={{ width: "calc(100% - 153px)" }}>
                     <FastField
                       type="text"
                       name="AdultUnitPrice"
@@ -484,12 +409,12 @@ function TourAddEdit(props) {
               </Col>
               <Col xl={4} lg={6}>
                 <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
+                  <div style={{ width: "153px" }}>
                     <label className="h-label h-lable-Obligatory">
                       Đơn giá trẻ em
                     </label>
                   </div>
-                  <div style={{ width: "calc(100% - 150px)" }}>
+                  <div style={{ width: "calc(100% - 153px)" }}>
                     <FastField
                       type="text"
                       name="ChildrenUnitPrice"
@@ -501,12 +426,12 @@ function TourAddEdit(props) {
               </Col>
               <Col xl={4} lg={6} style={{ display: "block" }}>
                 <FormGroup style={styles}>
-                  <div style={{ width: "150px" }}>
+                  <div style={{ width: "153px" }}>
                     <label className="h-label h-lable-Obligatory">
                       Đơn giá trẻ nhỏ
                     </label>
                   </div>
-                  <div style={{ width: "calc(100% - 150px)" }}>
+                  <div style={{ width: "calc(100% - 153px)" }}>
                     <FastField
                       type="text"
                       name="BabyUnitPrice"
@@ -518,12 +443,12 @@ function TourAddEdit(props) {
               </Col>
             </Row>
             <FormGroup style={styles}>
-              <div style={{ width: "150px" }}>
+              <div style={{ width: "153px" }}>
                 <label className="h-label h-lable-Obligatory">
                   Lịch trình tour
                 </label>
               </div>
-              <div style={{ width: "calc(100% - 150px)", marginLeft: "3px" }}>
+              <div style={{ width: "calc(100% - 153px)" }}>
                 <FastField
                   className="h-editor form-control"
                   name="Schedule"
@@ -533,8 +458,8 @@ function TourAddEdit(props) {
               </div>
             </FormGroup>
             <FormGroup style={{ marginTop: "2px", ...styles }}>
-              <div style={{ width: "150px" }}></div>
-              <div style={{ width: "calc(100% - 150px)" }}></div>
+              <div style={{ width: "153px" }}></div>
+              <div style={{ width: "calc(100% - 153px)" }}></div>
             </FormGroup>
           </Col>
         </Row>
@@ -544,6 +469,7 @@ function TourAddEdit(props) {
 }
 
 TourAddEdit.propTypes = {
+  validationSchema: PropTypes.object,
   onGetTOuristByRegions: PropTypes.func,
   touristAttrByRegions: PropTypes.array,
   initialValues: PropTypes.object.isRequired,

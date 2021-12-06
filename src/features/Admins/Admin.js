@@ -1,13 +1,14 @@
-import { unwrapResult } from "@reduxjs/toolkit";
-import React, { Suspense, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Switch, Route } from "react-router-dom";
-import * as yup from "yup";
-import MainLayout from "./components/Layout/MainLayout";
-import LoginAdmin from "./components/LoginAdmin/Index";
-import { LoginEmp } from "./Slices/SliceEmployee";
+import React, { Suspense } from "react";
 import { NotificationContainer } from "react-notifications";
+import {
+  BrowserRouter,
+  Redirect,
+  Route,
+  Switch,
+  useRouteMatch,
+} from "react-router-dom";
 import { Spinner } from "reactstrap";
+import MainLayout from "./components/Layout/MainLayout";
 
 const TourManager = React.lazy(() =>
   import("../Admins/pages/TourManager/Index")
@@ -31,59 +32,41 @@ const TourGuide = React.lazy(() =>
   import("../Admins/pages/TourGuideManager/index")
 );
 
+const LoginAdmin = React.lazy(() =>
+  import("../Admins/components/LoginAdmin/Index")
+);
+
 function Admin(props) {
-  const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.employee);
-
-  const initialValues = {
-    userName: "",
-    password: "",
-  };
-  const validationSchema = yup.object().shape({
-    userName: yup.string().required("Username không được để trống!"),
-    password: yup.string().required("Password không được để trống!"),
-  });
-
-  const handleClickLoginEmp = async (values) => {
-    try {
-      const actionResult = await dispatch(LoginEmp(values));
-      const currentEmp = unwrapResult(actionResult);
-      console.log("Login", currentEmp);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // if (!checkLogin) {
-  //   console.log(Object.entries(dataEmp).length === 0);
-  //   return (
-  //     <>
-  //       {/* {loading == "loading" ? <div>loading</div> : <div></div>} */}
-  //       <LoginAdmin
-  //         initialValues={initialValues}
-  //         validationSchema={validationSchema}
-  //         handleLogin={handleClickLoginEmp}
-  //         isLogin={false}
-  //       />
-  //     </>
-  //   );
-  // }
+  const match = useRouteMatch();
   return (
     <>
-      <MainLayout>
-        <Switch>
-          <Suspense fallback={<Spinner color={"secondary"} />}>
-            <Route exact={true} path="/admin" component={TourManager} />
-            <Route path="/admin/Employee" component={Employee} />
-            <Route path="/admin/TouristAttraction" component={TouristAttr} />
-            <Route path="/admin/Province" component={Province} />
-            <Route path="/admin/District" component={District} />
-            <Route path="/admin/Village" component={Wards} />
-            <Route path="/admin/Tourguide" component={TourGuide} />
-          </Suspense>
-        </Switch>
-      </MainLayout>
-      <NotificationContainer />
+      {localStorage.getItem("accessTokenEmp") == null ? (
+        <>
+          <Redirect from="/admin" to="/admin/login" />
+          <Route exact={true} path="/admin/login" component={LoginAdmin} />
+        </>
+      ) : (
+        <>
+          <MainLayout>
+            <Switch>
+              <Suspense fallback={<Spinner color={"secondary"} />}>
+                {/* <Redirect from={`${match.url}/login`} to={`${match.url}`} /> */}
+                <Route exact path={`${match.url}`} component={TourManager} />
+                <Route path={`${match.url}/Employee`} component={Employee} />
+                <Route
+                  path="/admin/TouristAttraction"
+                  component={TouristAttr}
+                />
+                <Route path={`${match.url}/Province`} component={Province} />
+                <Route path={`${match.url}/District`} component={District} />
+                <Route path={`${match.url}/Village`} component={Wards} />
+                <Route path={`${match.url}/Tourguide`} component={TourGuide} />
+              </Suspense>
+            </Switch>
+          </MainLayout>
+          <NotificationContainer />
+        </>
+      )}
     </>
   );
 }

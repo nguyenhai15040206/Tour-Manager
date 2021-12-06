@@ -8,7 +8,6 @@ export const LoginEmp = createAsyncThunk(
   async (values, thunkApi) => {
     try {
       const response = await employeeApi.Login(values);
-      localStorage.setItem("accessTokenEmp", response.accessTokenEmp);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue({ error: error.message });

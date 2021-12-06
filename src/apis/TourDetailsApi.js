@@ -6,6 +6,9 @@ const tourDetailsApi = {
   Adm_InsertTourDetails: (params) => {
     return axiosClient.post(`${url}/Adm_InsertTourDetails`, params);
   },
+  Adm_UpdateTourDetails: (params) => {
+    return axiosClient.put(`${url}/Adm_UpdateTourDetails`, params);
+  },
   Adm_DeleteTourDetailsByTourIds: (params) => {
     return axiosClient.put(`${url}/Adm_DeleteTourDetailsByTourID`, params);
   },

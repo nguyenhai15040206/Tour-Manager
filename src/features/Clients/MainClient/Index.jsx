@@ -9,7 +9,9 @@ const HotelBanner = React.lazy(() =>
   import("../../../components/Hotels/HotelBanner/Index")
 );
 const TourDetails = React.lazy(() => import("../TourDetails/Index"));
-const TourList = React.lazy(() => import("../Pages/TourPages/TourSearch/index"));
+const TourList = React.lazy(() =>
+  import("../Pages/TourPages/TourSearch/index")
+);
 
 function MainClient(props) {
   const [loading, setLoading] = useState(false);

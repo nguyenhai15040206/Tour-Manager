@@ -51,6 +51,7 @@ function SelectField(props) {
         id={name}
         isClearable={true}
         {...field}
+        closeMenuOnSelect={!isMulti}
         options={options}
         isLoading={isLoading}
         isMulti={isMulti}
