@@ -50,7 +50,7 @@ const wardsSlice = createSlice({
 
     /////
     builder.addCase(Adm_GetWardsByIdDistrictCbb.pending, (state) => {
-      state.dataWardsCbb = null;
+      state.dataWardsCbb = [];
       state.loading = "loading";
     });
     builder.addCase(

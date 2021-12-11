@@ -52,7 +52,7 @@ const districtSlice = createSlice({
 
     ///get by province cbb
     builder.addCase(Adm_GetDistrictByProvinceCBB.pending, (state) => {
-      state.dataDistrictCbb = null;
+      state.dataDistrictCbb = [];
       state.loading = "loading";
     });
     builder.addCase(

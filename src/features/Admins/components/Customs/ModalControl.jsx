@@ -62,13 +62,7 @@ function ModalControl(props) {
           return (
             <Form>
               <ModalBody>{children}</ModalBody>
-              <ModalFooter
-                style={{
-                  justifyContent: "start",
-                  padding: "2px 20rem 3px 16rem",
-                  backgroundColor: "#fff",
-                }}
-              >
+              <ModalFooter style={props.style}>
                 <button
                   className="h-button"
                   type="button"
@@ -96,7 +90,6 @@ function ModalControl(props) {
                   type="button"
                   onClick={() => {
                     submitAction = "SaveAndClosed";
-                    //alert("OK");
                     formikProps.submitForm();
                   }}
                   className="h-button"

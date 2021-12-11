@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Login from "../Auth/Login/Index";
+import icon_logo_mytour_white from "../../assets/logo/icon_logo_mytour_white.svg";
 import "./styles.scss";
 
 function Header(props) {
@@ -97,7 +98,7 @@ Header.propTypes = {
 };
 
 Header.defaultProps = {
-  logo: "https://storage.googleapis.com/tripi-assets/mytour/icons/icon_logo_mytour_white.svg",
+  logo: icon_logo_mytour_white,
   color: "#ffffff",
   position: "absolute",
   background:

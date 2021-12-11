@@ -1,3 +1,107 @@
+//Nguyễn Tấn Hải 2021-12-19
+// table Phương tiện
+export const tableColoumnCompanyTransport = [
+  {
+    field: `companyId`,
+    headerName: "Mã công công ty",
+    sortTable: true,
+    unSortIcon: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
+    headerCheckboxSelection: true,
+    minWidth: 250,
+  },
+
+  {
+    field: "companyName",
+    headerName: "Tên công ty",
+    filter: true,
+    minWidth: 200,
+  },
+  {
+    field: "enumerationID",
+    headerName: "Loại phương tiện",
+    minWidth: 200,
+  },
+  {
+    field: "companyImage",
+    headerName: "Ảnh đại diện",
+    minWidth: 200,
+  },
+  {
+    field: "phoneNumber",
+    headerName: "Số điện thoại",
+    minWidth: 150,
+  },
+  {
+    field: "address",
+    headerName: "Địa chỉ",
+    minWidth: 200,
+  },
+  {
+    field: "empIDUpdate",
+    headerName: "Người cập nhật",
+    minWidth: 200,
+  },
+  {
+    field: "dateUpdate",
+    headerName: "Ngày cập nhật",
+    minWidth: 150,
+  },
+];
+
+// table khuyến mãi
+export const tableColumnPromotion = [
+  {
+    field: `promotionId`,
+    headerName: "Mã khuyến mãi",
+    sortTable: true,
+    unSortIcon: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
+    headerCheckboxSelection: true,
+    minWidth: 250,
+  },
+
+  {
+    field: "promotionName",
+    headerName: "Tên khuyên mãi",
+    filter: true,
+    minWidth: 300,
+  },
+  {
+    field: "dateStart",
+    headerName: "Ngày bắt đầu",
+    minWidth: 150,
+  },
+  {
+    field: "dateEnd",
+    headerName: "Ngày kết thúc",
+    minWidth: 150,
+  },
+  {
+    field: "discount",
+    headerName: "Giảm giá(%)",
+    minWidth: 120,
+  },
+  {
+    field: "isApplyAll",
+    headerName: "Áp dụng cho tất cả",
+    sortTable: true,
+    unSortIcon: true,
+    minWidth: 200,
+    cellRenderer: (params) => {
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.readonly = "readonly";
+      input.checked = params.value;
+      return input;
+    },
+  },
+];
+
 // Nguyễn Tấn Hải 2021-11-11
 // Tour
 export const tableColumnsTour = [
@@ -81,12 +185,8 @@ export const tableColumnsTour = [
     cellRenderer: (params) => {
       var input = document.createElement("input");
       input.type = "checkbox";
-      //input.className = "form-check-input";
+      input.readOnly = true;
       input.checked = params.value;
-      // input.addEventListener("click", function (event) {
-      //   params.value = !params.value;
-      //   params.node.data.fieldName = params.value;
-      // });
       return input;
     },
     minWidth: 150,

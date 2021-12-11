@@ -1,18 +1,10 @@
 import React, { Suspense } from "react";
 import { NotificationContainer } from "react-notifications";
-import {
-  BrowserRouter,
-  Redirect,
-  Route,
-  Switch,
-  useRouteMatch,
-} from "react-router-dom";
+import { Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import { Spinner } from "reactstrap";
 import MainLayout from "./components/Layout/MainLayout";
+import TourManagement from "../Admins/pages/TourManager/TourManagement";
 
-const TourManager = React.lazy(() =>
-  import("../Admins/pages/TourManager/Index")
-);
 const Employee = React.lazy(() =>
   import("../Admins/pages/EmployeeManager/index")
 );
@@ -32,9 +24,15 @@ const TourGuide = React.lazy(() =>
   import("../Admins/pages/TourGuideManager/index")
 );
 
+const Transport = React.lazy(() =>
+  import("../Admins/pages/TravelCompayTransport/Index")
+);
+
 const LoginAdmin = React.lazy(() =>
   import("../Admins/components/LoginAdmin/Index")
 );
+
+const Promotion = React.lazy(() => import("../Admins/pages/Promotion/Index"));
 
 function Admin(props) {
   const match = useRouteMatch();
@@ -48,11 +46,16 @@ function Admin(props) {
       ) : (
         <>
           <MainLayout>
-            <Switch>
-              <Suspense fallback={<Spinner color={"secondary"} />}>
-                {/* <Redirect from={`${match.url}/login`} to={`${match.url}`} /> */}
-                <Route exact path={`${match.url}`} component={TourManager} />
-                <Route path={`${match.url}/Employee`} component={Employee} />
+            <Suspense fallback={<Spinner color={"secondary"} />}>
+              <Switch>
+                <Redirect exact from={`/admin`} to="/admin/TourManager" />
+                <Redirect from="/admin/login" to="/admin/TourManager" />
+                <Route
+                  path={`${match.url}/TourManager`}
+                  component={TourManagement}
+                />
+                <Route path={`/admin/Employee`} component={Employee} />
+                <Route path={`/admin/Promotion`} component={Promotion} />
                 <Route
                   path="/admin/TouristAttraction"
                   component={TouristAttr}
@@ -61,8 +64,9 @@ function Admin(props) {
                 <Route path={`${match.url}/District`} component={District} />
                 <Route path={`${match.url}/Village`} component={Wards} />
                 <Route path={`${match.url}/Tourguide`} component={TourGuide} />
-              </Suspense>
-            </Switch>
+                <Route path={`${match.url}/Transport`} component={Transport} />
+              </Switch>
+            </Suspense>
           </MainLayout>
           <NotificationContainer />
         </>

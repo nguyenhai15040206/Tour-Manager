@@ -6,11 +6,13 @@ import tourReducer from "../features/Admins/Slices/SliceTour";
 import tourDetailsReducer from "../features/Admins/Slices/SliceTourDetails";
 import touristAttrReducer from "../features/Admins/Slices/SliceTouristAttraction";
 import travelTypeReducer from "../features/Admins/Slices/SliceTravelType";
-import unitPriceReducer from "../features/Admins/Slices/SliceUnitPrice";
 import customerReducer from "../features/Clients/Customers/SliceCustomer";
 import districtReducer from "../features/Admins/Slices/SliceDistrict";
 import wardsReducer from "../features/Admins/Slices/SliceWards";
 import tourGuideReducer from "../features/Admins/Slices/SliceTourGuide";
+import promotionReducer from "../features/Admins/Slices/SlicePromotion";
+import enumConstantReducer from "../features/Admins/Slices/SliceEnumConstant";
+import travelConpanyTransportSliceReducer from "../features/Admins/Slices/SliceTravelConpanyTransport";
 
 export default configureStore({
   reducer: {
@@ -20,12 +22,14 @@ export default configureStore({
     touristAttraction: touristAttrReducer,
     address: addressReducer,
     tourDetails: tourDetailsReducer,
-    unitPrice: unitPriceReducer,
     imagesUpload: imagesUploadReducer,
     travelType: travelTypeReducer,
     district: districtReducer,
     wards: wardsReducer,
     tourGuide: tourGuideReducer,
+    promotion: promotionReducer,
+    enumConstant: enumConstantReducer,
+    travelConpanyTransport: travelConpanyTransportSliceReducer,
   },
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

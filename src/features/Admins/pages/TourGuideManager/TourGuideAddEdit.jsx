@@ -99,6 +99,11 @@ function TourGuideAddEdit(props) {
       {stateTourGuide.loading === "loading" && <Loading loading={true} />}
       <ModalControl
         backdrop={"static"}
+        style={{
+          justifyContent: "start",
+          padding: "2px 20rem 3px 16rem",
+          backgroundColor: "#fff",
+        }}
         toggle={props.toggle}
         showModal={props.showModal}
         className={props.className}

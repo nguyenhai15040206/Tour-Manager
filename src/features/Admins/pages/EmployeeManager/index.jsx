@@ -183,7 +183,6 @@ function EmployeeManager(props) {
     };
     const params = {};
     if (values.empId !== "") {
-      // edit xong e làm gi nưa khong, khong lam thi khoi lay unwrapRS
       dispatch(
         Adm_EditEmployee(Object.assign({ empId: values.empId }, employee))
       )
