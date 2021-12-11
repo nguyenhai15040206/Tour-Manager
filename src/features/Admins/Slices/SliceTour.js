@@ -78,7 +78,7 @@ export const Cli_GetTourDetailsByTourID = createAsyncThunk(
 const tourSlice = createSlice({
   name: "Tour",
   initialState: {
-    tourByID: null,
+    tourByID: {},
     dataInsert: {},
     tourList: null,
     loading: "idle",

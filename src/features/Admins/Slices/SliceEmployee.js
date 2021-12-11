@@ -21,7 +21,6 @@ export const Adm_GetEmployeeList = createAsyncThunk(
   async (values, thunkApi) => {
     try {
       const response = await employeeApi.Adm_GetEmployeeList(values);
-      console.log(response);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue({ error: error.message });
@@ -62,7 +61,6 @@ export const Adm_DeleteEmployee = createAsyncThunk(
   async (values, thunkApi) => {
     try {
       const response = await employeeApi.Adm_DeleteEmployee(values);
-      console.log("response.data", response.data);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data);

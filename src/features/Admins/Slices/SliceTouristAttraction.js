@@ -110,6 +110,7 @@ const touristAttrSlice = createSlice({
     //end
     // Start Get  tour Attraction by regions
     builder.addCase(Adm_GetTouristAttByRegions.pending, (state) => {
+      state.touristAttrByRegions = [];
       state.loading = "loading";
     });
 

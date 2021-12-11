@@ -35,18 +35,11 @@ import {
 } from "../../Slices/SliceTour";
 import {
   Adm_DeleteTourDetailsByTourIds,
-  Adm_InsertTourDetails,
   Adm_UpdateTourDetails,
 } from "../../Slices/SliceTourDetails";
 import { Adm_GetTouristAttByRegions } from "../../Slices/SliceTouristAttraction";
 import { Adm_GetTravelTypeCbo } from "../../Slices/SliceTravelType";
-import {
-  Adm_DeleteUnitPriceByTourIds,
-  Adm_InsertUnitPrice,
-  Adm_UpdateUnitPrice,
-} from "../../Slices/SliceUnitPrice";
-import TourAddEdit from "./TourAddEdit";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const initialValuesSearch = {
   TourName: "",
@@ -77,6 +70,7 @@ const initialValuesInsert = {
   TouristAttaction: [],
 };
 function TourManager(props) {
+  document.title = "Quản lý tour";
   // state in components
   const [rating, setRating] = useState(3);
   const [showModal, setShowModal] = useState(false);
@@ -154,282 +148,30 @@ function TourManager(props) {
       console.log(err);
     }
   };
-  // handeCLick change rating
-  const handleClickChangeRating = (rating) => {
-    console.log(rating);
-    setRating(rating);
-  };
-
-  // onSubmitForm
-  //Nguyễn Tấn Hải - bắt sự kiện submit form
-  //Thêm mới dữ liệu TOur => call APi khi submit on success!
-  const onInsertTour = (tour, values) => {
-    let formData = new FormData();
-    formData.append("file", imageUpload);
-    dispatch(Adm_UploadImageTour(formData))
-      .then(unwrapResult)
-      .then((payload) => {
-        dispatch(Adm_InsertTour({ ...tour, tourImg: payload.fileName }))
-          .then(unwrapResult)
-          .then((payload) => {
-            const tourIDPayload = payload.tourId;
-            if (tourIDPayload === undefined) {
-              return NotificationManager.error(`Lỗi`, "Thêm thất bại!", 1500);
-            }
-            // insert tour => insert tourDetails => insert dong gia
-            console.log(tourIDPayload);
-            console.log(values);
-            const unitPrice = {
-              tourId: tourIDPayload,
-              adultUnitPrice: values.AdultUnitPrice,
-              childrenUnitPrice: 5000,
-              babyUnitPrice: values.BabyUnitPrice,
-              empIDInsert: JSON.parse(localStorage.getItem("accessTokenEmp"))
-                .data.empId,
-              empIdUpdate: JSON.parse(localStorage.getItem("accessTokenEmp"))
-                .data.empId,
-            };
-            dispatch(Adm_InsertUnitPrice(unitPrice))
-              .then(unwrapResult)
-              .then(async () => {
-                let arrTouristAttr = values.TouristAttaction;
-                if (Array.isArray(arrTouristAttr)) {
-                  try {
-                    arrTouristAttr.map(async (item) => {
-                      const tourDetails = {
-                        tourID: tourIDPayload,
-                        touristAttrID: item,
-                        empIDInsert: JSON.parse(
-                          localStorage.getItem("accessTokenEmp")
-                        ).data.empId,
-                        empIDUpdate: JSON.parse(
-                          localStorage.getItem("accessTokenEmp")
-                        ).data.empId,
-                      };
-                      return await dispatch(Adm_InsertTourDetails(tourDetails));
-                    });
-                    await dispatch(Adm_GetTourList(initialValuesSearch));
-                    return NotificationManager.success(
-                      `Thêm thành công!`,
-                      "Success!",
-                      1500
-                    );
-                  } catch (err) {
-                    return NotificationManager.error(`${err}`, "Error!", 1500);
-                  }
-                }
-              })
-              .catch((err) => {
-                return NotificationManager.error(
-                  `${err}`,
-                  "Thêm thất bại!",
-                  1500
-                );
-              });
-          })
-          .catch((err) => {
-            if ((err.status = 401)) {
-              console.log(err.status);
-              //history.push("/admin");
-              //console.log("Vui lòng đăng nhập lại");
-            }
-            return NotificationManager.error(`${err}`, "Thêm thất bại!", 1500);
-          });
-      })
-      .catch((err) => {
-        return NotificationManager.error(`${err}`, "Thêm thất bại!", 1500);
-      });
-  };
-
-  const onEditTour = async (tour, values) => {
-    let tourImageEdit = "";
-    try {
-      if (values.TourImg !== "") {
-        let formData = new FormData();
-        formData.append("file", imageUpload);
-        tourImageEdit = unwrapResult(
-          await dispatch(Adm_UploadImageTour(formData))
-        ).fileName;
-      }
-      dispatch(
-        Adm_UpdateTour({
-          ...tour,
-          tourImg: tourImageEdit,
-          tourId: values.TourID,
-        })
-      )
-        .then(unwrapResult)
-        .then(async (payload) => {
-          const unitPrice = {
-            tourId: payload.tourId,
-            adultUnitPrice: values.AdultUnitPrice,
-            childrenUnitPrice: values.ChildrenUnitPrice,
-            babyUnitPrice: values.BabyUnitPrice,
-            empIDUpdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
-              .empId,
-          };
-          await dispatch(Adm_UpdateUnitPrice(unitPrice));
-          const dataUpdateTourDetails = {
-            TourID: payload.tourId,
-            TourAttrIds: values.TouristAttaction,
-            EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data
-              .empId,
-          };
-          await dispatch(Adm_UpdateTourDetails(dataUpdateTourDetails));
-          await dispatch(Adm_GetTourList(initialValuesSearch));
-          return NotificationManager.success(
-            "Cập nhật thành công!",
-            "Success!",
-            1500
-          );
-        })
-        .catch((error) => {
-          if (error.status === 401) {
-            localStorage.removeItem("accessTokenEmp");
-            return history.push("/admin/login");
-          }
-          return NotificationManager.error(
-            `${error.error}`,
-            "Thêm thất bại!",
-            1500
-          );
-        });
-    } catch (err) {
-      console.log(err);
-      return NotificationManager.error(`${err}`, "Thêm thất bại!", 1500);
-    }
-  };
-  const handleClickOnSumitForm = async (values) => {
-    //thực hiện call dữ liệu
-    const tour = {
-      tourName: values.TourName,
-      description: values.Description,
-      dateStart: values.DateStart,
-      dateEnd: values.DateEnd,
-      transport: values.Transport,
-      quaniTyMax: values.QuanityMax,
-      quanityMin: values.QuanityMin,
-      currentQuanity: values.CurrentQuanity === "" ? 0 : values.CurrentQuanity,
-      Schedule: values.Schedule,
-      rating: rating,
-      travelTypeID: "972c5fc0-a815-41a2-8de1-1fe5301fb76c", //
-      DeparturePlace: values.DeparturePlace,
-      tourGuideID: null, //
-      suggest: true, //
-      EmpIDInsert: JSON.parse(localStorage.getItem("accessTokenEmp")).data
-        .empId,
-      EmpIdupdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
-        .empId,
-      status: null, //
-    };
-    if (values.TourID !== "") {
-      // edit here
-      onEditTour(tour, values);
-    } else {
-      onInsertTour(tour, values);
-    }
-  };
   // showModel Add Edit form
-  const handleClickShowModal = async () => {
-    try {
-      setInitialValues(initialValuesInsert);
-      setValidateShemaTourAddEdit(validationSchema.TourManagerAdd);
-      await dispatch(Adm_GetProvince({}));
-      setImageDefault(`${imageDefaultPNG}`);
-      setShowModal(true);
-    } catch (err) {
-      return NotificationManager.error(`${err}`, "Error", 1500);
-    }
+  const handleClickAddTour = () => {
+    history.push("/admin/TourManager/Create");
   };
 
   // closed toggle
   const toggle = () => {
-    setShowModal(false);
     setShowConfirm(false);
   };
 
-  // handle click change regions => get tourRistAttr
-  const handleChangeRegions = async (e) => {
-    try {
-      if (e === null || e === "") {
-        return;
-      }
-      const params = {
-        regions: e.value,
-      };
-      await dispatch(Adm_GetTouristAttByRegions(params));
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   // handleClick Edit tour by Id => get tourDetails
-  const handleEditTour = async (tourId) => {
-    try {
-      const params = {
-        tourId: tourId,
-      };
-      setValidateShemaTourAddEdit(validationSchema.TourManagerEdit);
-      dispatch(Adm_GetTourById(params))
-        .then(unwrapResult)
-        .then((payload) => {
-          setImageDefault(`${payload.tourImg}`);
-          setInitialValues({
-            TourID: payload.tourId,
-            TourName: payload.tourName,
-            TourImg: "",
-            Description: payload.description,
-            DeparturePlace: payload.departurePlace,
-            QuanityMax: payload.quanityMax,
-            QuanityMin: payload.quanityMin,
-            CurrentQuanity: payload.currentQuanity,
-            AdultUnitPrice:
-              payload.adultUnitPrice == null ? 0 : payload.adultUnitPrice,
-            ChildrenUnitPrice:
-              payload.childrenUnitPrice == null ? 0 : payload.childrenUnitPrice,
-            BabyUnitPrice:
-              payload.babyUnitPrice == null ? 0 : payload.babyUnitPrice,
-            Regions: payload.regions,
-            Transport: payload.transport.trim(),
-            DateStart: payload.dateStart.slice(0, 10),
-            DateEnd: payload.dateEnd.slice(0, 10),
-            TouristAttaction:
-              payload.tourDetails == null ? [] : payload.tourDetails,
-            Schedule: payload.schedule,
-          });
-          setRating(payload.rating);
-          dispatch(Adm_GetProvince())
-            .then(unwrapResult)
-            .then(() => {
-              const params = {
-                regions: payload.regions,
-              };
-              dispatch(Adm_GetTouristAttByRegions(params))
-                .then(unwrapResult)
-                .then(() => {
-                  setShowModal(true);
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  // handle Change Image
-  const handleChangeImage = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      setImageUpload(event.target.files[0]);
-      setImageDefault(URL.createObjectURL(event.target.files[0]));
-    }
+  const handleEditTour = (tourId) => {
+    const params = {
+      tourId: tourId,
+    };
+    dispatch(Adm_GetTourById(params))
+      .then(unwrapResult)
+      .then(() => {
+        const editTourUrl = `/admin/TourManager/Edit/tourID=${tourId}`;
+        history.push(editTourUrl);
+      })
+      .catch((err) => {
+        return NotificationManager.error(`${err}`, "Thêm thất bại!", 1500);
+      });
   };
 
   // handel click Delete MultiRow
@@ -442,23 +184,16 @@ function TourManager(props) {
     dispatch(Adm_DeleteTourByIds(DeleteModels))
       .then(unwrapResult)
       .then(() => {
-        dispatch(Adm_DeleteUnitPriceByTourIds(DeleteModels))
+        dispatch(Adm_DeleteTourDetailsByTourIds(DeleteModels))
           .then(unwrapResult)
-          .then(() => {
-            dispatch(Adm_DeleteTourDetailsByTourIds(DeleteModels))
-              .then(unwrapResult)
-              .then(async () => {
-                await dispatch(Adm_GetTourList({}));
-                setShowConfirm(false);
-                return NotificationManager.success(
-                  `Xóa thành công!`,
-                  "Success!",
-                  1500
-                );
-              })
-              .catch((err) => {
-                return NotificationManager.error(`${err}!`, "Error!", 1500);
-              });
+          .then(async () => {
+            await dispatch(Adm_GetTourList({}));
+            setShowConfirm(false);
+            return NotificationManager.success(
+              `Xóa thành công!`,
+              "Success!",
+              1500
+            );
           })
           .catch((err) => {
             return NotificationManager.error(`${err}!`, "Error!", 1500);
@@ -476,25 +211,6 @@ function TourManager(props) {
         ConfirmDelete={confirmDeleteMultiRow}
         showModal={showConfirm}
         toggle={toggle}
-      />
-      <TourAddEdit
-        className="modal-xl"
-        backdrop={"static"}
-        toggle={toggle}
-        rating={rating}
-        onSubmitForm={(values) => {
-          handleClickOnSumitForm(values);
-        }}
-        onChangeRating={(rating) => {
-          handleClickChangeRating(rating);
-        }}
-        onChangeImage={handleChangeImage}
-        touristAttrByRegions={stateTourisAtt.touristAttrByRegions}
-        onGetTOuristByRegions={handleChangeRegions}
-        imageDefault={`${imageDefault}`}
-        initialValues={initialValues}
-        validationSchema={validateShemaTourAddEdit}
-        showModal={showModal}
       />
       <Container
         fluid
@@ -658,7 +374,7 @@ function TourManager(props) {
                                   <div className="commandToolBarWidge">
                                     <button
                                       type="button"
-                                      onClick={handleClickShowModal}
+                                      onClick={handleClickAddTour}
                                       className="h-button"
                                     >
                                       <IoMdAddCircle
@@ -667,6 +383,7 @@ function TourManager(props) {
                                       />{" "}
                                       Tạo mới
                                     </button>
+
                                     <button
                                       type="submit"
                                       className="h-button"

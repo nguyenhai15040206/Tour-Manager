@@ -212,18 +212,17 @@ input.form-check-input:focus{
     font-weight: 400 !important;
     color: #333 !important;
     margin-left: 5px !important;
-    margin-top: 4px !important;
+    margin-top: 6px !important;
 }
 
 .h-checkbox{
-    margin-left: 3.5px !important;
     width: 15px !important;
     height: 15px !important;
 }
 
 .h-label{
-    white-space: nowrap;
     font-family: "Poppins", sans-serif;
+    white-space: pre-wrap;
     font-size: 13px !important;
     font-weight: 400 !important;
     margin-left: 10px !important;
@@ -296,6 +295,19 @@ input.form-control-file{
 
 .DraftEditor-editorContainer{
     z-index: 0 !important;
+}
+
+.cr-notfound{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.cr-notfound__shadow{
+    max-width: 80%;
+    height: auto;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    border-radius: 0.25rem!important;
 }
 
 

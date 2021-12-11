@@ -47,6 +47,11 @@ function TouristAttrAddEdit(props) {
         initialValues={initialValues}
         validationSchema={validationSchema}
         backdrop={"static"}
+        style={{
+          justifyContent: "start",
+          padding: "2px 20rem 3px 16rem",
+          backgroundColor: "#fff",
+        }}
         toggle={props.toggle}
         className={props.className}
         showModal={props.showModal}

@@ -9,6 +9,8 @@ import {
   MdInsertChart,
   MdKeyboardArrowDown,
   MdNotificationsActive,
+  MdOutlineAirplaneTicket,
+  MdOutlineTravelExplore,
   MdRadioButtonChecked,
   MdStar,
   MdViewDay,
@@ -16,9 +18,14 @@ import {
   MdWeb,
   MdWidgets,
 } from "react-icons/md";
+import { BsPersonSquare } from "react-icons/bs";
+import { HiOutlineSpeakerphone } from "react-icons/hi";
+import { SiGoogletagmanager, SiYourtraveldottv } from "react-icons/si";
 import { FaMapMarkedAlt, FaCanadianMapleLeaf } from "react-icons/fa";
 import { SiOpenstreetmap } from "react-icons/si";
+import { BiCategory } from "react-icons/bi";
 import { RiMapPin2Fill } from "react-icons/ri";
+import { VscGroupByRefType } from "react-icons/vsc";
 import { Link, NavLink } from "react-router-dom";
 import {
   Collapse,
@@ -38,10 +45,50 @@ const sidebarBackground = {
 };
 
 const navItems = [
-  { to: "/admin", name: "dashboard", exact: true, Icon: MdDashboard },
-  { to: "/admin/TouristAttraction", name: "cards", exact: false, Icon: MdWeb },
-  { to: "/admin/Employee", name: "charts", exact: false, Icon: MdInsertChart },
-  { to: "/admin/anh", name: "widgets", exact: false, Icon: MdWidgets },
+  { to: "/admin/a", name: "dashboard", exact: true, Icon: MdDashboard },
+  {
+    to: "/admin/Employee",
+    name: "Quản lý nhân viên",
+    exact: false,
+    Icon: BsPersonSquare,
+  },
+  { to: "/admin/abcd", name: "charts", exact: false, Icon: MdInsertChart },
+];
+
+const navTransportManager = [
+  {
+    to: "/admin/TransportABC",
+    name: "Loại phương tiện",
+    exact: false,
+    Icon: VscGroupByRefType,
+  },
+  {
+    to: "/admin/Transport",
+    name: "Phương tiện di chuyển",
+    exact: false,
+    Icon: MdOutlineAirplaneTicket,
+  },
+];
+
+const navTourManager = [
+  {
+    to: "/admin/TourManager",
+    name: "Quản lý tour du lịch",
+    exact: false,
+    Icon: SiYourtraveldottv,
+  },
+  {
+    to: "/admin/TouristAttraction",
+    name: "DS địa điểm du lịch",
+    exact: false,
+    Icon: MdOutlineTravelExplore,
+  },
+  {
+    to: "/admin/Promotion",
+    name: "Khuyến mãi",
+    exact: false,
+    Icon: HiOutlineSpeakerphone,
+  },
 ];
 const navGeographySocial = [
   {
@@ -108,11 +155,20 @@ function Sidebar(props) {
   // };
   const [isOpenComponents, setOpenComponent] = useState(false);
   const [isOpenGeographySocial, setOpenGeographySocial] = useState(false);
+  const [isOpenTourManager, setOpenTourManager] = useState(false);
+  const [isOpenTransportManager, setOpenTransportManager] = useState(false);
   const handleClick = () => {
     setOpenComponent(!isOpenComponents);
   };
   const handleClickGeographySocial = () => {
     setOpenGeographySocial(!isOpenGeographySocial);
+  };
+
+  const handleClickTourManager = () => {
+    setOpenTourManager(!isOpenTourManager);
+  };
+  const handleClickTransportManager = () => {
+    setOpenTransportManager(!isOpenTransportManager);
   };
   return (
     <aside
@@ -133,11 +189,51 @@ function Sidebar(props) {
           </Link>
         </Navbar>
         <Nav vertical>
+          <NavItem
+            className="cr-sidebar__nav-item"
+            onClick={() => {
+              handleClickTourManager();
+            }}
+          >
+            <BsNavLink className="cr-sidebar__nav-item-collapse">
+              <div>
+                <SiGoogletagmanager className="cr-sidebar__nav-item-icon" />
+                <span className=" align-self-start">Danh mục Travel</span>
+              </div>
+              <MdKeyboardArrowDown
+                className="cr-sidebar__nav-item-icon"
+                style={{
+                  padding: 0,
+                  transform: isOpenTourManager
+                    ? "rotate(0deg)"
+                    : "rotate(-90deg)",
+                  transition: "transform 0.3s",
+                }}
+              />
+            </BsNavLink>
+          </NavItem>
+          <Collapse isOpen={isOpenTourManager}>
+            {navTourManager.map(({ to, name, exact, Icon }, index) => (
+              <NavItem key={index} className="cr-sidebar__nav-item">
+                <BsNavLink
+                  id={`navItem-${name}-${index}`}
+                  className=""
+                  tag={NavLink}
+                  to={to}
+                  activeClassName="active"
+                  exact={exact}
+                >
+                  <Icon className="cr-sidebar__nav-item-icon" />
+                  <span className="">{name}</span>
+                </BsNavLink>
+              </NavItem>
+            ))}
+          </Collapse>
           {navItems.map(({ to, name, exact, Icon }, index) => (
             <NavItem key={index} className="cr-sidebar__nav-item">
               <BsNavLink
                 id={`navItem-${name}-${index}`}
-                className="text-uppercase"
+                //className="text-uppercase"
                 tag={NavLink}
                 to={to}
                 activeClassName="active"
@@ -151,11 +247,51 @@ function Sidebar(props) {
           <NavItem
             className="cr-sidebar__nav-item"
             onClick={() => {
+              handleClickTransportManager();
+            }}
+          >
+            <BsNavLink className="cr-sidebar__nav-item-collapse">
+              <div>
+                <BiCategory className="cr-sidebar__nav-item-icon" />
+                <span className=" align-self-start">DM Phương tiện</span>
+              </div>
+              <MdKeyboardArrowDown
+                className="cr-sidebar__nav-item-icon"
+                style={{
+                  padding: 0,
+                  transform: isOpenTransportManager
+                    ? "rotate(0deg)"
+                    : "rotate(-90deg)",
+                  transition: "transform 0.3s",
+                }}
+              />
+            </BsNavLink>
+          </NavItem>
+          <Collapse isOpen={isOpenTransportManager}>
+            {navTransportManager.map(({ to, name, exact, Icon }, index) => (
+              <NavItem key={index} className="cr-sidebar__nav-item">
+                <BsNavLink
+                  id={`navItem-${name}-${index}`}
+                  className=""
+                  tag={NavLink}
+                  to={to}
+                  activeClassName="active"
+                  exact={exact}
+                >
+                  <Icon className="cr-sidebar__nav-item-icon" />
+                  <span className="">{name}</span>
+                </BsNavLink>
+              </NavItem>
+            ))}
+          </Collapse>
+          <NavItem
+            className="cr-sidebar__nav-item"
+            onClick={() => {
               handleClick();
             }}
           >
             <BsNavLink className="cr-sidebar__nav-item-collapse">
-              <div className="d-flex">
+              <div>
                 <MdExtension className="cr-sidebar__nav-item-icon" />
                 <span className=" align-self-start">Components</span>
               </div>
@@ -176,7 +312,7 @@ function Sidebar(props) {
               <NavItem key={index} className="cr-sidebar__nav-item">
                 <BsNavLink
                   id={`navItem-${name}-${index}`}
-                  className="text-uppercase"
+                  //className="text-uppercase"
                   tag={NavLink}
                   to={to}
                   activeClassName="active"
@@ -195,7 +331,7 @@ function Sidebar(props) {
             }}
           >
             <BsNavLink className="cr-sidebar__nav-item-collapse">
-              <div className="d-flex">
+              <div>
                 <FaCanadianMapleLeaf className="cr-sidebar__nav-item-icon" />
                 <span className=" align-self-start">Địa lý - xã hội</span>
               </div>

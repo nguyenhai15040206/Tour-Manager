@@ -1,6 +1,6 @@
 import React from "react";
-import { MdClearAll, MdNotificationsActive } from "react-icons/md";
-import { Button, Nav, Navbar, NavItem, NavLink } from "reactstrap";
+import { MdClearAll, MdNotificationsActive, MdSearch } from "react-icons/md";
+import { Button, Form, Input, Nav, Navbar, NavItem, NavLink } from "reactstrap";
 import "./styles.scss";
 
 function Header(props) {
@@ -30,7 +30,7 @@ function Header(props) {
             <NavLink>
               <img
                 className="cr-header__avatar rounded-circle"
-                src="https://scontent.fdad3-3.fna.fbcdn.net/v/t1.6435-1/c0.80.240.240a/p240x240/176880266_1609953652536323_438876987912733542_n.jpg?_nc_cat=111&ccb=1-5&_nc_sid=7206a8&_nc_ohc=SqGaeFhVJfIAX8jXaiB&_nc_ht=scontent.fdad3-3.fna&oh=5e050d18dc7e891764598eaa2528533c&oe=619BDA22"
+                src="https://reduction-admin.github.io/react-reduction/static/media/100_4.978e51b5.jpg"
                 alt=""
               />
             </NavLink>

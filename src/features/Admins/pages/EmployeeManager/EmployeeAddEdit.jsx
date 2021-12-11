@@ -73,6 +73,11 @@ function EmployeeAddEdit(props) {
       <ModalControl
         backdrop={"static"}
         toggle={props.toggle}
+        style={{
+          justifyContent: "start",
+          padding: "2px 20rem 3px 16rem",
+          backgroundColor: "#fff",
+        }}
         showModal={props.showModal}
         className={props.className}
         initialValues={initialValues} // init nay la cai props

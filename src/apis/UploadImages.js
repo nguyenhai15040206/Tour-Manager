@@ -8,6 +8,12 @@ const imagesUpload = {
     };
     return axiosClient.post(`${url}/Adm_UploadImageTour`, data, config);
   },
+  UploadImageCompany: (data) => {
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+    };
+    return axiosClient.post(`${url}/UploadImageCompany`, data, config);
+  },
 };
 
 export default imagesUpload;
