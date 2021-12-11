@@ -268,7 +268,7 @@ function EmployeeManager(props) {
       />
       <Container
         fluid
-        className="animate__animated animate_slideInUp animate__delay-0.5s "
+        className="animate__animated animate__slideInUp animate__delay-0.5s "
       >
         <Row>
           <Col>
