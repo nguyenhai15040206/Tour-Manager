@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -222,22 +221,19 @@ function Transport(props) {
             })
             .catch((err) => {
               return NotificationManager.error(
-                `${err.message}`,
+                `${err.error}`,
                 "Vui lòng kiểm tra lại"
               );
             });
         })
         .catch((err) => {
           return NotificationManager.error(
-            `${err.message}`,
+            `${err.error}`,
             "Vui lòng kiểm tra lại"
           );
         });
     } catch (err) {
-      return NotificationManager.error(
-        `${err.message}`,
-        "Vui lòng kiểm tra lại"
-      );
+      return NotificationManager.error(`${err.error}`, "Vui lòng kiểm tra lại");
     }
   };
 
@@ -283,7 +279,6 @@ function Transport(props) {
       if (values.CompanyImage !== "") {
         let formData = new FormData();
         formData.append("file", imageUpload);
-        console.log(imageUpload);
         companyImageEdit = unwrapResult(
           await dispatch(UploadImageCompany(formData))
         ).fileName;
@@ -354,7 +349,7 @@ function Transport(props) {
       // nếu là chưa chọn => vui lòng chọn dòng cần xóa
       if (Ids[0] === "") {
         return NotificationManager.warning(
-          "Chọn một dòng để xóa",
+          "Chọn một dòng để xóa!!!",
           "Warning!",
           1500
         );

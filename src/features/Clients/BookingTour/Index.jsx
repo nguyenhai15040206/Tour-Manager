@@ -183,10 +183,22 @@ function BookingTour() {
                 </div>
               </div>
               <ul className="regulation-age">
-                <li>. Người lớn sinh từ <span>11/11/1951</span> đến <span>15/11/2009</span></li>
-                <li>. Trẻ em sinh từ <span>16/11/2009</span> đến <span>15/11/2016</span></li>
-                <li>. Trẻ nhỏ sinh từ <span>16/11/2016</span> đến <span>15/11/2019</span></li>
-                <li>. Em bé sinh từ <span>16/11/2019</span> đến <span>15/11/2021</span></li>
+                <li>
+                  . Người lớn sinh từ <span>11/11/1951</span> đến{" "}
+                  <span>15/11/2009</span>
+                </li>
+                <li>
+                  . Trẻ em sinh từ <span>16/11/2009</span> đến{" "}
+                  <span>15/11/2016</span>
+                </li>
+                <li>
+                  . Trẻ nhỏ sinh từ <span>16/11/2016</span> đến{" "}
+                  <span>15/11/2019</span>
+                </li>
+                <li>
+                  . Em bé sinh từ <span>16/11/2019</span> đến{" "}
+                  <span>15/11/2021</span>
+                </li>
               </ul>
             </div>
             <div className="trip-overview__right">

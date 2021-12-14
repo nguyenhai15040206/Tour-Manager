@@ -8,7 +8,7 @@ import * as yup from "yup";
 import InputField from "../../../../CustomFields/InputField/Index";
 import { LoginEmp } from "../../Slices/SliceEmployee";
 import { PropagateLoader } from "react-spinners";
-import { useHistory, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import "./styles.scss";
 
 function LoginAdmin(props) {
@@ -16,7 +16,6 @@ function LoginAdmin(props) {
   const [timeoutLoading, setTimeoutLoading] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
-  const location = useLocation();
   const { loading } = useSelector((state) => state.employee);
   const initialValues = {
     userName: "anhnghia99",

@@ -1,6 +1,6 @@
 import React from "react";
-import { MdClearAll, MdNotificationsActive, MdSearch } from "react-icons/md";
-import { Button, Form, Input, Nav, Navbar, NavItem, NavLink } from "reactstrap";
+import { MdClearAll, MdNotificationsActive } from "react-icons/md";
+import { Button, Nav, Navbar, NavItem, NavLink } from "reactstrap";
 import "./styles.scss";
 
 function Header(props) {

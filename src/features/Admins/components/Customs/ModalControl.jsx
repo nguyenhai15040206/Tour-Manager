@@ -40,18 +40,18 @@ function ModalControl(props) {
         enableReinitialize={true}
         initialValues={props.initialValues}
         validationSchema={props.validationSchema}
-        onSubmit={(values, { resetForm }) => {
+        onSubmit={async (values, { resetForm }) => {
           if (submitAction === "Save") {
-            props.HandleClickSave(values);
+            await props.HandleClickSave(values);
             return;
           }
           if (submitAction === "SaveAndCreated") {
-            props.HandleClickSaveAndCreated(values);
+            await props.HandleClickSaveAndCreated(values);
             resetForm();
             return;
           }
           if (submitAction === "SaveAndClosed") {
-            props.HandleClickSaveAndClosed(values);
+            await props.HandleClickSaveAndClosed(values);
             toggle();
             return;
           }
@@ -88,9 +88,9 @@ function ModalControl(props) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     submitAction = "SaveAndClosed";
-                    formikProps.submitForm();
+                    await formikProps.submitForm();
                   }}
                   className="h-button"
                   style={{ marginLeft: "4px" }}

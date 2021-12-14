@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import ModalControl from "./../../components/Customs/ModalControl";
 import { Card, CardImg, Col, FormGroup, Row } from "reactstrap";
@@ -7,7 +7,7 @@ import InputField from "./../../../../CustomFields/InputField/Index";
 import RadioField from "./../../../../CustomFields/InputField/RadioField";
 import SelectField from "./../../../../CustomFields/SelectField/Index";
 import * as yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Loading from "./../../../../components/Loading/Index";
 
 const styles = {
@@ -32,7 +32,6 @@ function TourGuideAddEdit(props) {
   const stateWards = useSelector((state) => state?.wards);
   ///console.log(stateWards?.dataWardsCbb);
   ///
-  const dispatch = useDispatch();
 
   const handleClickOnSubmit = async (e) => {
     if (onSubmitForm) {

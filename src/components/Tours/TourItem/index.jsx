@@ -18,7 +18,7 @@ function TourItem(props) {
   const ratingNumber = (rating) => {
     var indents = [];
     for (let index = 0; index < rating; index++) {
-      indents.push(<FaStar />);
+      indents.push(<FaStar key={index} />);
     }
     return indents;
   };

@@ -17,29 +17,20 @@ import {
   Row,
 } from "reactstrap";
 import * as yup from "yup";
-import imageDefaultPNG from "../../../../assets/logo/imageDefault.png";
 import InputField from "../../../../CustomFields/InputField/Index";
 import SelectField from "../../../../CustomFields/SelectField/Index";
 import { tableColumnsTour } from "../../../../utils/Columns";
-import validationSchema from "../../../../utils/ValidateShema";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
 import TableGridControl from "../../components/Customs/TableGridControl";
 import { Adm_GetProvince } from "../../Slices/SliceAddress";
-import { Adm_UploadImageTour } from "../../Slices/SliceImagesUpload";
 import {
   Adm_DeleteTourByIds,
   Adm_GetTourById,
   Adm_GetTourList,
-  Adm_InsertTour,
-  Adm_UpdateTour,
 } from "../../Slices/SliceTour";
-import {
-  Adm_DeleteTourDetailsByTourIds,
-  Adm_UpdateTourDetails,
-} from "../../Slices/SliceTourDetails";
-import { Adm_GetTouristAttByRegions } from "../../Slices/SliceTouristAttraction";
+import { Adm_DeleteTourDetailsByTourIds } from "../../Slices/SliceTourDetails";
 import { Adm_GetTravelTypeCbo } from "../../Slices/SliceTravelType";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const initialValuesSearch = {
   TourName: "",
@@ -50,42 +41,15 @@ const initialValuesSearch = {
   DeparturePlace: [],
 };
 
-const initialValuesInsert = {
-  TourImg: "",
-  TourID: "",
-  TourName: "",
-  Description: "",
-  DateStart: "",
-  DateEnd: "",
-  Transport: "",
-  BabyUnitPrice: "", // đơn giá trẻ em
-  AdultUnitPrice: "", // đơn giá người lớn
-  ChildrenUnitPrice: "", // đơn giá trẻ nhỏ
-  Schedule: "", // Lịch trình
-  QuanityMax: 10,
-  QuanityMin: "",
-  CurrentQuanity: 0,
-  Regions: "",
-  DeparturePlace: "",
-  TouristAttaction: [],
-};
 function TourManager(props) {
-  document.title = "Quản lý tour";
+  document.title = "Quản lý tour du lịch";
   // state in components
-  const [rating, setRating] = useState(3);
-  const [showModal, setShowModal] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [initialValues, setInitialValues] = useState(initialValuesInsert);
-  const [imageDefault, setImageDefault] = useState(`${imageDefaultPNG}`);
-  const [imageUpload, setImageUpload] = useState(null);
   const [selectedTourByIds, setSelectedTourByIds] = useState([]);
-  const [validateShemaTourAddEdit, setValidateShemaTourAddEdit] =
-    useState(null);
   //end
   //state in redux
   const { tourList } = useSelector((state) => state?.tour);
   const stateAddress = useSelector((state) => state.address);
-  const stateTourisAtt = useSelector((state) => state.touristAttraction);
   const stateTravelType = useSelector((state) => state?.travelType);
   //end
   const gridRef = useRef(null);
@@ -289,7 +253,7 @@ function TourManager(props) {
                                   </FormGroup>
                                   <FormGroup className="row">
                                     <label className="col-lg-3 h-label">
-                                      Điểm xuất phát
+                                      Điểm x/phát
                                     </label>
                                     <div className="col-lg-8">
                                       <Field

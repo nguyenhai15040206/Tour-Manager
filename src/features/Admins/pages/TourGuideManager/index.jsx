@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import PropTypes from "prop-types";
 import { Breadcrumb, BreadcrumbItem, Container, FormGroup } from "reactstrap";
 import { Row } from "reactstrap";
 import { Col } from "reactstrap";

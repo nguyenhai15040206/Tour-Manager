@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import Header from "../../../components/Header";
 import { formatCash } from "../../../utils/format";
@@ -33,7 +33,7 @@ function TourDetails(props) {
       }
     };
     fetchDataTourDetails();
-  }, [dispatch]);
+  }, [dispatch, tourID]);
 
   const changeDate = (number) => {
     if (Number.isInteger(number)) {

@@ -14,6 +14,12 @@ const imagesUpload = {
     };
     return axiosClient.post(`${url}/UploadImageCompany`, data, config);
   },
+  Adm_UploadImageTouristAttr: (data) => {
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+    };
+    return axiosClient.post(`${url}/UploadImagesTouristAttr`, data, config);
+  },
 };
 
 export default imagesUpload;

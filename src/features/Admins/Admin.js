@@ -5,6 +5,9 @@ import { Spinner } from "reactstrap";
 import MainLayout from "./components/Layout/MainLayout";
 import TourManagement from "../Admins/pages/TourManager/TourManagement";
 
+const UnitPriceTransport = React.lazy(() =>
+  import("../Admins/pages/UnitpriceTransport/Index")
+);
 const Employee = React.lazy(() =>
   import("../Admins/pages/EmployeeManager/index")
 );
@@ -53,6 +56,10 @@ function Admin(props) {
                 <Route
                   path={`${match.url}/TourManager`}
                   component={TourManagement}
+                />
+                <Route
+                  path={`/admin/UnitPriceTransport`}
+                  component={UnitPriceTransport}
                 />
                 <Route path={`/admin/Employee`} component={Employee} />
                 <Route path={`/admin/Promotion`} component={Promotion} />

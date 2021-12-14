@@ -1,3 +1,68 @@
+export const tableColumnUnitPriceTransport = [
+  {
+    field: `upTransportId`,
+    headerName: "Mã đơn giá",
+    sortTable: true,
+    unSortIcon: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
+    headerCheckboxSelection: true,
+    minWidth: 250,
+  },
+  {
+    field: "timeStart",
+    headerName: "Giờ đi",
+    filter: true,
+    minWidth: 110,
+  },
+  {
+    field: "timeEnd",
+    headerName: "Giờ đến",
+    minWidth: 110,
+  },
+  {
+    field: "provinceFrom",
+    headerName: "Nơi khởi hành",
+    minWidth: 200,
+  },
+  {
+    field: "provinceTo",
+    headerName: "Nơi đến",
+    minWidth: 200,
+  },
+  {
+    field: "companyName",
+    headerName: "Hãng vận chuyển",
+    minWidth: 200,
+  },
+  {
+    field: "adultUnitPrice",
+    headerName: "Đơn giá người lớn",
+    minWidth: 150,
+  },
+  {
+    field: "childrenUnitPrice",
+    headerName: "Đơn giá trẻ em",
+    minWidth: 150,
+  },
+  {
+    field: "babyUnitPrice",
+    headerName: "Đơn giá trẻ nhỏ",
+    minWidth: 150,
+  },
+  {
+    field: "dateUpdate",
+    headerName: "Ngày cập nhật",
+    minWidth: 150,
+  },
+  {
+    field: "empName",
+    headerName: "Nhân viên cập nhật",
+    minWidth: 200,
+  },
+];
+
 //Nguyễn Tấn Hải 2021-12-19
 // table Phương tiện
 export const tableColoumnCompanyTransport = [
@@ -114,14 +179,14 @@ export const tableColumnsTour = [
     checkboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     headerCheckboxSelection: true,
-    minWidth: 250,
+    minWidth: 220,
   },
 
   {
     field: "tourName",
     headerName: "Tên tour",
     filter: true,
-    minWidth: 300,
+    minWidth: 220,
   },
   {
     field: "description",
@@ -131,16 +196,6 @@ export const tableColumnsTour = [
   {
     field: "tourImg",
     headerName: "Ảnh tour",
-    minWidth: 190,
-  },
-  {
-    field: "transport",
-    headerName: "Phương tiện x/phát",
-    minWidth: 190,
-  },
-  {
-    field: "provinceName",
-    headerName: "Địa điểm xuất phát",
     minWidth: 200,
   },
   {
@@ -152,6 +207,13 @@ export const tableColumnsTour = [
     field: "dateEnd",
     headerName: "Ngày kết thúc",
     minWidth: 130,
+  },
+  {
+    field: "rating",
+    headerName: "Đánh giá(sao)",
+    minWidth: 150,
+    sortTable: true,
+    unSortIcon: true,
   },
   {
     field: "quanityMax",
@@ -178,6 +240,58 @@ export const tableColumnsTour = [
     minWidth: 150,
   },
   {
+    field: "quanityMax",
+    headerName: "Đơn giá người lớn",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 190,
+  },
+  {
+    field: "quanityMin",
+    headerName: "Đơn giá trẻ em",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 190,
+  },
+  {
+    field: "currentQuanity",
+    headerName: "Đơn giá trẻ nhỏ",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 190,
+  },
+  {
+    field: "currentQuanity",
+    headerName: "Phụ phí(nếu có)",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 190,
+  },
+  {
+    field: "provinceName",
+    headerName: "Nơi khởi hành",
+    minWidth: 170,
+  },
+  {
+    field: "provinceName",
+    headerName: "Nơi đến",
+    minWidth: 170,
+  },
+  {
+    field: "provinceName",
+    headerName: "Hướng dẫn viên",
+    minWidth: 190,
+  },
+  {
+    field: "provinceName",
+    headerName: "Loại hình du lịch",
+    minWidth: 190,
+  },
+  {
     field: "suggest",
     headerName: "Đề xuất",
     sortTable: true,
@@ -189,6 +303,16 @@ export const tableColumnsTour = [
       input.checked = params.value;
       return input;
     },
+    minWidth: 130,
+  },
+  {
+    field: "transport",
+    headerName: "Người cập nhật",
+    minWidth: 150,
+  },
+  {
+    field: "transport",
+    headerName: "Ngày cập nhật",
     minWidth: 150,
   },
 ];
@@ -293,62 +417,33 @@ export const tableColumnTouristAttr = [
     headerSelect: true,
     checkboxSelection: true,
     headerCheckboxSelection: true,
-    minWidth: 170,
+    minWidth: 220,
   },
   {
     field: `touristAttrName`,
     headerName: "Tên địa điểm",
-    sortTable: false,
-    unSortIcon: false,
-    filter: false,
-    headerSelect: false,
-    checkboxSelection: false,
-    headerCheckboxSelection: false,
     minWidth: 200,
   },
   {
     field: `description`,
     headerName: "Chi tiết",
-    sortTable: false,
-    unSortIcon: false,
-    filter: false,
-    headerSelect: false,
-    checkboxSelection: false,
-    headerCheckboxSelection: false,
-    minWidth: 500,
+    minWidth: 250,
+  },
+
+  {
+    field: `provinceName`,
+    headerName: "Tỉnh thành",
+    minWidth: 200,
   },
   {
     field: `dateUpdate`,
     headerName: "Ngày cập nhật",
-    sortTable: false,
-    unSortIcon: false,
-    filter: false,
-    headerSelect: false,
-    checkboxSelection: false,
-    headerCheckboxSelection: false,
     minWidth: 170,
   },
   {
-    field: `provinceName`,
-    headerName: "Tỉnh thành",
-    sortTable: false,
-    unSortIcon: false,
-    filter: false,
-    headerSelect: false,
-    checkboxSelection: false,
-    headerCheckboxSelection: false,
-    minWidth: 200,
-  },
-  {
     field: `empName`,
-    headerName: "Nhân viên",
-    sortTable: false,
-    unSortIcon: false,
-    filter: false,
-    headerSelect: false,
-    checkboxSelection: false,
-    headerCheckboxSelection: false,
-    minWidth: 200,
+    headerName: "Nhân viên cập nhật",
+    minWidth: 190,
   },
 ];
 

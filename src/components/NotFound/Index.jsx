@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import NotFoundIMG from "../../assets/logo/404-SVG.png";
 
 function NotFound(props) {

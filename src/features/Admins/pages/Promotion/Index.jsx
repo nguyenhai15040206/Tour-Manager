@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import PropTypes from "prop-types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,7 +7,6 @@ import {
   FormGroup,
   Row,
 } from "reactstrap";
-import SelectField from "../../../../CustomFields/SelectField/Index";
 import InputField from "../../../../CustomFields/InputField/Index";
 import { FastField, Form, Formik } from "formik";
 import { RiDeleteBin6Line, RiFileExcel2Fill } from "react-icons/ri";
@@ -86,9 +84,9 @@ function Promotion(props) {
     } catch (err) {}
   };
   // load grid
-  const onGridReady = () => {
+  const onGridReady = async () => {
     try {
-      dispatch(Adm_GetPromotionList(initialValuesSearh));
+      await dispatch(Adm_GetPromotionList(initialValuesSearh));
     } catch (err) {
       if (err.status === 500) {
         return NotificationManager.error(`${err.message}`, "Error!", 1500);
@@ -107,7 +105,6 @@ function Promotion(props) {
   };
 
   const handleClickEditPromotionFromGrid = (promotionId) => {
-    console.log(promotionId);
     const params = {
       pID: promotionId,
     };
@@ -201,7 +198,6 @@ function Promotion(props) {
       SelectByIds: selectedIds,
       EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
     };
-    console.log(DeleteModels);
     dispatch(Adm_DeletePromotionByIds(DeleteModels))
       .then(unwrapResult)
       .then(() => {
@@ -215,7 +211,7 @@ function Promotion(props) {
           return history.push("/admin/login");
         }
         return NotificationManager.error(
-          `${err.message}!`,
+          `${err.error}!`,
           "Xóa thất bại!",
           1500
         );
