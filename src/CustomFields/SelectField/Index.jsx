@@ -61,7 +61,7 @@ function SelectField(props) {
           handleSelectedOptionChange(e);
           handleChangeClick(e);
         }}
-        disable={disable}
+        isDisabled={disable}
         placeholder={placeholder}
       ></Select>
       {showError && <div className="invalid-feedback">{errors[name]}</div>}

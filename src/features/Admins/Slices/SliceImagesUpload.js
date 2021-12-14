@@ -29,12 +29,28 @@ export const UploadImageCompany = createAsyncThunk(
     }
   }
 );
+export const Adm_UploadImageTouristAttr = createAsyncThunk(
+  "api/ImagesUpload/Adm_UploadImageTouristAttr",
+  async (data, thunkApi) => {
+    try {
+      const response = await imagesUpload.Adm_UploadImageTouristAttr(data);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
+    }
+  }
+);
 
 const imagesUploadSlice = createSlice({
   name: "ImagesUpload",
   initialState: {
     imageTour: "",
     imageCompany: "",
+    arrayImagesTourist: [],
     loading: "idled",
     error: "",
   },
@@ -70,6 +86,27 @@ const imagesUploadSlice = createSlice({
       state.imageCompany = "";
       state.error = payload;
     });
+    //end
+    // upload multi images tourist attraction
+    builder.addCase(Adm_UploadImageTouristAttr.pending, (state) => {
+      state.arrayImagesTourist = [];
+      state.loading = "loading";
+    });
+    builder.addCase(
+      Adm_UploadImageTouristAttr.fulfilled,
+      (state, { payload }) => {
+        state.arrayImagesTourist = payload;
+        state.loading = "loaded";
+      }
+    );
+    builder.addCase(
+      Adm_UploadImageTouristAttr.rejected,
+      (state, { payload }) => {
+        state.loading = "error";
+        state.arrayImagesTourist = [];
+        state.error = payload;
+      }
+    );
     //end
   },
 });

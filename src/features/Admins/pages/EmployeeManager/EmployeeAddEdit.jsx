@@ -48,9 +48,9 @@ function EmployeeAddEdit(props) {
       .string()
       .trim()
       .required("[Số điện thoại] không để trống")
-      .matches(phoneRegExp, "[Số điện thoại không hợp lệ]")
-      .min(10, "[Số điện thoại] quá ngắn")
-      .max(10, "[Số điện thoại] quá dài"),
+      .matches(phoneRegExp, "[Số điện thoại] không hợp lệ")
+      .min(10, "[Số điện thoại] không hợp lệ")
+      .max(10, "[Số điện thoại] không hợp lệ"),
     email: yup.string().email().required("[Email] không để trống"),
     userName: yup
       .string()

@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { BiCategory } from "react-icons/bi";
+import { BsPersonSquare } from "react-icons/bs";
+import { FaCanadianMapleLeaf, FaMapMarkedAlt } from "react-icons/fa";
+import { HiOutlineSpeakerphone } from "react-icons/hi";
 import {
   MdArrowDropDownCircle,
   MdBrush,
@@ -15,17 +19,14 @@ import {
   MdStar,
   MdViewDay,
   MdViewList,
-  MdWeb,
-  MdWidgets,
 } from "react-icons/md";
-import { BsPersonSquare } from "react-icons/bs";
-import { HiOutlineSpeakerphone } from "react-icons/hi";
-import { SiGoogletagmanager, SiYourtraveldottv } from "react-icons/si";
-import { FaMapMarkedAlt, FaCanadianMapleLeaf } from "react-icons/fa";
-import { SiOpenstreetmap } from "react-icons/si";
-import { BiCategory } from "react-icons/bi";
+import { GiMoneyStack } from "react-icons/gi";
 import { RiMapPin2Fill } from "react-icons/ri";
-import { VscGroupByRefType } from "react-icons/vsc";
+import {
+  SiGoogletagmanager,
+  SiOpenstreetmap,
+  SiYourtraveldottv,
+} from "react-icons/si";
 import { Link, NavLink } from "react-router-dom";
 import {
   Collapse,
@@ -57,16 +58,16 @@ const navItems = [
 
 const navTransportManager = [
   {
-    to: "/admin/TransportABC",
-    name: "Loại phương tiện",
-    exact: false,
-    Icon: VscGroupByRefType,
-  },
-  {
     to: "/admin/Transport",
     name: "Phương tiện di chuyển",
     exact: false,
     Icon: MdOutlineAirplaneTicket,
+  },
+  {
+    to: "/admin/UnitPriceTransport",
+    name: "Thông tin giá cả",
+    exact: false,
+    Icon: GiMoneyStack,
   },
 ];
 

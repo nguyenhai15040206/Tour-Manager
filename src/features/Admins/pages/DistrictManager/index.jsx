@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
+import React, { useEffect, useRef } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,12 +11,10 @@ import { Field, Formik, Form } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { Adm_GetProvince } from "../../Slices/SliceAddress";
 import SelectField from "./../../../../CustomFields/SelectField/Index";
-import { IoMdAddCircle } from "react-icons/io";
 import TableGridControl from "../../components/Customs/TableGridControl";
 import { FaSearch } from "react-icons/fa";
 import { tableColumnDistrict } from "../../../../utils/Columns";
 import { Adm_GetDisTrictByIdPro } from "./../../Slices/SliceDistrict";
-import * as yup from "yup";
 import { NotificationManager } from "react-notifications";
 
 const initialValues = {

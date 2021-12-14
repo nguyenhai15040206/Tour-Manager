@@ -17,6 +17,10 @@ const travelConpanyTransportApi = {
     return axiosClient.get(`${url}/Adm_GetCompanyDetails`, { params });
   },
 
+  Adm_GetCompanyByTravelTypeCbo: (params) => {
+    return axiosClient.get(`${url}/Adm_GetCompanyByTravelTypeCbo`, { params });
+  },
+
   Adm_DeleteCompanyByIds: (DeleteModels) => {
     return axiosClient.put(`${url}/Adm_DeleteCompanyByIds`, DeleteModels);
   },

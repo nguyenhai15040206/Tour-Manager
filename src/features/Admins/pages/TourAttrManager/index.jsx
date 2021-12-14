@@ -10,10 +10,7 @@ import {
 } from "reactstrap";
 import InputField from "./../../../../CustomFields/InputField/Index";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Adm_GetProvince,
-  Adm_GetProvinceAndSearch,
-} from "./../../Slices/SliceAddress";
+import { Adm_GetProvince } from "./../../Slices/SliceAddress";
 import SelectField from "./../../../../CustomFields/SelectField/Index";
 import {
   Adm_CreateTourAttr,
@@ -31,18 +28,34 @@ import TouristAttrAddEdit from "./TouristAttrAddEdit";
 import { NotificationManager } from "react-notifications";
 import { unwrapResult } from "@reduxjs/toolkit";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
+import { Adm_UploadImageTouristAttr } from "../../Slices/SliceImagesUpload";
+import { useHistory } from "react-router-dom";
+import validationSchema from "../../../../utils/ValidateShema";
 
 const initialValuesTourAttr = {
-  touristAttrId: "",
   touristAttrName: "",
   provinceId: [],
 };
+
+const initialValuesInsert = {
+  TouristAttrID: "",
+  TouristAttrName: "",
+  ProvinceID: "",
+  TouristAttrImages: [],
+  Description: "",
+};
 function TourAttrManager() {
+  document.title = "Quản lý địa điểm du lịch";
   //state in component
   const [showModal, setShowModal] = useState(false);
-  const [initialValues, setInitialValues] = useState(initialValuesTourAttr);
+  const [initialValues, setInitialValues] = useState(initialValuesInsert);
   const [showConfirm, setShowConfirm] = useState(false);
   const [values, setValues] = useState([]);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [imagesUpload, setImagesUpload] = useState([]);
+  const [validation, setValidation] = useState(
+    validationSchema.TouristAttractionAdd
+  );
 
   //state in store
   const stateProvince = useSelector((state) => state?.address);
@@ -50,12 +63,17 @@ function TourAttrManager() {
 
   const dispatch = useDispatch();
   const gridRef = useRef(null);
+  const history = useHistory();
 
-  const handleClickShowModal = async (values) => {
-    console.log(values);
-    await dispatch(Adm_GetProvinceAndSearch(values));
-    setInitialValues(initialValuesTourAttr);
-    setShowModal(true);
+  const handleClickShowModal = async () => {
+    try {
+      await dispatch(Adm_GetProvince({}));
+      setInitialValues(initialValuesInsert);
+      setValidation(validationSchema.TouristAttractionAdd);
+      setShowModal(true);
+    } catch (err) {
+      return NotificationManager.error(`${err.message}`, "Error!", 1500);
+    }
   };
 
   const toggle = () => {
@@ -80,15 +98,13 @@ function TourAttrManager() {
     try {
       await dispatch(Adm_GetTouristAttr(initialValuesTourAttr));
     } catch (err) {
-      console.log(err);
+      return NotificationManager.error(`${err.error}`, "Error!", 1500);
     }
   };
 
   //tìm kiếm
   const handelClickSearch = async (values) => {
     try {
-      const Ids = values.provinceId;
-      console.log(Ids);
       await dispatch(Adm_GetTouristAttr(values));
     } catch (err) {
       console.log(err);
@@ -103,11 +119,10 @@ function TourAttrManager() {
       .map((node) => `${node.touristAttrId}`)
       .join(",");
     const Ids = selectedDataStringPresentation.split(",").map(String);
-    console.log(Ids[0]);
-    if (Ids[0] === 0) {
-      return NotificationManager.error(
-        "Error!",
-        "Chọn một dòng để xóa!!",
+    if (Ids[0] === "") {
+      return NotificationManager.warning(
+        "Chọn một dòng để xóa!!!",
+        "Warning!",
         1500
       );
     }
@@ -115,100 +130,189 @@ function TourAttrManager() {
     setShowConfirm(true);
   };
   const ConfirmDelete = async () => {
-    console.log(values);
-    const value = {};
-    dispatch(Adm_DeleteTouristAttr(values))
+    let DeleteModels = {
+      SelectByIds: values,
+      EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
+    };
+    dispatch(Adm_DeleteTouristAttr(DeleteModels))
       .then(unwrapResult)
       .then((payload) => {
-        dispatch(Adm_GetTouristAttr(initialValuesTourAttr))
-          .unwrap()
-          .then(() => {
-            setShowConfirm(false);
-            return NotificationManager.success(
-              "Success!",
-              "Xóa thành công!",
-              1500
-            );
-          });
+        onGridReady();
+        setShowConfirm(false);
+        return NotificationManager.success("Success!", "Xóa thành công!", 1500);
       })
       .catch((err) => {
-        return NotificationManager.error(`${err}`, "Xóa thất bại!", 1500);
+        if (err.status === 401) {
+          localStorage.removeItem("accessTokenEmp");
+          return history.push("/admin/login");
+        }
+        return NotificationManager.error(`${err.error}`, "Xóa thất bại!", 1500);
       });
   };
 
+  //===================
+  //
+  const onInsertTouristAttr = async (touristAttr) => {
+    let formData = new FormData();
+    imagesUpload.forEach((file) => {
+      formData.append("files", file);
+    });
+    dispatch(Adm_UploadImageTouristAttr(formData))
+      .then(unwrapResult)
+      .then((payload) => {
+        const imagesList = payload.map((item) => item.fileName).join("||");
+        dispatch(Adm_CreateTourAttr({ ...touristAttr, imagesList: imagesList }))
+          .then(unwrapResult)
+          .then(async () => {
+            await onGridReady();
+            return NotificationManager.success(
+              "Thêm thành công!",
+              " Success!",
+              1500
+            );
+          })
+          .catch((err) => {
+            if (err.status === 401) {
+              localStorage.removeItem("accessTokenEmp");
+              return history.push("/admin/login");
+            }
+            return NotificationManager.error(`${err.message}`, "Error!", 1500);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.status === 401) {
+          localStorage.removeItem("accessTokenEmp");
+          return history.push("/admin/login");
+        }
+        return NotificationManager.error(`${err.message}`, "Error!", 1500);
+      });
+  };
+
+  const onUpdateTouristAttr = async (tourist, values) => {
+    let imagesListTourist = "";
+    try {
+      if (values.TouristAttrImages !== "") {
+        let formData = new FormData();
+        imagesUpload.forEach((file) => {
+          formData.append("files", file);
+        });
+        await dispatch(Adm_UploadImageTouristAttr(formData))
+          .then(unwrapResult)
+          .then((payload) => {
+            imagesListTourist = payload.map((item) => item.fileName).join("||");
+            console.log(imagesListTourist);
+          })
+          .catch((err) => {
+            if (err.status === 401) {
+              localStorage.removeItem("accessTokenEmp");
+              return history.push("/admin/login");
+            }
+            return NotificationManager.error(`${err.message}`, "Error!", 1500);
+          });
+      }
+      dispatch(
+        Adm_EditTouristAttr({
+          ...tourist,
+          imagesList: imagesListTourist,
+          touristAttrId: values.TouristAttrID,
+        })
+      )
+        .then(unwrapResult)
+        .then(async () => {
+          await onGridReady();
+          return NotificationManager.success(
+            "Cập nhật thành công!",
+            "Success!",
+            1500
+          );
+        })
+        .catch((err) => {
+          if (err.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            return history.push("/admin/login");
+          }
+          return NotificationManager.error(`${err.message}`, "Error!", 1500);
+        });
+    } catch (err) {
+      if (err.status === 401) {
+        localStorage.removeItem("accessTokenEmp");
+        return history.push("/admin/login");
+      }
+      return NotificationManager.error(`${err.message}`, "Error!", 1500);
+    }
+  };
   const handleClickSubmitForm = async (values) => {
-    const touristAttr = {
-      //touristAttrId: values.touristAttrId === "" ? 0 : values.touristAttrId,
-      touristAttrName: values.touristAttrName,
-      provinceId: values.provinceId,
-      description: values.description,
-      imagesList: values.imagesList,
+    const data = {
+      touristAttrName: values.TouristAttrName,
+      description: values.Description,
+      provinceId: values.ProvinceID,
+      empIDInsert: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+        .empId,
+      empIDUpdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+        .empId,
     };
-    if (values.touristAttrId !== "") {
-      dispatch(Adm_EditTouristAttr(values))
-        .then(unwrapResult)
-        .then((payload) => {
-          dispatch(Adm_GetTouristAttr(initialValuesTourAttr))
-            .unwrap()
-            .then(() => {
-              return NotificationManager.success(
-                "Cập nhật thành công!",
-                "Success"
-              );
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-          return NotificationManager.error(`${err}`, "Edit thất bại");
-        });
+    if (values.TouristAttrID !== "") {
+      onUpdateTouristAttr(data, values);
     } else {
-      console.log(touristAttr);
-      dispatch(Adm_CreateTourAttr(touristAttr))
-        .then(unwrapResult)
-        .then((payload) => {
-          dispatch(Adm_GetTouristAttr(initialValuesTourAttr))
-            .unwrap()
-            .then(() => {
-              return NotificationManager.success(
-                "Thêm thành công!",
-                " Success!",
-                1500
-              );
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-          return NotificationManager.error(`${err}`, "Thêm thất bại!", 1500);
-        });
+      onInsertTouristAttr(data);
     }
   };
 
   const handleClickEdit = async (touristAttrId) => {
     try {
+      setValidation(validationSchema.TouristAttractionEdit);
+      await dispatch(Adm_GetProvince({}));
       const params = {
         touristAttrId: touristAttrId,
       };
-      console.log(params);
-      const rs = await dispatch(Adm_GetTouristAttrById(params));
-      const unwrapRS = unwrapResult(rs);
-      setInitialValues({
-        touristAttrId: unwrapRS.touristAttrId,
-        touristAttrName: unwrapRS.touristAttrName,
-        imagesList: unwrapRS?.imagesList === null ? "" : unwrapRS.imagesList,
-        description: unwrapRS.description,
-        provinceId: unwrapRS.provinceId,
-      });
-      setShowModal(true);
+      dispatch(Adm_GetTouristAttrById(params))
+        .then(unwrapResult)
+        .then((payload) => {
+          console.log(payload);
+          setSelectedImages(
+            payload.imagesList === null ? [] : payload.imagesList
+          );
+          setInitialValues({
+            TouristAttrID: payload.touristAttrId,
+            TouristAttrName: payload.touristAttrName,
+            TouristAttrImages: "",
+            Description:
+              payload.description === null ? "" : payload.description,
+            ProvinceID: payload.provinceId,
+          });
+          setShowModal(true);
+        })
+        .catch((err) => {
+          return NotificationManager.error(`${err.message}`, "Error!", 1500);
+        });
     } catch (err) {
-      console.log(err);
+      return NotificationManager.error(`${err.message}`, "Error!", 1500);
     }
   };
 
+  // handle click chose multi images
+  const handleClickChangeImages = (event) => {
+    if (event.target.files) {
+      const fileArray = Array.from(event.target.files).map((file) =>
+        URL.createObjectURL(file)
+      );
+      setSelectedImages(fileArray);
+      Array.from(event.target.files).map((file) => URL.createObjectURL(file));
+      setImagesUpload([]);
+      Array.from(event.target.files).map((item) =>
+        setImagesUpload((prev) => [...prev, item])
+      );
+    }
+  };
+
+  //=======================
   return (
     <>
       <ConfirmControl
         toggle={toggle}
         showModal={showConfirm}
+        count={values.length}
         ConfirmDelete={ConfirmDelete}
       />
       <TouristAttrAddEdit
@@ -216,7 +320,11 @@ function TourAttrManager() {
         toggle={toggle}
         showModal={showModal}
         initialValues={initialValues}
+        validationSchema={validation}
+        onChangeImages={handleClickChangeImages}
+        imagesList={selectedImages}
         onSubmitForm={(values) => {
+          console.log(values);
           handleClickSubmitForm(values);
         }}
       />
@@ -232,12 +340,14 @@ function TourAttrManager() {
                   {/**Begin start */}
                   <Breadcrumb>
                     <BreadcrumbItem active>
-                      <a href="/admin/TourAtrr">Home</a>
+                      <a href="/admin/TourAtrr">Trang chủ</a>
                     </BreadcrumbItem>
                     <BreadcrumbItem active>
-                      <a href="admin/TourAttr">Library</a>
+                      <a href="admin/TourAttr">Danh mục Travel</a>
                     </BreadcrumbItem>
-                    <BreadcrumbItem active>Data</BreadcrumbItem>
+                    <BreadcrumbItem active>
+                      Danh sách địa điểm du lịch
+                    </BreadcrumbItem>
                     <li className="breadcrumb-item">
                       <FormGroup
                         style={{
@@ -263,7 +373,7 @@ function TourAttrManager() {
                   {/**begin search */}
                   <div id="showSearch" className="collapse show">
                     <Formik
-                      initialValues={initialValues}
+                      initialValues={initialValuesTourAttr}
                       onSubmit={(values) => {
                         handelClickSearch(values);
                       }}
@@ -288,14 +398,14 @@ function TourAttrManager() {
                                   </FormGroup>
                                   <FormGroup className="row">
                                     <label className="col-lg-3 h-label">
-                                      Tên tỉnh thành
+                                      Tỉnh thành
                                     </label>
                                     <div className="col-lg-8">
                                       <Field
                                         isMulti={true}
                                         className="h-textbox"
                                         isLoading={
-                                          stateProvince?.loading === "loaded"
+                                          stateProvince.loading === "loaded"
                                             ? false
                                             : true
                                         }
@@ -364,7 +474,7 @@ function TourAttrManager() {
         <Row>
           <Col>
             <TableGridControl
-              rowData={stateTouristAtt.data}
+              rowData={stateTouristAtt?.data}
               tableHeight="450px"
               tableColoumn={tableColumnTouristAttr}
               gridRef={gridRef}

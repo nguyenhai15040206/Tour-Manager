@@ -12,7 +12,11 @@ export const Adm_GetTouristAttr = createAsyncThunk(
       );
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
     }
   }
 );
@@ -23,8 +27,12 @@ export const Adm_CreateTourAttr = createAsyncThunk(
   async (values, thunkApi) => {
     try {
       await touristAttractionApi.Adm_CreateTouristAttr(values);
-    } catch (err) {
-      return thunkApi.rejectWithValue(err.response.data);
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
     }
   }
 );
@@ -36,7 +44,11 @@ export const Adm_DeleteTouristAttr = createAsyncThunk(
     try {
       await touristAttractionApi.Adm_DeleteTouristAttrList(values);
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
     }
   }
 );
@@ -49,7 +61,11 @@ export const Adm_GetTouristAttrById = createAsyncThunk(
       const response = await touristAttractionApi.Adm_GetTouristAttById(params);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
     }
   }
 );
@@ -63,7 +79,11 @@ export const Adm_GetTouristAttByRegions = createAsyncThunk(
       );
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
     }
   }
 );
@@ -75,7 +95,11 @@ export const Adm_EditTouristAttr = createAsyncThunk(
       const response = await touristAttractionApi.Adm_EditTouristAttr(values);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
     }
   }
 );
