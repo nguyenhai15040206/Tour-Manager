@@ -8,6 +8,9 @@ const touristAttractionApi = {
   Adm_GetTouristAttByRegions: (params) => {
     return axioxClient.get(`${url}/Adm_GetTouristAttByRegions`, { params });
   },
+  Adm_GetTouristAttByProvince: (params) => {
+    return axioxClient.get(`${url}/Adm_GetTouristAttByProvince`, { params });
+  },
   Adm_CreateTouristAttr: (values) => {
     return axioxClient.post(`${url}/Adm_CreateTourAttraction`, values);
   },

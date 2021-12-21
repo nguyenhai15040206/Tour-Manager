@@ -21,7 +21,11 @@ export const Adm_InsertTour = createAsyncThunk(
       const response = await tourApi.Adm_InsertTour(values);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
     }
   }
 );
@@ -35,6 +39,7 @@ export const Adm_UpdateTour = createAsyncThunk(
       return thunkApi.rejectWithValue({
         error: error.message,
         status: error.response.status,
+        message: error.response.data,
       });
     }
   }
@@ -47,7 +52,28 @@ export const Adm_DeleteTourByIds = createAsyncThunk(
       const response = await tourApi.Adm_DeleteTourByIds(values);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
+
+//
+export const GetTourTourIsSuggest = createAsyncThunk(
+  "api/Tour/GetTourTourIsSuggest",
+  async (values, thunkApi) => {
+    try {
+      const response = await tourApi.GetTourTourIsSuggest(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
     }
   }
 );
@@ -58,7 +84,11 @@ export const Adm_GetTourById = createAsyncThunk(
       const response = await tourApi.Adm_GetTourDetails(params);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
     }
   }
 );
@@ -70,7 +100,28 @@ export const Cli_GetTourDetailsByTourID = createAsyncThunk(
       const response = await tourApi.getTourDetails(params);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
+
+// lọc danh sách tour theo điều kiện
+export const Cli_GetDataTourSearch = createAsyncThunk(
+  "api/Tour/Cli_GetDataTourSearch",
+  async (params, thunkApi) => {
+    try {
+      const response = await tourApi.Cli_GetDataTourSearch(params);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
     }
   }
 );
@@ -78,15 +129,54 @@ export const Cli_GetTourDetailsByTourID = createAsyncThunk(
 const tourSlice = createSlice({
   name: "Tour",
   initialState: {
+    tourSuggest: [],
     tourByID: {},
     dataInsert: {},
     tourList: null,
     loading: "idle",
     error: "",
     Cli_TourDetails: {},
+    Cli_DataSearch: [],
+    Cli_PaginationSearch: {},
   },
 
   extraReducers: (builder) => {
+    // laays duwx lieu tour search ở cli
+    builder.addCase(Cli_GetDataTourSearch.pending, (state) => {
+      state.Cli_DataSearch = [];
+      state.Cli_PaginationSearch = {};
+      state.loading = "loading";
+    });
+
+    builder.addCase(Cli_GetDataTourSearch.fulfilled, (state, { payload }) => {
+      state.Cli_DataSearch = payload.data;
+      state.Cli_PaginationSearch = payload.pagination;
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Cli_GetDataTourSearch.rejected, (state, action) => {
+      state.Cli_DataSearch = [];
+      state.Cli_PaginationSearch = {};
+      state.loading = "error";
+      state.error = action.payload?.error;
+    });
+
+    // laays duwx lieu tour được đề xuất
+    builder.addCase(GetTourTourIsSuggest.pending, (state) => {
+      state.tourSuggest = [];
+      state.loading = "loading";
+    });
+
+    builder.addCase(GetTourTourIsSuggest.fulfilled, (state, { payload }) => {
+      state.tourSuggest = payload;
+      state.loading = "loaded";
+    });
+
+    builder.addCase(GetTourTourIsSuggest.rejected, (state, action) => {
+      state.tourSuggest = [];
+      state.loading = "error";
+      state.error = action.payload?.error;
+    });
     // laays duwx lieu
     builder.addCase(Adm_GetTourList.pending, (state) => {
       state.tourList = null;

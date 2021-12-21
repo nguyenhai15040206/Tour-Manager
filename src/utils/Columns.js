@@ -1,3 +1,86 @@
+//==
+
+export const tableColumnTourGuidSupportSearch = [
+  {
+    field: `tourGuideId`,
+    headerName: "Mã nhân viên",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    minWidth: 200,
+  },
+  {
+    field: `tourGuideName`,
+    headerName: "Tên nhân viên",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `gender`,
+    headerName: "Giới tính",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 100,
+  },
+  {
+    field: `dateOfBirth`,
+    headerName: "Ngày sinh",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 170,
+  },
+
+  {
+    field: `phoneNumber`,
+    headerName: "Số điện thoại",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 170,
+  },
+  {
+    field: `email`,
+    headerName: "Email",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `address`,
+    headerName: "Địa chỉ",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 300,
+  },
+];
+//===
 export const tableColumnUnitPriceTransport = [
   {
     field: `upTransportId`,
@@ -240,7 +323,7 @@ export const tableColumnsTour = [
     minWidth: 150,
   },
   {
-    field: "quanityMax",
+    field: "adultUnitPrice",
     headerName: "Đơn giá người lớn",
     sortTable: true,
     unSortIcon: true,
@@ -248,7 +331,7 @@ export const tableColumnsTour = [
     minWidth: 190,
   },
   {
-    field: "quanityMin",
+    field: "childrenUnitPrice",
     headerName: "Đơn giá trẻ em",
     sortTable: true,
     unSortIcon: true,
@@ -256,7 +339,7 @@ export const tableColumnsTour = [
     minWidth: 190,
   },
   {
-    field: "currentQuanity",
+    field: "babyUnitPrice",
     headerName: "Đơn giá trẻ nhỏ",
     sortTable: true,
     unSortIcon: true,
@@ -264,7 +347,7 @@ export const tableColumnsTour = [
     minWidth: 190,
   },
   {
-    field: "currentQuanity",
+    field: "surcharge",
     headerName: "Phụ phí(nếu có)",
     sortTable: true,
     unSortIcon: true,
@@ -272,24 +355,34 @@ export const tableColumnsTour = [
     minWidth: 190,
   },
   {
-    field: "provinceName",
+    field: "departurePlaceFrom",
     headerName: "Nơi khởi hành",
     minWidth: 170,
   },
   {
-    field: "provinceName",
+    field: "departurePlaceTo",
     headerName: "Nơi đến",
     minWidth: 170,
   },
   {
-    field: "provinceName",
+    field: "tourGuideName",
     headerName: "Hướng dẫn viên",
     minWidth: 190,
   },
   {
-    field: "provinceName",
+    field: "travelTypeName",
     headerName: "Loại hình du lịch",
     minWidth: 190,
+  },
+  {
+    field: "empName",
+    headerName: "Người cập nhật",
+    minWidth: 150,
+  },
+  {
+    field: "dateUpdate",
+    headerName: "Ngày cập nhật",
+    minWidth: 150,
   },
   {
     field: "suggest",
@@ -304,16 +397,6 @@ export const tableColumnsTour = [
       return input;
     },
     minWidth: 130,
-  },
-  {
-    field: "transport",
-    headerName: "Người cập nhật",
-    minWidth: 150,
-  },
-  {
-    field: "transport",
-    headerName: "Ngày cập nhật",
-    minWidth: 150,
   },
 ];
 export const tableColumnEmployee = [

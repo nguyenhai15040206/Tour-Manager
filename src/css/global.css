@@ -198,7 +198,7 @@ input.h-textbox, textarea.h-textbox{
 }
 .h-editor{
     line-height: 1.6rem !important;
-    height: 200px !important;
+    height: 150px !important;
 }
 
 input.form-check-input:focus{

@@ -5,7 +5,7 @@
     font-weight: 600;
     text-transform: uppercase;
     font-size: 14px;
-    margin-bottom: 14px;
+    margin-bottom: 7px;
   }
   h3 {
     color: $color-black;
@@ -25,16 +25,19 @@
   }
   margin-top: 54px;
   &__sidebar-inner {
+    border-radius: 5px;
     background-color: $background-color-gray;
   }
   &__all-option-filter {
     background-color: $color-icon;
     h3 {
+      margin: auto;
       color: white;
     }
   }
   &__kd-number-date-tour {
     .button-group__number-date {
+      
       @include flex(space-between, center);
       flex-wrap: wrap;
       .btn-option-date {
@@ -42,6 +45,10 @@
         &:hover {
           @include hover($color-icon, $gray-light-color);
         }
+      }
+      #btn-active{
+        @include button($color-icon, 48%);
+        color: $gray-light-color;
       }
     }
   }
@@ -73,6 +80,11 @@
           @include hover($color-icon, $gray-light-color);
         }
       }
+      #btn-active{
+        @include button($color-icon, 48%);
+        color: $gray-light-color;
+      }
+      
     }
   }
   &__kd-transport-tour {
@@ -84,6 +96,10 @@
         &:hover {
           @include hover($color-icon, $gray-light-color);
         }
+      }
+      #btn-active{
+        @include button($color-icon, 48%);
+        color: $gray-light-color;
       }
     }
   }

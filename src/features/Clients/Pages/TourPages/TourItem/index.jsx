@@ -17,6 +17,8 @@ function TourItem(props) {
     nameTour,
     locationStart,
     moneyTour,
+    quanityCurrent,
+    href,
   } = props;
   return (
     <div className="card-tour-item">
@@ -34,7 +36,9 @@ function TourItem(props) {
           </p>
         </div>
         <div className="card-tour-item__name-tour mb-3">
-          <h3 className="title-name">{nameTour}</h3>
+          <Link to={href}>
+            <h3 className="title-name">{nameTour}</h3>
+          </Link>
         </div>
         <div className="card-tour-item__location-start mb-3">
           <p className="title-location-start">Nơi khởi hành: {locationStart}</p>
@@ -47,19 +51,18 @@ function TourItem(props) {
             <BsCart3 className="icon-cart" />
             <span>Đặt ngay</span>
           </button>
-          <button className="custom-btn-out-light">Xem chi tiết</button>
+          <Link to={href}>
+            <button className="custom-btn-out-light">Xem chi tiết</button>
+          </Link>
         </div>
       </div>
       <div className="card-footer">
         <div className="card-tour-item__link-assess">
-          <AiOutlinePlusCircle className="icon-add" />
-          <Link to="/" className="link-title">
-            Thêm vào so sánh
-          </Link>
+          <p className="link-title">{props.TravelTypeName}</p>
         </div>
         <div className="card-tour-item__number-assess">
           <p className="title-number">Số chỗ còn nhận</p>
-          <p className="number">9</p>
+          <p className="number">{quanityCurrent}</p>
         </div>
       </div>
     </div>

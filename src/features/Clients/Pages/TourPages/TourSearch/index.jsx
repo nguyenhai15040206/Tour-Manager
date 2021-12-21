@@ -1,35 +1,304 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../../../../components/Header";
 import Select from "react-select";
 import "./styles.scss";
-import { BsCalendarMinus } from "react-icons/bs";
 import TourItem from "../TourItem";
 import {
   AiOutlineDoubleLeft,
   AiOutlineDoubleRight,
   AiOutlineSearch,
 } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Adm_GetTravelTypeCbo } from "../../../../Admins/Slices/SliceTravelType";
+import { Adm_GetProvince } from "../../../../Admins/Slices/SliceAddress";
+import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Col, Row } from "reactstrap";
+import { FastField, Field, Form, Formik } from "formik";
+import SelectField from "../../../../../CustomFields/SelectField/Index";
+import InputField from "../../../../../CustomFields/InputField/Index";
+import { FaSearch } from "react-icons/fa";
+import { NotificationManager } from "react-notifications";
+import { Cli_GetDataTourSearch } from "../../../../Admins/Slices/SliceTour";
+import { unwrapResult } from "@reduxjs/toolkit";
+import Loading from "../../../../../components/Loading/Index";
+import { formatCash } from "../../../../../utils/format";
+const filterMoney = [
+  { value: "giathapdencao", label: "Giá thấp > cao" },
+  { value: "giacaodenthap", label: "Giá cao > thấp" },
+  { value: "giamgia", label: "Giảm giá nhiều nhất" },
+];
+
+const initialValuesSearch = {
+  TravelTypeID: "",
+  DeparturePlaceFrom: "",
+  DeparturePlaceTo: "",
+  DateStart: "",
+};
+
+const changeDate = (number) => {
+  if (Number.isInteger(number)) {
+    if (number === 1) {
+      return `${number}N`;
+    }
+    if (number > 1) {
+      return `${number}N${number - 1}Đ`;
+    }
+  }
+  return `${number}N`;
+};
 
 function TourSearch(props) {
-  const optionsTour = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
-  const optionLocation = [
-    { value: "hcm", label: "Hồ Chí Minh" },
-    { value: "qn", label: "Quy Nhơn" },
-    { value: "hn", label: "Hà Nội" },
-  ];
-  const filterMoney = [
-    { value: "giathapdencao", label: "Giá thấp > cao" },
-    { value: "giacaodenthap", label: "Giá cao > thấp" },
-    { value: "giamgia", label: "Giảm giá nhiều nhất" },
-  ];
+  const dispatch = useDispatch();
 
+  //==
+  const [totalDate1, setTotalDay1] = useState(false);
+  const [totalDate2, setTotalDay2] = useState(false);
+  const [totalDate3, setTotalDay3] = useState(false);
+  const [totalDate4, setTotalDay4] = useState(false);
+  //==
+  //==
+  const [totalPeople1, setTotalPeople1] = useState(false);
+  const [totalPeople2, setTotalPeople2] = useState(false);
+  const [totalPeople3, setTotalPeople3] = useState(false);
+  const [totalPeople4, setTotalPeople4] = useState(false);
+  //==
+  const [transportTypr1, setTransportType1] = useState(false);
+  const [transportTypr2, setTransportType2] = useState(false);
+  //==
+
+  //==
+  const [valuesSearch, setValuesSearch] = useState({});
+
+  //==
+  let { DeFrom, DeTo, DateStart, TotalDays } = useParams();
+  const stateTravelType = useSelector((state) => state?.travelType);
+  const stateAddress = useSelector((state) => state.address);
+  const stateTour = useSelector((state) => state.tour);
+
+  //===========
+  useEffect(() => {
+    window.scrollTo({
+      top: 10,
+      behavior: "smooth",
+    });
+  }, [stateTour]);
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        await dispatch(Adm_GetProvince({}));
+        await dispatch(Adm_GetTravelTypeCbo());
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchApi();
+  }, [DeFrom, DeTo, DateStart, TotalDays]);
+
+  useEffect(() => {
+    const fetchApiTourSearch = () => {
+      const params = {
+        quantityDate1: totalDate1,
+        quantityDate2: totalDate2,
+        quantityDate3: totalDate3,
+        quantityDate4: totalDate4,
+
+        // number people
+        quantityPeople1: totalPeople1,
+        quantityPeople2: totalPeople2,
+        quantityPeople3: totalPeople3,
+        quantityPeople4: totalPeople4,
+
+        // transport type
+        transportType1: transportTypr1,
+        transportType2: transportTypr2,
+      };
+      const ObjAsign = Object.assign(initialValuesSearch, params);
+      setValuesSearch(ObjAsign);
+      dispatch(
+        Cli_GetDataTourSearch(Object.assign(ObjAsign, { page: 1, limit: 9 }))
+      )
+        .then(unwrapResult)
+        .then(() => {})
+        .catch((err) => {
+          console.log(err.error);
+        });
+    };
+    fetchApiTourSearch();
+  }, [DeFrom, DeTo, DateStart, TotalDays]);
+
+  //==
+  const isValidDate = (d) => {
+    return d instanceof Date && !isNaN(d);
+  };
+  const handleClichSearchTour = (values) => {
+    var checkDateIsNull = document.getElementById("DateStart").value;
+    // param sap xem nhu torng hinh
+    const params = {
+      quantityDate1: totalDate1,
+      quantityDate2: totalDate2,
+      quantityDate3: totalDate3,
+      quantityDate4: totalDate4,
+
+      // number people
+      quantityPeople1: totalPeople1,
+      quantityPeople2: totalPeople2,
+      quantityPeople3: totalPeople3,
+      quantityPeople4: totalPeople4,
+
+      // transport type
+      transportType1: transportTypr1,
+      transportType2: transportTypr2,
+    };
+    if (values.DeparturePlaceFrom !== "" && values.DeparturePlaceTo !== "") {
+      if (values.DeparturePlaceFrom === values.DeparturePlaceTo) {
+        return NotificationManager.warning(
+          "[Điểm đến] trùng [Điểm x/phát]",
+          "Warning!",
+          1500
+        );
+      }
+    }
+    if (checkDateIsNull !== "") {
+      const dateStart = new Date(document.getElementById("DateStart").value);
+      const currentDate = new Date();
+      if (!isValidDate(dateStart) || dateStart < currentDate) {
+        return NotificationManager.warning(
+          "Ngày đi không hợp lệ!",
+          "warning!!!",
+          2500
+        );
+      }
+    }
+    const ObjAsign = Object.assign(values, params);
+    console.log(ObjAsign);
+    dispatch(
+      Cli_GetDataTourSearch(Object.assign(ObjAsign, { page: 1, limit: 20 }))
+    )
+      .then(unwrapResult)
+      .then((payload) => {
+        console.log(payload);
+      })
+      .catch((err) => {
+        return NotificationManager.error(
+          `${err.error}`,
+          "Vui lòng kiểm tra lại!!!",
+          2500
+        );
+      });
+  };
+
+  //===
+  const handelClickTotalDay = (total) => {
+    if (Number(total) === 1) {
+      setTotalDay1(true);
+      setTotalDay2(false);
+      setTotalDay3(false);
+      setTotalDay4(false);
+    }
+    if (Number(total) === 2) {
+      setTotalDay1(false);
+      setTotalDay2(true);
+      setTotalDay3(false);
+      setTotalDay4(false);
+    }
+    if (Number(total) === 3) {
+      setTotalDay1(false);
+      setTotalDay2(false);
+      setTotalDay3(true);
+      setTotalDay4(false);
+    }
+    if (Number(total) === 4) {
+      setTotalDay1(false);
+      setTotalDay2(false);
+      setTotalDay3(false);
+      setTotalDay4(true);
+    }
+  };
+  //===
+  const handelClickTotalPeople = (total) => {
+    if (Number(total) === 1) {
+      setTotalPeople1(true);
+      setTotalPeople2(false);
+      setTotalPeople3(false);
+      setTotalPeople4(false);
+    }
+    if (Number(total) === 2) {
+      setTotalPeople1(false);
+      setTotalPeople2(true);
+      setTotalPeople3(false);
+      setTotalPeople4(false);
+    }
+    if (Number(total) === 3) {
+      setTotalPeople1(false);
+      setTotalPeople2(false);
+      setTotalPeople3(true);
+      setTotalPeople4(false);
+    }
+    if (Number(total) === 4) {
+      setTotalPeople1(false);
+      setTotalPeople2(false);
+      setTotalPeople3(false);
+      setTotalPeople4(true);
+    }
+  };
+  const handelClickTransportType = (total) => {
+    if (Number(total) === 1) {
+      setTransportType1(true);
+      setTransportType2(false);
+    }
+    if (Number(total) === 2) {
+      setTransportType1(false);
+      setTransportType2(true);
+    }
+  };
+
+  //====
+  const pangination = (totalRecord) => {
+    var indents = [];
+    for (let index = 0; index < totalRecord; index++) {
+      indents.push(
+        <li
+          className={`page-item ${
+            stateTour.Cli_PaginationSearch.currentPage === index + 1
+              ? "active"
+              : ""
+          }`}
+          key={index}
+        >
+          <button
+            onClick={() => {
+              handleClickGetDataPagination(index + 1, 9);
+            }}
+            className="page-link"
+          >
+            {index + 1}
+          </button>
+        </li>
+      );
+    }
+    return indents;
+  };
+
+  const handleClickGetDataPagination = async (page, limit) => {
+    try {
+      await dispatch(
+        Cli_GetDataTourSearch(
+          Object.assign(valuesSearch, { page: page, limit: limit })
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //===========
   return (
     <>
+      {(stateAddress.loading === "loading" ||
+        stateTravelType.loading === "loading" ||
+        stateTour.loading === "loading") && <Loading loading={true} />}
       <Header
         boxShadow="rgb(92 149 252) 3px -7px 20px 3px"
         position="sticky"
@@ -39,107 +308,240 @@ function TourSearch(props) {
       />
       <main className="tour-search">
         <div className="container container-padding">
-          <div className="row">
-            <div className="col-md-3 col-12">
+          <Row>
+            <Col xl={3} lg={4}>
               <div className="tour-search__sidebar-inner">
                 <div className="tour-search__filter-text px-3 py-2">
                   <h3>Lọc kết quả</h3>
                 </div>
-                <div className="tour-search__all-option-filter px-3 py-2 ">
-                  <h2>Tất cả</h2>
-                </div>
-                <div className="px-3 py-4">
-                  <div className="tour-search__kd-start-to-stop mb-5">
-                    <h5 className="point-start-title s-title">
-                      Loại hình tour
-                    </h5>
-                    <Select options={optionsTour} />
-                  </div>
-                  <div className="tour-search__kd-start-option-location mb-5">
-                    <h5 className="point-start-title s-title">Điểm đi</h5>
-                    <Select options={optionLocation} />
-                  </div>
-                  <div className="tour-search__kd-stop-option-location mb-5">
-                    <h5 className="point-stop-title s-title">Điểm đến</h5>
-                    <Select options={optionLocation} />
-                  </div>
-                  <div className="tour-search__kd-number-date-tour mb-5">
-                    <h5 className="point-number-title s-title">Số ngày</h5>
-                    <div className="button-group__number-date">
-                      <button type="button" className="btn-option-date mb-3">
-                        1-3 ngày
-                      </button>
-                      <button type="button" className="btn-option-date mb-3">
-                        4-7 ngày
-                      </button>
-                      <button type="button" className="btn-option-date mb-3">
-                        8-14 ngày
-                      </button>
-                      <button type="button" className="btn-option-date mb-3">
-                        trên 14 ngày
-                      </button>
-                    </div>
-                  </div>
-                  <div className="tour-search__kd-date-start-calendar mb-5">
-                    <h5 className="point-title-date-start s-title">Ngày đi</h5>
-                    <div className="custom-calendar">
-                      <BsCalendarMinus className="icon-calendar" />
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="text-calendar"
-                        placeholder="20/10/2020"
-                        readOnly
-                      ></input>
-                    </div>
-                  </div>
-                  <div className="tour-search__kd-number-customers mb-5">
-                    <h5 className="point-title-customer-number s-title">
-                      Số người
-                    </h5>
-                    <div className="button-group__number-customer">
-                      <button
-                        type="button"
-                        className="btn-option-number-customer mb-3"
-                      >
-                        1 người
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-option-number-customer mb-3"
-                      >
-                        2 người
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-option-number-customer mb-3"
-                      >
-                        3-5 người
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-option-number-customer mb-3"
-                      >
-                        5+ người
-                      </button>
-                    </div>
-                  </div>
-                  <div className="tour-search__kd-transport-tour mb-5">
-                    <h5 className="point-title-transport-tour s-title">
-                      Thông tin vận chuyển
-                    </h5>
-                    <div className="button-group__number-customer">
-                      <button className="btn-transport-tour">Máy bay</button>
-                      <button className="btn-transport-tour">Ô tô</button>
-                    </div>
-                  </div>
+                <div className="tour-search__kd-start-to-stop mb-3">
+                  <Formik
+                    initialValues={initialValuesSearch}
+                    onSubmit={handleClichSearchTour}
+                  >
+                    {(formikProps) => {
+                      return (
+                        <Form>
+                          <div
+                            className="tour-search__all-option-filter px-3 py-2 "
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <h2 style={{ margin: "auto 0" }}>Tất cả</h2>
+                            <button type="submit" className="h-button">
+                              <FaSearch color="rgb(180 173 30)" size={15} />
+                              Lọc
+                            </button>
+                          </div>
+                          <div className="px-3 py-4">
+                            <h5 className="point-start-title s-title">
+                              Loại hình tour
+                            </h5>
+                            <Field
+                              className="h-textbox"
+                              isLoading={
+                                stateTravelType?.loading === "loaded"
+                                  ? false
+                                  : true
+                              }
+                              placeholder="Chọn loại hình du lịch"
+                              name="TravelTypeID"
+                              options={stateTravelType.dataCbo}
+                              component={SelectField}
+                            />
+                            <div className="tour-search__kd-start-option-location mt-4">
+                              <h5 className="point-start-title s-title">
+                                Điểm đi
+                              </h5>
+                              <Field
+                                className="h-textbox"
+                                placeholder="Chọn điểm xuất phát"
+                                name="DeparturePlaceFrom"
+                                isLoading={
+                                  stateAddress?.loading === "loaded"
+                                    ? false
+                                    : true
+                                }
+                                options={stateAddress.data}
+                                component={SelectField}
+                              />
+                            </div>
+                            <div className="tour-search__kd-stop-option-location mt-4">
+                              <h5 className="point-stop-title s-title">
+                                Điểm đến
+                              </h5>
+                              <Field
+                                className="h-textbox"
+                                placeholder="Chọn địa điểm đến"
+                                name="DeparturePlaceTo"
+                                isLoading={
+                                  stateAddress?.loading === "loaded"
+                                    ? false
+                                    : true
+                                }
+                                options={stateAddress.data}
+                                component={SelectField}
+                              />
+                            </div>
+                            <div className="tour-search__kd-date-start-calendar mt-4">
+                              <h5 className="point-title-date-start s-title">
+                                Ngày đi
+                              </h5>
+                              <FastField
+                                className="h-textbox"
+                                name="DateStart"
+                                type="date"
+                                component={InputField}
+                              />
+                            </div>
+                            <div className="tour-search__kd-number-date-tour mt-4">
+                              <h5 className="point-number-title s-title">
+                                Số ngày
+                              </h5>
+                              <div className="button-group__number-date">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    handelClickTotalDay(1);
+                                  }}
+                                  id={totalDate1 ? "btn-active" : undefined}
+                                  className="btn-option-date mb-3"
+                                >
+                                  1-3 ngày
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    handelClickTotalDay(2);
+                                  }}
+                                  id={totalDate2 ? "btn-active" : undefined}
+                                  className="btn-option-date mb-3"
+                                >
+                                  4-7 ngày
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    handelClickTotalDay(3);
+                                  }}
+                                  id={totalDate3 ? "btn-active" : undefined}
+                                  className="btn-option-date mb-3"
+                                >
+                                  8-14 ngày
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    handelClickTotalDay(4);
+                                  }}
+                                  id={totalDate4 ? "btn-active" : undefined}
+                                  className="btn-option-date mb-3"
+                                >
+                                  trên 14 ngày
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="tour-search__kd-number-customers mt-4">
+                              <h5 className="point-title-customer-number s-title">
+                                Số người
+                              </h5>
+                              <div className="button-group__number-customer">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    handelClickTotalPeople(1);
+                                  }}
+                                  id={totalPeople1 ? "btn-active" : undefined}
+                                  className="btn-option-number-customer mb-3"
+                                >
+                                  1 người
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    handelClickTotalPeople(2);
+                                  }}
+                                  id={
+                                    totalPeople2 === true
+                                      ? "btn-active"
+                                      : undefined
+                                  }
+                                  className="btn-option-number-customer mb-3"
+                                >
+                                  2 người
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    handelClickTotalPeople(3);
+                                  }}
+                                  id={
+                                    totalPeople3 === true
+                                      ? "btn-active"
+                                      : undefined
+                                  }
+                                  className="btn-option-number-customer mb-3"
+                                >
+                                  3-5 người
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    handelClickTotalPeople(4);
+                                  }}
+                                  id={totalPeople4 === true ? "btn-active" : ""}
+                                  className="btn-option-number-customer mb-3"
+                                >
+                                  5+ người
+                                </button>
+                              </div>
+                            </div>
+                            <div className="tour-search__kd-transport-tour mt-5">
+                              <h5 className="point-title-transport-tour s-title">
+                                Thông tin vận chuyển
+                              </h5>
+                              <div className="button-group__number-customer">
+                                <button
+                                  onClick={() => {
+                                    handelClickTransportType(1);
+                                  }}
+                                  id={
+                                    transportTypr1 === true ? "btn-active" : ""
+                                  }
+                                  className="btn-transport-tour"
+                                  type="button"
+                                >
+                                  Máy bay
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    handelClickTransportType(2);
+                                  }}
+                                  id={
+                                    transportTypr2 == true ? "btn-active" : ""
+                                  }
+                                  className="btn-transport-tour"
+                                  type="button"
+                                >
+                                  Ô tô
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </Form>
+                      );
+                    }}
+                  </Formik>
                 </div>
               </div>
-            </div>
-            <div className="col-md-9 col-12">
+            </Col>
+            <Col xl={9} lg={8}>
               <div className="tour-search__kd-title mb-5">
                 <h3 className="kd-title">
-                  Danh sách tour du lịch khởi hành từ TP. Hồ Chí Minh
+                  Danh sách kết quả các tour du lịch được tìm kiếm
                 </h3>
               </div>
               <hr />
@@ -147,8 +549,10 @@ function TourSearch(props) {
                 <div className="tour-search__number-result">
                   <p className="title-result">
                     Chúng tôi tìm thấy{" "}
-                    <span className="number-result">1,570</span> tour cho quý
-                    khách
+                    <span className="number-result">
+                      {stateTour.Cli_PaginationSearch.count}
+                    </span>{" "}
+                    tour cho quý khách
                   </p>
                 </div>
                 <div className="tour-search__filter">
@@ -160,151 +564,38 @@ function TourSearch(props) {
                 </div>
               </div>
               <hr />
-              <div className="row mb-5">
-                <div className="col-4">
-                  <TourItem
-                    image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
-                    assess="9,1"
-                    comment="377"
-                    date="03/11/2020"
-                    numberDate="5N4Đ"
-                    time="4:30"
-                    nameTour="Tour Caravan - Miền Tây Sông Nước: Châu Đốc - Hà Tiên - Phú Quốc - Cần Thơ - Chương Trình Mới"
-                    locationTour="TP. Hồ Chí Minh"
-                    moneyTour="7,390,000"
-                  ></TourItem>
-                </div>
-                <div className="col-4">
-                  <TourItem
-                    image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
-                    assess="9,1"
-                    comment="377"
-                    date="03/11/2020"
-                    numberDate="5N4Đ"
-                    time="4:30"
-                    nameTour="Tour Caravan - Miền Tây Sông Nước: Châu Đốc - Hà Tiên - Phú Quốc - Cần Thơ - Chương Trình Mới"
-                    locationTour="TP. Hồ Chí Minh"
-                    moneyTour="7,390,000"
-                  ></TourItem>
-                </div>
-                <div className="col-4">
-                  <TourItem
-                    image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
-                    assess="9,1"
-                    comment="377"
-                    date="03/11/2020"
-                    numberDate="5N4Đ"
-                    time="4:30"
-                    nameTour="Tour Caravan - Miền Tây Sông Nước: Châu Đốc - Hà Tiên - Phú Quốc - Cần Thơ - Chương Trình Mới"
-                    locationTour="TP. Hồ Chí Minh"
-                    moneyTour="7,390,000"
-                  ></TourItem>
-                </div>
-                <div className="col-4">
-                  <TourItem
-                    image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
-                    assess="9,1"
-                    comment="377"
-                    date="03/11/2020"
-                    numberDate="5N4Đ"
-                    time="4:30"
-                    nameTour="Tour Caravan - Miền Tây Sông Nước: Châu Đốc - Hà Tiên - Phú Quốc - Cần Thơ - Chương Trình Mới"
-                    locationTour="TP. Hồ Chí Minh"
-                    moneyTour="7,390,000"
-                  ></TourItem>
-                </div>
-                <div className="col-4">
-                  <TourItem
-                    image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
-                    assess="9,1"
-                    comment="377"
-                    date="03/11/2020"
-                    numberDate="5N4Đ"
-                    time="4:30"
-                    nameTour="Tour Caravan - Miền Tây Sông Nước: Châu Đốc - Hà Tiên - Phú Quốc - Cần Thơ - Chương Trình Mới"
-                    locationTour="TP. Hồ Chí Minh"
-                    moneyTour="7,390,000"
-                  ></TourItem>
-                </div>
-                <div className="col-4">
-                  <TourItem
-                    image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
-                    assess="9,1"
-                    comment="377"
-                    date="03/11/2020"
-                    numberDate="5N4Đ"
-                    time="4:30"
-                    nameTour="Tour Caravan - Miền Tây Sông Nước: Châu Đốc - Hà Tiên - Phú Quốc - Cần Thơ - Chương Trình Mới"
-                    locationTour="TP. Hồ Chí Minh"
-                    moneyTour="7,390,000"
-                  ></TourItem>
-                </div>
-                <div className="col-4">
-                  <TourItem
-                    image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
-                    assess="9,1"
-                    comment="377"
-                    date="03/11/2020"
-                    numberDate="5N4Đ"
-                    time="4:30"
-                    nameTour="Tour Caravan - Miền Tây Sông Nước: Châu Đốc - Hà Tiên - Phú Quốc - Cần Thơ - Chương Trình Mới"
-                    locationTour="TP. Hồ Chí Minh"
-                    moneyTour="7,390,000"
-                  ></TourItem>
-                </div>
-                <div className="col-4">
-                  <TourItem
-                    image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
-                    assess="9,1"
-                    comment="377"
-                    date="03/11/2020"
-                    numberDate="5N4Đ"
-                    time="4:30"
-                    nameTour="Tour Caravan - Miền Tây Sông Nước: Châu Đốc - Hà Tiên - Phú Quốc - Cần Thơ - Chương Trình Mới"
-                    locationTour="TP. Hồ Chí Minh"
-                    moneyTour="7,390,000"
-                  ></TourItem>
-                </div>
-                <div className="col-md-4 col-12">
-                  <TourItem
-                    image="https://btnmt.1cdn.vn/2020/10/27/sls-nhung-dia-diem-chup-anh-cuoi-dep-o-ninh-binh-03_0.jpg"
-                    assess="9,1"
-                    comment="377"
-                    date="03/11/2020"
-                    numberDate="5N4Đ"
-                    time="4:30"
-                    nameTour="Tour Caravan - Miền Tây Sông Nước: Châu Đốc - Hà Tiên - Phú Quốc - Cần Thơ - Chương Trình Mới"
-                    locationTour="TP. Hồ Chí Minh"
-                    moneyTour="7,390,000"
-                  ></TourItem>
-                </div>
-              </div>
+              <Row className="row mb-5">
+                {Array.from(stateTour.Cli_DataSearch).map((item, index) => (
+                  <Col xl={4} lg={6} key={index}>
+                    <TourItem
+                      href={`/my-tour/tour-details/tourID=${item.tourId}`}
+                      image={`${item.tourImg}`}
+                      assess="9,1"
+                      comment="377"
+                      date={`${item.dateStartFormat}`}
+                      numberDate={changeDate(Number(item.totalDays))}
+                      time="4:30"
+                      TravelTypeName={`${item.travelTypeName}`}
+                      nameTour={`${item.tourName}`}
+                      quanityCurrent={`${item.totalCurrentQuanity}`}
+                      locationStart={`${item.departurePlaceFromName}`}
+                      moneyTour={formatCash(`${item.adultUnitPrice}`)}
+                    ></TourItem>
+                  </Col>
+                ))}
+              </Row>
               <div className="tour-search__kd-pagination mb-5">
                 <ul className="pagination">
                   <li className="page-item">
-                    <Link className="page-link" to="/">
+                    <button className="page-link">
                       <AiOutlineDoubleLeft />
-                    </Link>
+                    </button>
                   </li>
+                  {pangination(stateTour.Cli_PaginationSearch.totalPage)}
                   <li className="page-item">
-                    <Link className="page-link" to="/">
-                      1
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="/">
-                      2
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" to="/">
-                      3
-                    </Link>
-                  </li>
-                  <li className="page-item">
-                    <Link className="page-link" href="#">
+                    <button className="page-link">
                       <AiOutlineDoubleRight />
-                    </Link>
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -374,8 +665,8 @@ function TourSearch(props) {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </Col>
+          </Row>
         </div>
       </main>
     </>

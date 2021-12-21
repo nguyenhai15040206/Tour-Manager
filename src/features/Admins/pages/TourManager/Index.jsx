@@ -61,6 +61,7 @@ function TourManager(props) {
       try {
         await dispatch(Adm_GetProvince());
         await dispatch(Adm_GetTravelTypeCbo());
+        await dispatch(Adm_GetTourList(initialValuesSearch));
       } catch (err) {
         console.log(err);
       }

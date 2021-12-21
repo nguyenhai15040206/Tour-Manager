@@ -18,11 +18,27 @@ export const Adm_GetEnumConstantCbo = createAsyncThunk(
     }
   }
 );
+///get employee
+export const Adm_GetEnumList = createAsyncThunk(
+  "api/EnumConstant/Adm_GetEnumList",
+  async (values, thunkApi) => {
+    try {
+      const response = await enumConstantApi.Adm_GetEnumList(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+      });
+    }
+  }
+);
 
 const enumConstantSlice = createSlice({
   name: "EnumConstant",
   initialState: {
     dataCbo: [],
+    data: [],
     loading: "idle",
     error: "",
   },
@@ -42,6 +58,22 @@ const enumConstantSlice = createSlice({
 
     builder.addCase(Adm_GetEnumConstantCbo.rejected, (state, action) => {
       state.loading = "error";
+      state.error = action.error.error;
+    });
+    //end
+    // get enum constant list
+    builder.addCase(Adm_GetEnumList.pending, (state) => {
+      state.data = [];
+      state.loading = "loading";
+    });
+
+    builder.addCase(Adm_GetEnumList.fulfilled, (state, { payload }) => {
+      state.data = payload;
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Adm_GetEnumList.rejected, (state, action) => {
+      state.data = "error";
       state.error = action.error.error;
     });
     //end

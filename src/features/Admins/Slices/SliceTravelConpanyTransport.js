@@ -88,6 +88,24 @@ export const Adm_GetCompanyByTravelTypeCbo = createAsyncThunk(
     }
   }
 );
+///get
+export const Adm_GetCompanyTransportInTourCbo = createAsyncThunk(
+  "api/TravelConpanyTransport/Adm_GetCompanyTransportInTourCbo",
+  async (values, thunkApi) => {
+    try {
+      const response =
+        await travelConpanyTransportApi.Adm_GetCompanyTransportInTourCbo(
+          values
+        );
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+      });
+    }
+  }
+);
 
 //delete
 export const Adm_DeleteCompanyByIds = createAsyncThunk(
@@ -113,6 +131,7 @@ const travelConpanyTransportSlice = createSlice({
     data: null,
     companyByID: {},
     companyByTravelType: [],
+    companyTravelInTour: [],
     dataInsert: {},
     loading: "idle",
     error: "",
@@ -120,6 +139,29 @@ const travelConpanyTransportSlice = createSlice({
 
   // start Login
   extraReducers: (builder) => {
+    // get
+    builder.addCase(Adm_GetCompanyTransportInTourCbo.pending, (state) => {
+      state.companyTravelInTour = [];
+      state.loading = "loading";
+    });
+
+    builder.addCase(
+      Adm_GetCompanyTransportInTourCbo.fulfilled,
+      (state, { payload }) => {
+        state.companyTravelInTour = payload;
+        state.loading = "loaded";
+      }
+    );
+
+    builder.addCase(
+      Adm_GetCompanyTransportInTourCbo.rejected,
+      (state, action) => {
+        state.companyTravelInTour = [];
+        state.loading = "error";
+        state.error = action.error.error;
+      }
+    );
+    //end
     // get
     builder.addCase(Adm_GetCompanyList.pending, (state) => {
       state.data = null;

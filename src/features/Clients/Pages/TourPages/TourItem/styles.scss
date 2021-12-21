@@ -6,6 +6,7 @@
   border-radius: 10px;
   position: relative;
   &__img {
+    min-height: 180px;
     border-radius: 10px 10px 0px 0px;
   }
   &__assess {
@@ -57,6 +58,7 @@
     .title-name {
       color: $color-black;
       font-size: 14px;
+      min-height: 58.8px;
       font-weight: 700;
       overflow: hidden;
       display: -webkit-box;

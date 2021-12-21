@@ -48,6 +48,7 @@ function TourAttrManager() {
   document.title = "Quản lý địa điểm du lịch";
   //state in component
   const [showModal, setShowModal] = useState(false);
+  const [stateOptionChange, setStateOptionChange] = useState([]);
   const [initialValues, setInitialValues] = useState(initialValuesInsert);
   const [showConfirm, setShowConfirm] = useState(false);
   const [values, setValues] = useState([]);
@@ -96,7 +97,11 @@ function TourAttrManager() {
 
   const onGridReady = async () => {
     try {
-      await dispatch(Adm_GetTouristAttr(initialValuesTourAttr));
+      const params = {
+        touristAttrName: document.getElementById("touristAttrName").value,
+        provinceId: stateOptionChange,
+      };
+      await dispatch(Adm_GetTouristAttr(params));
     } catch (err) {
       return NotificationManager.error(`${err.error}`, "Error!", 1500);
     }
@@ -105,6 +110,7 @@ function TourAttrManager() {
   //tìm kiếm
   const handelClickSearch = async (values) => {
     try {
+      setStateOptionChange(values.provinceId);
       await dispatch(Adm_GetTouristAttr(values));
     } catch (err) {
       console.log(err);
@@ -324,7 +330,6 @@ function TourAttrManager() {
         onChangeImages={handleClickChangeImages}
         imagesList={selectedImages}
         onSubmitForm={(values) => {
-          console.log(values);
           handleClickSubmitForm(values);
         }}
       />
