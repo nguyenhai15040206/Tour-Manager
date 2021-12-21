@@ -6,6 +6,9 @@ const enumConstantApi = {
   Adm_GetEnumConstantCbo: (params) => {
     return axiosClient.get(`${url}/Adm_GetEnumConstant`, { params });
   },
+  Adm_GetEnumList: (params) => {
+    return axiosClient.get(`${url}/Adm_GetEnumInfo`, { params });
+  },
 };
 
 export default enumConstantApi;

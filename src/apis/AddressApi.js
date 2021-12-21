@@ -9,6 +9,9 @@ export const addressApi = {
   Adm_GetProvince: (params) => {
     return axiosClient.get(`${url}/Adm_GetProvince`, { params });
   },
+  Adm_GetProvinceByRegions: (params) => {
+    return axiosClient.get(`${url}/Adm_GetProvinceByRegions`, { params });
+  },
   Adm_GetProvinceAndSearch: (params) => {
     return axiosClient.post(`${url}/Adm_GetProvinceAndSearch`, params);
   },

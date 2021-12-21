@@ -7,5 +7,9 @@ const tourGuideApi = {
   Adm_CreateTourGuide: (params) => {
     return axiosClient.post(`${url}/Adm_CreateTourGuide`, params);
   },
+
+  Adm_GetDataTourGuidCondition: (params) => {
+    return axiosClient.get(`${url}/Adm_GetDataTourGuidCondition`, { params });
+  },
 };
 export default tourGuideApi;

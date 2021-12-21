@@ -6,6 +6,10 @@ const tourApi = {
   Adm_GetTourList: (values) => {
     return axiosClient.post(`${url}/Adm_GetDataTourList`, values);
   },
+  // Lấy danh timkf kiếm các tour theo điều kiện ở Cli
+  Cli_GetDataTourSearch: (values) => {
+    return axiosClient.post(`${url}/Cli_GetDataTourSearch`, values);
+  },
 
   // Lấy danh sách các tour được đề xuất
   GetTourTourIsSuggest: () => {

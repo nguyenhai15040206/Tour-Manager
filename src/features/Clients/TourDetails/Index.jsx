@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Header from "../../../components/Header";
 import { formatCash } from "../../../utils/format";
@@ -6,9 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Cli_GetTourDetailsByTourID } from "../../Admins/Slices/SliceTour";
 import "./styles.scss";
 import { Spinner } from "reactstrap";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 function TourDetails(props) {
   //state
+  const [SheduleArray, setSheduleArray] = useState([]);
   const { Cli_TourDetails, loading } = useSelector((state) => state?.tour);
   // end state
   //
@@ -20,17 +22,30 @@ function TourDetails(props) {
       top: 10,
       behavior: "smooth",
     });
-  }, []);
+  }, [tourID]);
   useEffect(() => {
-    const fetchDataTourDetails = async () => {
-      try {
-        const params = {
-          tourID: tourID,
-        };
-        await dispatch(Cli_GetTourDetailsByTourID(params));
-      } catch (err) {
-        console.log(err);
-      }
+    const fetchDataTourDetails = () => {
+      const params = {
+        tourID: tourID,
+      };
+      dispatch(Cli_GetTourDetailsByTourID(params))
+        .then(unwrapResult)
+        .then((payload) => {
+          const re = "^||||^";
+          let arrayObj = String(payload.schedule).split(re);
+          arrayObj.pop();
+          setSheduleArray([]);
+          Array.from(arrayObj).map((item) => {
+            const arrayObjDay = item.split("^||^");
+            return setSheduleArray((prev) => [
+              ...prev,
+              { title: arrayObjDay[0], shedule: arrayObjDay[1] },
+            ]);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     };
     fetchDataTourDetails();
   }, [dispatch, tourID]);
@@ -71,7 +86,7 @@ function TourDetails(props) {
                   <label
                     data-toggle="tooltip"
                     data-placement="top"
-                    title="Tooltip on top"
+                    title="Mã tour"
                   >{`${Cli_TourDetails.tourId}`}</label>
                 </div>
                 <h1 className="tour-name">
@@ -97,7 +112,10 @@ function TourDetails(props) {
               </div>
               <div className="tour-details__header--right">
                 <div className="add-cart">
-                  <Link to="/bookingtour" className="add-to-cart">
+                  <Link
+                    to={`/my-tour/booking-tour/tourID=${tourID}`}
+                    className="add-to-cart"
+                  >
                     <i className="fas fa-shopping-cart"></i>
                     <label>Đặt ngay</label>
                   </Link>
@@ -178,7 +196,7 @@ function TourDetails(props) {
                 <div className="group-services__item">
                   <i className="fas fa-users"></i>
                   <label>Quy mô nhóm</label>
-                  <p>20 người</p>
+                  <p>{Cli_TourDetails.quanityMax} người</p>
                 </div>
                 <div className="group-services__item">
                   <i className="fas fa-hotel"></i>
@@ -206,113 +224,26 @@ function TourDetails(props) {
                 </div>
               </div>
             </section>
-            <div
-              dangerouslySetInnerHTML={{ __html: Cli_TourDetails.schedule }}
-            />
             <section className="tour-details__map-route">
               <h2 className="title">Bản đồ và lịch trình</h2>
               <div className="content">
                 <ul className="timeline">
-                  <li className="timeline__item">
-                    <div className="timeline__item--tail"></div>
-                    <div className="timeline__item--head timeline__item--head-blue"></div>
-                    <div className="timeline__item--content">
-                      <h5 className="title">
-                        Ngày 1 - TP.HỒ CHÍ MINH - MŨI NÉ - LÂU ĐÀI RƯỢU VANG Số
-                        bữa ăn: 03 (Ăn sáng, trưa, tối)
-                      </h5>
-                      <div className="details">
-                        <p>
-                          Quý khách tập trung tại Công ty Vietravel (190
-                          Pasteur, Phường 6, Quận 3, TP.Hồ Chí Minh) khởi hành
-                          đi Phan Thiết. Quý khách ăn sáng trên cung đường đi.
-                          Đến Phan Thiết đoàn tham quan:
-                        </p>
-                        <p>
-                          <strong>- Lâu đài Rượu Vang RD:</strong> nghe giới
-                          thiệu về quy trình sản xuất, đóng chai và thưởng thức
-                          một trong những loại rượu vang hảo hạng nổi tiếng thế
-                          giới được xuất xứ từ Thung Lũng Napa (Mỹ).{" "}
-                        </p>
-                        <p>
-                          <strong>- Bảo tàng Ngọc Trai Mũi Né:</strong> khu
-                          trưng bày được giới thiệu một cách nghệ thuật và sang
-                          trọng theo từng chủng loại, màu sắc và kích cỡ. Từ các
-                          bộ sưu tập ngọc trai để nguyên cho đến các loại trang
-                          sức đính ngọc trai như: vòng đeo cổ, mặt dây chuyền,
-                          nhẫn, bông tai, lắc, đồng hồ đính ngọc trai….
-                        </p>
-                        <p>
-                          Sau khi ăn tối, Quý khách tự do dạo phố khám phá Mũi
-                          Né về đêm,…Nghỉ đêm tại Mũi Né.
-                        </p>
+                  {Array.from(SheduleArray).map((item, index) => (
+                    <li className="timeline__item" key={index}>
+                      <div className="timeline__item--tail"></div>
+                      <div className="timeline__item--head timeline__item--head-blue"></div>
+                      <div className="timeline__item--content">
+                        <h5 className="title">{item.title.trim()}</h5>
+                        <div
+                          className="details"
+                          dangerouslySetInnerHTML={{
+                            __html: item.shedule,
+                          }}
+                        />
                       </div>
-                    </div>
-                  </li>
-                  <li className="timeline__item">
-                    <div className="timeline__item--tail"></div>
-                    <div className="timeline__item--head timeline__item--head-blue"></div>
-                    <div className="timeline__item--content">
-                      <h5 className="title">
-                        Ngày 2 - MŨI NÉ - BÀU TRẮNG Số bữa ăn:02 (Ăn sáng, trưa)
-                      </h5>
-                      <div className="details">
-                        <p>
-                          Quý khách dùng bữa sáng tại khách sạn. Sau đó, đoàn đi
-                          tham quan:
-                        </p>
-                        <p>
-                          <strong>- Bàu Trắng:</strong> hay còn được gọi với cái
-                          tên khác Bàu Sen bởi trong hồ khi vào mùa hè sen nở sẽ
-                          rất đẹp, phủ kín cả một vùng hồ…. Quý khách dùng bữa
-                          trưa. Chiều tự do nghỉ ngơi, tắm biển hồ bơi tại khách
-                          sạn/resort,…hoặc xe đưa đoàn tham quan:
-                        </p>
-                        <p>
-                          <strong>- Trung tâm Bùn Khoáng Mũi Né:</strong> Tận
-                          hưởng cảm giác tắm khoáng thư giãn, ngoài ra Quý khách
-                          còn có thể tắm bùn hoặc massage là một liệu pháp làm
-                          đẹp từ thiên nhiên giúp cải thiện làn da tươi trẻ, mịn
-                          màng (chi phí tự túc). Buổi tối, Quý khách tự do dạo
-                          phố ăn chiều tự túc. Nghỉ đêm tại Mũi Né.
-                        </p>
-                      </div>
-                    </div>
-                  </li>
-                  <li className="timeline__item">
-                    <div className="timeline__item--tail"></div>
-                    <div className="timeline__item--head timeline__item--head-blue"></div>
-                    <div className="timeline__item--content">
-                      <h5 className="title">
-                        Ngày 3 - MŨI NÉ – LÀNG CHÀI XƯA – TP HỒ CHÍ MINH Số bữa
-                        ăn:02 (Ăn sáng, trưa)
-                      </h5>
-                      <div className="details">
-                        <p>
-                          Quý khách dùng bữa sáng và tự do tắm biển. Đến giờ trả
-                          phòng, đoàn đi tham quan:
-                        </p>
-                        <p>
-                          <strong>- Làng Chài Xưa Mũi Né: </strong> với lịch sử
-                          300 năm cái nôi của nghề làm nước mắm, trải nghiệm cảm
-                          giác lao động trên đồng muối, đi trên con đường rạng
-                          xưa, thăm phố cổ Phan Thiết, , thăm nhà lều của hàm hộ
-                          nước mắm xưa, đắm chìm cảm xúc trong biển 3D và thích
-                          thú khi đi chợ làng chài xưa với bàn tính tay, bàn cân
-                          xưa thú vị,…
-                        </p>
-                        <p>
-                          - Mua sắm đặc sản Phan Thiết sạch tại{" "}
-                          <strong>Organik Farm - Hello Muine</strong> (chi phí
-                          tự túc) - nước mắm rin nguyên chất, nước mắm Nhật
-                          Shiitake, mực một nắng, khô cá dứa, nước cốt thanh
-                          long… về làm quà cho người thân và bạn bè. Chiều đoàn
-                          về đến TP.Hồ Chí Minh, xe đưa về điểm đón ban đầu.
-                          Chia tay Quý khách và kết thúc chương trình du lịch.
-                        </p>
-                      </div>
-                    </div>
-                  </li>
+                    </li>
+                  ))}
+
                   <li className="timeline__item timeline__item--last">
                     <div className="timeline__item--tail"></div>
                     <div className="timeline__item--head timeline__item--head-blue"></div>

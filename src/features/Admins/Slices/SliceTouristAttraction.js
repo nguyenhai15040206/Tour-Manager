@@ -87,6 +87,23 @@ export const Adm_GetTouristAttByRegions = createAsyncThunk(
     }
   }
 );
+export const Adm_GetTouristAttByProvince = createAsyncThunk(
+  "api/TouristAttraction/Adm_GetTouristAttByProvince",
+  async (params, thunkApi) => {
+    try {
+      const response = await touristAttractionApi.Adm_GetTouristAttByProvince(
+        params
+      );
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
+    }
+  }
+);
 
 export const Adm_EditTouristAttr = createAsyncThunk(
   "api/TouristAttr/Adm_EditTouristAttr",
@@ -130,6 +147,26 @@ const touristAttrSlice = createSlice({
       state.loading = "error";
       state.data = [];
       state.error = action.error.error;
+    });
+    //end
+    // Start Get  tour Attraction by Provinces
+    builder.addCase(Adm_GetTouristAttByProvince.pending, (state) => {
+      state.touristAttrByRegions = [];
+      state.loading = "loading";
+    });
+
+    builder.addCase(
+      Adm_GetTouristAttByProvince.fulfilled,
+      (state, { payload }) => {
+        state.touristAttrByRegions = payload;
+        state.loading = "loaded";
+      }
+    );
+
+    builder.addCase(Adm_GetTouristAttByProvince.rejected, (state, action) => {
+      state.loading = "error";
+      state.touristAttrByRegions = [];
+      state.error = action.error.message;
     });
     //end
     // Start Get  tour Attraction by regions

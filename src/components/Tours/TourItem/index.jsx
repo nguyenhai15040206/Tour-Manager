@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
+import imgTourHot from "../../../assets/logo/hot.png";
 
 function TourItem(props) {
   const {
@@ -30,7 +31,7 @@ function TourItem(props) {
       <div className="caption">
         {tourHot && (
           <div className="lable-hot">
-            <img src="https://benthanhtourist.com/img/Home/hot.png" alt="" />
+            <img src={`${imgTourHot}`} alt="" />
           </div>
         )}
         <Link className="title-tour" to={href}>

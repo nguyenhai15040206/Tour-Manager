@@ -14,10 +14,6 @@ const MainClient = React.lazy(() =>
 
 const MainAdmin = React.lazy(() => import("./features/Admins/Admin"));
 
-const Booking = React.lazy(() =>
-  import("./features/Clients/BookingTour/Index")
-);
-
 const NotFound = React.lazy(() => import("./components/NotFound/Index"));
 function App() {
   return (
@@ -29,7 +25,6 @@ function App() {
             <Route path="/my-tour" component={MainClient} />
             <Route path="/admin" component={MainAdmin} />
             <Route path="/index.html" component={NotFound} />
-            <Route path="/bookingtour" component={Booking} />
             <Route path="*">
               <NotFound />
             </Route>

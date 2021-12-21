@@ -189,10 +189,10 @@
 
           .details{
             padding: 0 0 0 20px;
-            color: $backgound-color-menu;
-            font-size: 13px;
-            font-weight: 400;
-            line-height: 1.5;
+            color: $backgound-color-menu !important;
+            font-size: 13px !important;
+            font-weight: 400 !important;
+            line-height: 1.5 !important;
             overflow-wrap: break-word;
 
             strong{

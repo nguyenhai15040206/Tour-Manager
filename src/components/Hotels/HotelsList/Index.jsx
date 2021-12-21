@@ -1,4 +1,5 @@
 import React from "react";
+import { Col, Row } from "reactstrap";
 import HotelItem from "../HotelItem/Index";
 import "./styles.scss";
 
@@ -20,80 +21,74 @@ function HotelsList(props) {
             <button className="content__item">Hội An</button>
           </ul>
         </div>
-        <div className="hotel__list">
-          <HotelItem
-            href="index.html"
-            image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/1616919860706qw/1-0a75c811-715b-4c53-9371-66103da1654c.png"
-            sale={5}
-            desc="Khác sạn cách ly"
-            address="Quận Tân Phú"
-            totalPrice="1.148.000đ"
-            price="1.092.000đ"
-          />
-          <HotelItem
-            href="index.html"
-            image="https://tripi.vn/cdn-cgi/image/width=320/https://www.googleapis.com/download/storage/v1/b/hotel_image/o/logo%2F4%2F10976.jpg?generation=1563769073064379&alt=media"
-            sale={5}
-            desc="Khác sạn cách ly"
-            address="Quận Tân Phú"
-            totalPrice="1.148.000đ"
-            price="1.092.000đ"
-          />
-          <HotelItem
-            href="index.html"
-            image="https://tripi.vn/cdn-cgi/image/width=320/https://www.googleapis.com/download/storage/v1/b/hotel_image/o/logo%2F4%2F2177977.jpg?generation=1563769181856135&alt=media"
-            sale={5}
-            desc="Khác sạn cách ly"
-            address="Quận Tân Phú"
-            totalPrice="1.148.000đ"
-            price="1.092.000đ"
-          />
-          <HotelItem
-            href="index.html"
-            image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/2690wF/155737068.jpg"
-            sale={5}
-            desc="Khác sạn cách ly"
-            address="Quận Tân Phú"
-            totalPrice="1.148.000đ"
-            price="1.092.000đ"
-          />
-          <HotelItem
-            href="index.html"
-            image="https://tripi.vn/cdn-cgi/image/width=320/https://www.googleapis.com/download/storage/v1/b/tourcdn/o/photos%2FLZMU79ZU1Z_%2Ftmp%2Fplaytemp6993685938555950743%2FmultipartBody7101078629708212087asTemporaryFile?generation=1586784963238377&alt=media"
-            sale={5}
-            desc="Khác sạn cách ly"
-            address="Quận Tân Phú"
-            totalPrice="1.148.000đ"
-            price="1.092.000đ"
-          />
-          <HotelItem
-            href="index.html"
-            image="https://tripi.vn/cdn-cgi/image/width=320/https://www.googleapis.com/download/storage/v1/b/hotel_image/o/logo%2F4%2F9195.jpg?generation=1563768994770250&alt=media"
-            sale={5}
-            desc="Khác sạn cách ly"
-            address="Quận Tân Phú"
-            totalPrice="1.148.000đ"
-            price="1.092.000đ"
-          />
-          <HotelItem
-            href="index.html"
-            image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/1616919860706qw/1-0a75c811-715b-4c53-9371-66103da1654c.png"
-            sale={5}
-            desc="Khác sạn cách ly"
-            address="Quận Tân Phú"
-            totalPrice="1.148.000đ"
-            price="1.092.000đ"
-          />
-          <HotelItem
-            href="index.html"
-            image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/1617031462271TZ/b7z1508151163_khach_san_aem_phan_boi_chau.png"
-            sale={5}
-            desc="Khác sạn cách ly"
-            address="Quận Tân Phú"
-            totalPrice="1.148.000đ"
-            price="1.092.000đ"
-          />
-        </div>
+        <Row>
+          <Col xl={3} lg={4} sm={6}>
+            <HotelItem
+              href="index.html"
+              image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/1616919860706qw/1-0a75c811-715b-4c53-9371-66103da1654c.png"
+              sale={5}
+              desc="Khác sạn cách ly"
+              address="Quận Tân Phú"
+              totalPrice="1.148.000đ"
+              price="1.092.000đ"
+            />
+          </Col>
+          <Col xl={3} lg={4} sm={6}>
+            <HotelItem
+              href="index.html"
+              image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/1616919860706qw/1-0a75c811-715b-4c53-9371-66103da1654c.png"
+              sale={5}
+              desc="Khác sạn cách ly"
+              address="Quận Tân Phú"
+              totalPrice="1.148.000đ"
+              price="1.092.000đ"
+            />
+          </Col>
+          <Col xl={3} lg={4} sm={12}>
+            <HotelItem
+              href="index.html"
+              image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/1616919860706qw/1-0a75c811-715b-4c53-9371-66103da1654c.png"
+              sale={5}
+              desc="Khác sạn cách ly"
+              address="Quận Tân Phú"
+              totalPrice="1.148.000đ"
+              price="1.092.000đ"
+            />
+          </Col>
+          <Col xl={3} lg={4} sm={12}>
+            <HotelItem
+              href="index.html"
+              image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/1616919860706qw/1-0a75c811-715b-4c53-9371-66103da1654c.png"
+              sale={5}
+              desc="Khác sạn cách ly"
+              address="Quận Tân Phú"
+              totalPrice="1.148.000đ"
+              price="1.092.000đ"
+            />
+          </Col>
+          <Col xl={3} lg={4} sm={12}>
+            <HotelItem
+              href="index.html"
+              image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/1616919860706qw/1-0a75c811-715b-4c53-9371-66103da1654c.png"
+              sale={5}
+              desc="Khác sạn cách ly"
+              address="Quận Tân Phú"
+              totalPrice="1.148.000đ"
+              price="1.092.000đ"
+            />
+          </Col>
+          <Col xl={3} lg={4} sm={12}>
+            <HotelItem
+              href="index.html"
+              image="https://tripi.vn/cdn-cgi/image/width=320/https://storage.googleapis.com/hms_prod/photo/thumb/1616919860706qw/1-0a75c811-715b-4c53-9371-66103da1654c.png"
+              sale={5}
+              desc="Khác sạn cách ly"
+              address="Quận Tân Phú"
+              totalPrice="1.148.000đ"
+              price="1.092.000đ"
+            />
+          </Col>
+        </Row>
 
         <div className="hotel__footer">
           <button>Xem tất cả</button>

@@ -10,8 +10,26 @@ export const Adm_GetProvince = createAsyncThunk(
       const response = await addressApi.Adm_GetProvince(values);
       return response;
     } catch (error) {
-      //console.log(thunkApi.rejectWithValue({ error: error.message }));
-      return thunkApi.rejectWithValue({ error: error.message });
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
+export const Adm_GetProvinceByRegions = createAsyncThunk(
+  "api/Province/Adm_GetProvinceByRegions",
+  async (values, thunkApi) => {
+    try {
+      const response = await addressApi.Adm_GetProvinceByRegions(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
     }
   }
 );
@@ -23,7 +41,11 @@ export const Adm_GetProvinceAndSearch = createAsyncThunk(
       const response = await addressApi.Adm_GetProvinceAndSearch(values);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
     }
   }
 );
@@ -32,6 +54,7 @@ const addressSlice = createSlice({
   name: "Address",
   initialState: {
     data: null,
+    ProvinceByRegions: [],
     dataSearch: [],
     loading: "idle",
     error: "",
@@ -51,6 +74,26 @@ const addressSlice = createSlice({
     builder.addCase(Adm_GetProvince.rejected, (state, action) => {
       state.loading = "error";
       state.data = [];
+      state.error = action.payload.error;
+    });
+
+    //=========
+    builder.addCase(Adm_GetProvinceByRegions.pending, (state) => {
+      state.ProvinceByRegions = [];
+      state.loading = "loading";
+    });
+
+    builder.addCase(
+      Adm_GetProvinceByRegions.fulfilled,
+      (state, { payload }) => {
+        state.ProvinceByRegions = payload;
+        state.loading = "loaded";
+      }
+    );
+
+    builder.addCase(Adm_GetProvinceByRegions.rejected, (state, action) => {
+      state.loading = "error";
+      state.ProvinceByRegions = [];
       state.error = action.payload.error;
     });
 

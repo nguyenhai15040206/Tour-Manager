@@ -35,10 +35,15 @@ function InputField(props) {
       handleChange(e);
     }
   };
+
   return (
     <>
       <FormGroup className="mt-1">
-        {label && <Label for={name}>{label}</Label>}
+        {label && (
+          <Label className={props.labelName} for={name}>
+            {label}
+          </Label>
+        )}
         <Input
           disabled={disabled}
           style={styles}
@@ -52,6 +57,9 @@ function InputField(props) {
           onChange={(e) => {
             onChange(e);
             if (type === "file") {
+              handleOnChange(e);
+            }
+            if (type === "date") {
               handleOnChange(e);
             }
           }}

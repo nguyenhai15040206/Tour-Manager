@@ -1,4 +1,5 @@
 import React from "react";
+import { Col, Row } from "reactstrap";
 import DestinationItem from "../DestinationItem";
 import "./styles.scss";
 

@@ -20,7 +20,27 @@ export const Adm_CreateTourGuide = createAsyncThunk(
       const response = await tourGuideApi.Adm_CreateTourGuide(values);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
+    }
+  }
+);
+
+export const Adm_GetDataTourGuidCondition = createAsyncThunk(
+  "api/TourGuide/Adm_GetDataTourGuidCondition",
+  async (values, thunkApi) => {
+    try {
+      const response = await tourGuideApi.Adm_GetDataTourGuidCondition(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
     }
   }
 );
@@ -29,6 +49,7 @@ const tourGuideSlice = createSlice({
   name: "TourGuide",
   initialState: {
     dataTourGuide: null,
+    dataCondition: [],
     loading: "idle",
     error: "",
   },
@@ -55,6 +76,23 @@ const tourGuideSlice = createSlice({
       state.loading = "loaded";
     });
     builder.addCase(Adm_CreateTourGuide.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.error;
+    });
+    ///get tour guide condition
+    builder.addCase(Adm_GetDataTourGuidCondition.pending, (state) => {
+      state.dataCondition = [];
+      state.loading = "loading";
+    });
+    builder.addCase(
+      Adm_GetDataTourGuidCondition.fulfilled,
+      (state, { payload }) => {
+        state.dataCondition = payload;
+        state.loading = "loaded";
+      }
+    );
+    builder.addCase(Adm_GetDataTourGuidCondition.rejected, (state, action) => {
+      state.dataCondition = [];
       state.loading = "error";
       state.error = action.error.error;
     });
