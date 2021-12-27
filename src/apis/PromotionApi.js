@@ -20,6 +20,9 @@ const promotionApi = {
   Adm_DeletePromotionByIds: (DeleteModels) => {
     return axiosClient.put(`${url}/Adm_DeletePromotionByIds`, DeleteModels);
   },
+  Adm_DeletePromotionExpired: (DeleteModels) => {
+    return axiosClient.put(`${url}/Adm_DeletePromotionExpired`, DeleteModels);
+  },
 };
 
 export default promotionApi;

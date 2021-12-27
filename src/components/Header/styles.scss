@@ -8,6 +8,7 @@
     z-index: 10;
     // background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.02) 100%);
 
+
     .header-menu{
         display: flex;
         justify-content: flex-start;
@@ -126,6 +127,27 @@
         }
     }
 
+
+}
+.dropdown-menu-custom{
+    border-radius: 8px;
+    width: 200px !important;
+    transform: translate3d(1099px, 43px, 0px) !important;
+    margin: 2px !important;
+
+    li{
+        a.dropdown-item{
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 23px;
+        }
+        a.dropdown-item:active{
+            background-color: transparent;
+        }
+        a:hover{
+            width: 100%;
+        }
+    }
 }
 
 @media (max-width:768px){

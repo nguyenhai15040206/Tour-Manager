@@ -12,6 +12,7 @@ export const Adm_GetPromotionList = createAsyncThunk(
       return thunkApi.rejectWithValue({
         error: error.message,
         status: error.response.status,
+        message: error.response.data,
       });
     }
   }
@@ -27,6 +28,7 @@ export const Adm_InsertPromotion = createAsyncThunk(
       return thunkApi.rejectWithValue({
         error: error.message,
         status: error.response.status,
+        message: error.response.data,
       });
     }
   }
@@ -41,6 +43,7 @@ export const Adm_UpdatePromotion = createAsyncThunk(
       return thunkApi.rejectWithValue({
         error: error.message,
         status: error.response.status,
+        message: error.response.data,
       });
     }
   }
@@ -56,6 +59,7 @@ export const Adm_DeletePromotionByIds = createAsyncThunk(
       return thunkApi.rejectWithValue({
         error: error.message,
         status: error.response.status,
+        message: error.response.data,
       });
     }
   }
@@ -65,6 +69,23 @@ export const Adm_GetPromotionById = createAsyncThunk(
   async (params, thunkApi) => {
     try {
       const response = await promotionApi.Adm_GetPromotionById(params);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
+
+// xóa tour hết hạn
+export const Adm_DeletePromotionExpired = createAsyncThunk(
+  "api/Promotion/Adm_DeletePromotionExpired",
+  async (params, thunkApi) => {
+    try {
+      const response = await promotionApi.Adm_DeletePromotionExpired(params);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue({
@@ -86,6 +107,23 @@ const promotionSlice = createSlice({
   },
 
   extraReducers: (builder) => {
+    // Xóa tour hết hạn
+    builder.addCase(Adm_DeletePromotionExpired.pending, (state) => {
+      state.loading = "loading";
+    });
+
+    builder.addCase(
+      Adm_DeletePromotionExpired.fulfilled,
+      (state, { payload }) => {
+        state.loading = "loaded";
+      }
+    );
+
+    builder.addCase(Adm_DeletePromotionExpired.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.payload?.error;
+    });
+
     // laays duwx lieu
     builder.addCase(Adm_GetPromotionList.pending, (state) => {
       state.promotionList = null;

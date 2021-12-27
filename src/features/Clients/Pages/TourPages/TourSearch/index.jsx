@@ -133,6 +133,7 @@ function TourSearch(props) {
     return d instanceof Date && !isNaN(d);
   };
   const handleClichSearchTour = (values) => {
+    //#region kiểm tra dữ liệu
     var checkDateIsNull = document.getElementById("DateStart").value;
     // param sap xem nhu torng hinh
     const params = {
@@ -171,10 +172,13 @@ function TourSearch(props) {
         );
       }
     }
+    //#endregion
+
+    console.log(values);
     const ObjAsign = Object.assign(values, params);
     console.log(ObjAsign);
     dispatch(
-      Cli_GetDataTourSearch(Object.assign(ObjAsign, { page: 1, limit: 20 }))
+      Cli_GetDataTourSearch(Object.assign(ObjAsign, { page: 1, limit: 9 }))
     )
       .then(unwrapResult)
       .then((payload) => {
@@ -570,8 +574,10 @@ function TourSearch(props) {
                     <TourItem
                       href={`/my-tour/tour-details/tourID=${item.tourId}`}
                       image={`${item.tourImg}`}
-                      assess="9,1"
-                      comment="377"
+                      rating={item.rating}
+                      promotion={item.promotion}
+                      groupNumber={item.groupNumber}
+                      traveltypeID={`${item.travelTypeId}`}
                       date={`${item.dateStartFormat}`}
                       numberDate={changeDate(Number(item.totalDays))}
                       time="4:30"

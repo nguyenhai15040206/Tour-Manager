@@ -41,21 +41,11 @@ const validationSchema = {
       .moreThan(0, "[Đơn giá] lớn hơn 0")
       .transform((value) => (isNaN(value) ? undefined : value))
       .required("Vui lòng nhập đơn giá hợp lệ!"),
-    ChildrenUnitPrice: yup
-      .number()
-      .moreThan(0, "[Đơn giá] lớn hơn 0")
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .max(yup.ref("AdultUnitPrice"), "[Giá trẻ em] < [Giá người lớn]")
-      .required("Vui lòng nhập đơn giá hợp lệ!"),
-    BabyUnitPrice: yup
-      .number()
-      .moreThan(0, "[Đơn giá] lớn hơn 0")
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .max(yup.ref("ChildrenUnitPrice"), "[Giá trẻ nhỏ] < [Giá trẻ em]")
-      .required("Vui lòng nhập đơn giá hợp lệ!"),
+
     Surcharge: yup
       .string()
-      .matches(/^[0-9]+$/, "Vui lòng nhập đơn giá hợp lệ!"),
+      .matches(/^[0-9]+$/, "Vui lòng nhập đơn giá hợp lệ!")
+      .required("[Phụ phí] không được bỏ trống!"),
     QuanityMax: yup
       .number()
       .min(10, "[Số lượng] phải lớn hơn 10!")
@@ -119,21 +109,10 @@ const validationSchema = {
       .moreThan(0, "[Đơn giá] lớn hơn 0")
       .transform((value) => (isNaN(value) ? undefined : value))
       .required("Vui lòng nhập đơn giá hợp lệ!"),
-    ChildrenUnitPrice: yup
-      .number()
-      .moreThan(0, "[Đơn giá] lớn hơn 0")
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .max(yup.ref("AdultUnitPrice"), "[Giá trẻ em] < [Giá người lớn]")
-      .required("Vui lòng nhập đơn giá hợp lệ!"),
-    BabyUnitPrice: yup
-      .number()
-      .moreThan(0, "[Đơn giá] lớn hơn 0")
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .max(yup.ref("ChildrenUnitPrice"), "[Giá trẻ nhỏ] < [Giá trẻ em]")
-      .required("Vui lòng nhập đơn giá hợp lệ!"),
     Surcharge: yup
       .string()
-      .matches(/^[0-9]+$/, "Vui lòng nhập đơn giá hợp lệ!"),
+      .matches(/^[0-9]+$/, "Vui lòng nhập đơn giá hợp lệ!")
+      .required("[Phụ phí] không được bỏ trống!"),
     QuanityMax: yup
       .number()
       .min(10, "[Số lượng] phải lớn hơn 10!")

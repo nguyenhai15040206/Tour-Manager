@@ -8,6 +8,7 @@ import { Adm_BookingTourDetails } from "../../Admins/Slices/SliceBookingTour";
 import "./styles.scss";
 import { unwrapResult } from "@reduxjs/toolkit";
 import Loading from "../../../components/Loading/Index";
+import { formatCash } from "../../../utils/format";
 
 function BookingDetails(props) {
   document.title = "Thông tin chi tiết";
@@ -126,8 +127,9 @@ function BookingDetails(props) {
                 <Col className="info" xl={3}>
                   Trị giá booking
                 </Col>
-                <Col className="info" style={{ fontWeight: "400" }} xl={9}>
-                  10,000,000đ
+                <Col className="info" style={{ fontWeight: "400" }} xl={3}>
+                  {formatCash(`${stateBookingTour.dataDetails?.totalMoney}`) +
+                    "đ"}
                 </Col>
               </Row>
               <Row className="booking-tour-details mt-4">
@@ -143,7 +145,9 @@ function BookingDetails(props) {
                   Hình thức thanh toán
                 </Col>
                 <Col className="info" style={{ fontWeight: "400" }} xl={9}>
-                  Chuyển khoản
+                  {stateBookingTour.dataDetails?.typePayment === 1
+                    ? "Thanh toán tiền mặt"
+                    : "Chuyển khoản"}
                 </Col>
               </Row>
               <Row className="booking-tour-details mt-4">
@@ -151,24 +155,39 @@ function BookingDetails(props) {
                   Tình trạng
                 </Col>
                 <Col className="info" style={{ fontWeight: "400" }} xl={9}>
-                  {`${stateBookingTour.dataDetails?.status}`}
+                  {`${
+                    stateBookingTour.dataDetails?.status === false
+                      ? "Chưa thanh toán"
+                      : "Đã thanh toán"
+                  }`}
                 </Col>
               </Row>
-              <Row className="booking-tour-details mt-4">
-                <Col className="info" xl={3}>
-                  Thời hạn
-                </Col>
-                <Col className="info" style={{ fontWeight: "400" }} xl={9}>
-                  <span
-                    className="info"
-                    style={{ color: "#fd5056" }}
-                  >{`${stateBookingTour.dataDetails?.duration}`}</span>
-                  <span style={{ color: "#2d4271", fontSize: "13px" }}>
-                    (Theo giờ Việt Nam) (Nếu quá thời hạn trên mà quý khách chưa
-                    thanh toán. Vietravel sẽ hủy booking này)
-                  </span>
-                </Col>
-              </Row>
+              {stateBookingTour.dataDetails?.status === false && (
+                <Row className="booking-tour-details mt-4">
+                  <Col className="info" xl={3}>
+                    Thời hạn
+                  </Col>
+                  <Col className="info" style={{ fontWeight: "400" }} xl={9}>
+                    <span
+                      className="info"
+                      style={{ color: "#fd5056" }}
+                    >{`${stateBookingTour.dataDetails?.duration}`}</span>
+                    <span style={{ color: "#2d4271", fontSize: "13px" }}>
+                      (Theo giờ Việt Nam) (Nếu quá thời hạn trên mà quý khách
+                      chưa thanh toán. Vietravel sẽ hủy booking này)
+                    </span>
+                  </Col>
+                </Row>
+              )}
+              {stateBookingTour.dataDetails?.isDelete === false && (
+                <Row className="booking-tour-details mt-4">
+                  <Col className="info" style={{ fontWeight: "400" }}>
+                    <p className="info" style={{ color: "red" }}>
+                      Tour này đã được hủy do không thực hiện đúng quy định!!!
+                    </p>
+                  </Col>
+                </Row>
+              )}
             </div>
           </Col>
           <Col xl={4} lg={6}>

@@ -42,7 +42,7 @@ function ModalControl(props) {
         validationSchema={props.validationSchema}
         onSubmit={async (values, { resetForm }) => {
           if (submitAction === "Save") {
-            await props.HandleClickSave(values);
+            await props.HandleClickSave(values, { resetForm });
             return;
           }
           if (submitAction === "SaveAndCreated") {
@@ -51,7 +51,7 @@ function ModalControl(props) {
             return;
           }
           if (submitAction === "SaveAndClosed") {
-            await props.HandleClickSaveAndClosed(values);
+            await props.HandleClickSaveAndClosed(values, { resetForm });
             toggle();
             return;
           }

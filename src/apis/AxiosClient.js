@@ -13,10 +13,18 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   async (config) => {
     // Handle token here ...
-    const checkToken = localStorage.getItem("accessTokenEmp") != null;
+    const url = window.location.pathname.trim().split("/")[1];
+
+    const checkToken =
+      url === "my-tour"
+        ? localStorage.getItem("accessTokenCustomer")
+        : localStorage.getItem("accessTokenEmp") != null;
     let token = "";
     if (checkToken) {
-      token = JSON.parse(localStorage.getItem("accessTokenEmp")).accessTokenEmp;
+      token =
+        url === "my-tour"
+          ? JSON.parse(localStorage.getItem("accessTokenCustomer")).accessToken
+          : JSON.parse(localStorage.getItem("accessTokenEmp")).accessTokenEmp;
     }
     config.headers["Authorization"] = "bearer " + token;
     return config;
@@ -31,7 +39,6 @@ axiosClient.interceptors.response.use(
     if (response && response.data) {
       return response.data;
     }
-    console.log(response.status);
     return response.status;
   },
   (error) => {

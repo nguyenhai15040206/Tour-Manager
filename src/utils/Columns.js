@@ -1,5 +1,8 @@
 //==
 
+import { NotificationManager } from "react-notifications";
+import tourApi from "../apis/TourApi";
+
 export const tableColumnTourGuidSupportSearch = [
   {
     field: `tourGuideId`,
@@ -250,6 +253,140 @@ export const tableColumnPromotion = [
   },
 ];
 
+export const tableColumnBooking = [
+  {
+    field: `bookingTourId`,
+    headerName: "Mã booking",
+    sortTable: true,
+    unSortIcon: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
+    headerCheckboxSelection: true,
+    minWidth: 220,
+  },
+  {
+    field: "bookingDate",
+    headerName: "Ngày booking",
+    minWidth: 150,
+  },
+  {
+    field: `tourId`,
+    headerName: "Mã tour",
+    minWidth: 220,
+  },
+  {
+    field: `tourName`,
+    headerName: "Tên tour",
+    minWidth: 220,
+  },
+  {
+    field: `customerId`,
+    headerName: "Mã khách hàng",
+    minWidth: 220,
+  },
+  {
+    field: `customerName`,
+    headerName: "Tên khách hàng",
+    minWidth: 220,
+  },
+  {
+    field: `phoneNumber`,
+    headerName: "Số điện thoại",
+    minWidth: 220,
+  },
+  {
+    field: `email`,
+    headerName: "Email",
+    minWidth: 220,
+  },
+  {
+    field: `quanityAdult`,
+    headerName: "SL người lớn",
+    minWidth: 150,
+  },
+  {
+    field: `quanityChildren`,
+    headerName: "SL trẻ em",
+    minWidth: 150,
+  },
+  {
+    field: `quanityBaby`,
+    headerName: "SL trẻ nhỏ",
+    minWidth: 150,
+  },
+  {
+    field: `quanityInfant`,
+    headerName: "SL trẻ sơ sinh",
+    minWidth: 150,
+  },
+  {
+    field: `adultUnitPrice`,
+    headerName: "Đơn giá người lớn",
+    minWidth: 150,
+  },
+  {
+    field: `childrenUnitPrice`,
+    headerName: "Đơn giá trẻ em",
+    minWidth: 150,
+  },
+  {
+    field: `babyUnitPrice`,
+    headerName: "Đơn giá trẻ em",
+    minWidth: 150,
+  },
+  {
+    field: `surcharge`,
+    headerName: "Phụ thu phòng đơn",
+    minWidth: 160,
+  },
+  {
+    field: `discount`,
+    headerName: "Giảm giá",
+    minWidth: 150,
+  },
+  {
+    field: `totalMoneyBooking`,
+    headerName: "Tổng tiền booking",
+    minWidth: 200,
+  },
+  {
+    field: `totalMoney`,
+    headerName: "Tổng tiền tất cả",
+    minWidth: 200,
+  },
+  {
+    field: `optionsNote`,
+    headerName: "Các ghi chú",
+    minWidth: 220,
+  },
+  {
+    field: `note`,
+    headerName: "Ghi chú khác",
+    minWidth: 200,
+  },
+  {
+    field: `typePayment`,
+    headerName: "Loại thanh toán",
+    minWidth: 200,
+  },
+  {
+    field: `status`,
+    headerName: "Tình trạng tranh toán",
+    minWidth: 200,
+  },
+  {
+    field: "empIDConfirm",
+    headerName: "Nhân viên xác nhận",
+    minWidth: 200,
+  },
+  {
+    field: "dateConfirm",
+    headerName: "Ngày xác nhận",
+    minWidth: 150,
+  },
+];
+
 // Nguyễn Tấn Hải 2021-11-11
 // Tour
 export const tableColumnsTour = [
@@ -389,16 +526,174 @@ export const tableColumnsTour = [
     headerName: "Đề xuất",
     sortTable: true,
     unSortIcon: true,
-    cellRenderer: (params) => {
+    cellRenderer: (values) => {
       var input = document.createElement("input");
       input.type = "checkbox";
       input.readOnly = true;
-      input.checked = params.value;
+      input.checked = values.value;
+      input.addEventListener("click", () => {
+        const params = {
+          pID: values.data.tourId,
+          pEmpID: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
+        };
+        console.log(params);
+        tourApi.Adm_UpdateSuggest(params).catch((err) => {
+          console.log(err);
+        });
+      });
       return input;
     },
     minWidth: 130,
   },
 ];
+export const tableColumnsTourSupportSearch = [
+  {
+    field: `tourId`,
+    headerName: "Mã tour",
+    sortTable: true,
+    unSortIcon: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
+    headerCheckboxSelection: true,
+    minWidth: 220,
+  },
+
+  {
+    field: "tourName",
+    headerName: "Tên tour",
+    filter: true,
+    minWidth: 220,
+  },
+  {
+    field: "description",
+    headerName: "Mô tả tour",
+    minWidth: 200,
+  },
+  {
+    field: "tourImg",
+    headerName: "Ảnh tour",
+    minWidth: 200,
+  },
+  {
+    field: "dateStart",
+    headerName: "Ngày bắt đầu",
+    minWidth: 130,
+  },
+  {
+    field: "dateEnd",
+    headerName: "Ngày kết thúc",
+    minWidth: 130,
+  },
+  {
+    field: "rating",
+    headerName: "Đánh giá(sao)",
+    minWidth: 150,
+    sortTable: true,
+    unSortIcon: true,
+  },
+  {
+    field: "quanityMax",
+    headerName: "SL Max",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 120,
+  },
+  {
+    field: "quanityMin",
+    headerName: "SL Min",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 120,
+  },
+  {
+    field: "currentQuanity",
+    headerName: "SL hiện tại",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 150,
+  },
+  {
+    field: "adultUnitPrice",
+    headerName: "Đơn giá người lớn",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 190,
+  },
+  {
+    field: "childrenUnitPrice",
+    headerName: "Đơn giá trẻ em",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 190,
+  },
+  {
+    field: "babyUnitPrice",
+    headerName: "Đơn giá trẻ nhỏ",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 190,
+  },
+  {
+    field: "surcharge",
+    headerName: "Phụ phí(nếu có)",
+    sortTable: true,
+    unSortIcon: true,
+    filter: "agNumberColumnFilter",
+    minWidth: 190,
+  },
+  {
+    field: "departurePlaceFrom",
+    headerName: "Nơi khởi hành",
+    minWidth: 170,
+  },
+  {
+    field: "departurePlaceTo",
+    headerName: "Nơi đến",
+    minWidth: 170,
+  },
+  {
+    field: "tourGuideName",
+    headerName: "Hướng dẫn viên",
+    minWidth: 190,
+  },
+  {
+    field: "travelTypeName",
+    headerName: "Loại hình du lịch",
+    minWidth: 190,
+  },
+  {
+    field: "empName",
+    headerName: "Người cập nhật",
+    minWidth: 150,
+  },
+  {
+    field: "dateUpdate",
+    headerName: "Ngày cập nhật",
+    minWidth: 150,
+  },
+  {
+    field: "suggest",
+    headerName: "Đề xuất",
+    sortTable: true,
+    unSortIcon: true,
+    cellRenderer: (values) => {
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.readOnly = true;
+      input.checked = values.value;
+      return input;
+    },
+    minWidth: 130,
+  },
+];
+
 export const tableColumnEmployee = [
   {
     field: `empId`,

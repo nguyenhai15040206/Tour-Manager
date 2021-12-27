@@ -9,6 +9,17 @@ const bookingTour = {
   Adm_BookingTourDetails: (params) => {
     return axiosClient.get(`${url}/Adm_BookingTourDetails`, { params });
   },
+
+  Adm_SendEmailAfterBooking: (params) => {
+    return axiosClient.get(`${url}/Adm_SendEmailAfterBooking`, { params });
+  },
+  Adm_AcceptBooking: (params) => {
+    return axiosClient.get(`${url}/Adm_AcceptBooking`, { params });
+  },
+
+  Adm_GetDataBooking: (params) => {
+    return axiosClient.post(`${url}/Adm_GetDataBooking`, params);
+  },
 };
 
 export default bookingTour;

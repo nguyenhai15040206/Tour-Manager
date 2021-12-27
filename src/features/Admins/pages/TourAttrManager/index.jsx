@@ -31,6 +31,7 @@ import ConfirmControl from "../../components/Customs/ConfirmControl";
 import { Adm_UploadImageTouristAttr } from "../../Slices/SliceImagesUpload";
 import { useHistory } from "react-router-dom";
 import validationSchema from "../../../../utils/ValidateShema";
+import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
 
 const initialValuesTourAttr = {
   touristAttrName: "",
@@ -44,6 +45,9 @@ const initialValuesInsert = {
   TouristAttrImages: [],
   Description: "",
 };
+const baseURL =
+  process.env.REACT_APP_TOUR_MANAGER_API_KEY + "ImagesTouristAttractions/";
+
 function TourAttrManager() {
   document.title = "Quản lý địa điểm du lịch";
   //state in component
@@ -69,6 +73,7 @@ function TourAttrManager() {
   const handleClickShowModal = async () => {
     try {
       await dispatch(Adm_GetProvince({}));
+      setSelectedImages([]);
       setInitialValues(initialValuesInsert);
       setValidation(validationSchema.TouristAttractionAdd);
       setShowModal(true);
@@ -276,9 +281,14 @@ function TourAttrManager() {
         .then(unwrapResult)
         .then((payload) => {
           console.log(payload);
-          setSelectedImages(
-            payload.imagesList === null ? [] : payload.imagesList
-          );
+          setSelectedImages([]);
+          if (payload.imagesList === null) {
+            setSelectedImages([]);
+          } else {
+            const arrObj = payload.imagesList.map((item) => baseURL + item);
+            setSelectedImages(arrObj);
+          }
+
           setInitialValues({
             TouristAttrID: payload.touristAttrId,
             TouristAttrName: payload.touristAttrName,
@@ -450,6 +460,10 @@ function TourAttrManager() {
                                       Tìm kiếm
                                     </button>
                                     <div style={{ float: "right" }}>
+                                      <ExportDataToExcel
+                                        apiData={stateTouristAtt?.data}
+                                        fileName="DanhSachDiaDiemDuLich"
+                                      />
                                       <button
                                         className="h-button"
                                         onClick={(e) => {

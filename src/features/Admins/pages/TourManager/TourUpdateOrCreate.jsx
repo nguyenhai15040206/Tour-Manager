@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { FastField, Field, Form, Formik, FieldArray } from "formik";
+import { FastField, Field, Form, Formik } from "formik";
 import { FcMindMap } from "react-icons/fc";
 import {
   Card,
@@ -15,6 +15,7 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import ReactRating from "react-rating";
 import InputField from "../../../../CustomFields/InputField/Index";
 import { IoMdSave } from "react-icons/io";
+import { IoAddCircleSharp } from "react-icons/io5";
 import TextAreaField from "../../../../CustomFields/TextareaField/Index";
 import SelectField from "../../../../CustomFields/SelectField/Index";
 import EditorField from "../../../../CustomFields/EditorField/Index";
@@ -71,6 +72,7 @@ let initialValuesInsert = {
   DeparturePlaceTo: "",
   DateStart: "",
   DateEnd: "",
+  GroupNumber: "",
   BabyUnitPrice: "", // đơn giá trẻ em
   AdultUnitPrice: "", // đơn giá người lớn
   ChildrenUnitPrice: "", // đơn giá trẻ nhỏ
@@ -157,8 +159,35 @@ let initialValuesInsert = {
   //#endregion end
 };
 
+//#region validate formik
+const validateNotTourFamily = yup.object().shape({
+  ChildrenUnitPrice: yup
+    .number()
+    .moreThan(0, "[Đơn giá] lớn hơn 0")
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .max(yup.ref("AdultUnitPrice"), "[Giá trẻ em] < [Giá người lớn]")
+    .required("Vui lòng nhập đơn giá hợp lệ!"),
+  BabyUnitPrice: yup
+    .number()
+    .moreThan(0, "[Đơn giá] lớn hơn 0")
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .max(yup.ref("ChildrenUnitPrice"), "[Giá trẻ nhỏ] < [Giá trẻ em]")
+    .required("Vui lòng nhập đơn giá hợp lệ!"),
+});
+
+const validateIsTourFamily = yup.object().shape({
+  GroupNumber: yup
+    .number()
+    .moreThan(0, "[Đơn giá] lớn hơn 0")
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .max(10, "[Số lượng nhóm] tối đa là 10")
+    .required("[Số lượng nhóm] không thể bỏ trống!"),
+});
+//#endregion
+
 function TourUpdateOrCreate(props) {
-  // state in components
+  const { tourId } = useParams();
+  //#region  state in components
   const [rating, setRating] = useState(3);
   const [imageDefault, setImageDefault] = useState(`${imageDefaultPNG}`);
   const [imageUpload, setImageUpload] = useState(null);
@@ -166,9 +195,14 @@ function TourUpdateOrCreate(props) {
   const [isOpenInfoTranposrt, setIsOpenInfoTranpsport] = useState(false);
   const [isOpenInfoNote, setIsOpenInfoNote] = useState(false);
   const [totalShedule, setTotalShedule] = useState([]);
-  //end
-  // Begin get state in store
+  const [isAddMode, setIsAddMode] = useState(!tourId);
+  const [tourFamily, setTourFamily] = useState(false);
+  const [validationShema, setValidationShema] = useState(
+    validationSchema.TourManagerAdd.concat(validateNotTourFamily)
+  );
+  //#endregion
 
+  //#region Begin get state in store
   const stateEnumConstant = useSelector((state) => state.enumConstant);
   const stateTourisAtt = useSelector((state) => state.touristAttraction);
   const stateTravelType = useSelector((state) => state?.travelType);
@@ -178,12 +212,11 @@ function TourUpdateOrCreate(props) {
   const stateTravelCompany = useSelector(
     (state) => state.travelConpanyTransport
   );
-  //end
+  //#endregion
   //
   const dispatch = useDispatch();
   const history = useHistory();
-  const { tourId } = useParams();
-  const isAddMode = !tourId;
+
   let submitAction = undefined;
 
   useEffect(() => {
@@ -195,9 +228,10 @@ function TourUpdateOrCreate(props) {
       }
     };
     fetchApi();
-  }, [dispatch, tourId, isAddMode]);
+  }, [dispatch, tourId]);
 
   //#region  call dữ liệu khi cập nhạt tour
+
   useEffect(() => {
     const fetchApi = async () => {
       try {
@@ -215,13 +249,33 @@ function TourUpdateOrCreate(props) {
             .then(unwrapResult)
             .then(async (payload) => {
               try {
+                //#region  check có phải là tour gia đình hay không?
+                if (
+                  payload.travelTypeId ===
+                  "8f64fb01-91fe-4850-a004-35cf26a1c1ef"
+                ) {
+                  setTourFamily(true);
+                  setValidationShema(
+                    validationSchema.TourManagerEdit.concat(
+                      validateIsTourFamily
+                    )
+                  );
+                } else {
+                  setTourFamily(false);
+                  setValidationShema(
+                    validationSchema.TourManagerEdit.concat(
+                      validateNotTourFamily
+                    )
+                  );
+                }
+                //#endregion
+
                 const params = {
                   regions: payload.regions,
                 };
-
                 setImageDefault(`${payload.tourImg}`);
                 setRating(payload.rating);
-                //==
+                //#region  xử lý lịch trình tour
                 const re = "^||||^";
                 let arrayObj = String(payload.schedule).split(re);
                 arrayObj.pop();
@@ -258,6 +312,7 @@ function TourUpdateOrCreate(props) {
                   };
                   await dispatch(Adm_GetCompanyByTravelTypeCbo(params));
                 }
+                //#endregion
                 //==
                 setInitialValues(
                   Object.assign(ObjectInit, {
@@ -271,16 +326,20 @@ function TourUpdateOrCreate(props) {
                     DeparturePlaceTo: payload.departurePlaceTo,
                     DateStart: payload.dateStart.slice(0, 10),
                     DateEnd: payload.dateEnd.slice(0, 10),
+                    GroupNumber:
+                      payload.groupNumber === null ? 0 : payload.groupNumber,
                     AdultUnitPrice:
-                      payload.adultUnitPrice == null
+                      payload.adultUnitPrice === null
                         ? 0
                         : payload.adultUnitPrice,
                     ChildrenUnitPrice:
-                      payload.childrenUnitPrice == null
+                      payload.childrenUnitPrice === null
                         ? 0
                         : payload.childrenUnitPrice,
                     BabyUnitPrice:
-                      payload.babyUnitPrice == null ? 0 : payload.babyUnitPrice,
+                      payload.babyUnitPrice === null
+                        ? 0
+                        : payload.babyUnitPrice,
                     Surcharge: payload.surcharge, // phụ thu nếu có
                     QuanityMax: payload.quanityMax,
                     QuanityMin: payload.quanityMin,
@@ -296,7 +355,7 @@ function TourUpdateOrCreate(props) {
                         ? ""
                         : payload.conditionByTour,
                     NoteByMyTour:
-                      payload.NoteByMyTour === null ? "" : payload.noteByMyTour,
+                      payload.noteByMyTour === null ? "" : payload.noteByMyTour,
                     TransportType: payload.transportTypeID,
                     CompanyStartID:
                       payload.companyTransportStart === null
@@ -326,9 +385,8 @@ function TourUpdateOrCreate(props) {
       }
     };
     fetchApi();
-  }, [dispatch, tourId, isAddMode]);
+  }, [dispatch, tourId]);
   //#endregion
-  ////////////////
   isAddMode
     ? (document.title = "Thêm tour du lịch")
     : (document.title = "Cập nhật tour du lịch");
@@ -337,16 +395,10 @@ function TourUpdateOrCreate(props) {
     ? "Tạo mới tour du lịch"
     : "Cập nhật tour du lịch";
 
-  const validationShema = isAddMode
-    ? validationSchema.TourManagerAdd
-    : validationSchema.TourManagerEdit;
-  /////////////
-
   ////////////////////// Xử lý sự kiện
 
-  // handle click change rating tour
+  //#region handle click change rating tour and change image
   const handleClickChangeRating = (rating) => {
-    console.log(rating);
     setRating(rating);
   };
 
@@ -358,36 +410,11 @@ function TourUpdateOrCreate(props) {
     }
   };
 
-  // handle click change regions => get tourRistAttr
-  const handleChangeRegions = async (e) => {
-    try {
-      if (e === null || e === "") {
-        const params = {
-          regions: ":(",
-        };
-        await dispatch(Adm_GetProvinceByRegions(params));
-        await dispatch(Adm_GetTouristAttByRegions(params));
-        return;
-      }
-      const params = {
-        regions: e.value,
-      };
-      await dispatch(Adm_GetProvinceByRegions(params));
-      await dispatch(Adm_GetTouristAttByRegions(params));
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //#endregion
 
   // handle change travel type => load company travel by traveltype
   const handleClickChangeTravelType = async (e) => {
     try {
-      if (e === null) {
-        const params = {
-          enumType: ":(",
-        };
-        await dispatch(Adm_GetCompanyByTravelTypeCbo(params));
-      }
       const params = {
         enumType: e.value,
       };
@@ -400,21 +427,28 @@ function TourUpdateOrCreate(props) {
   // onSubmitForm
   //#region Nguyễn Tấn Hải - bắt sự kiện submit form
   //Thêm mới dữ liệu TOur => call APi khi submit on success!
-  const onInsertTour = (tour, values) => {
-    if (values.DeparturePlaceFrom === values.DeparturePlaceTo) {
-      return NotificationManager.warning(
-        "[Điểm đến] trùng [Điểm x/phát]",
-        "Warning!",
-        1500
-      );
-    }
+  const onInsertTour = (tour, values, { setStatus, resetForm }) => {
+    //#region  check điều kiện
     if (totalShedule.length === 0) {
+      setStatus({ success: false });
       return NotificationManager.warning(
         "Vui lòng generate lịch trình tour",
         "Warning!",
         2500
       );
     }
+    const dateStart = new Date(document.getElementById("DateStart").value);
+    const dateEnd = new Date(document.getElementById("DateEnd").value);
+    const diff = Math.floor(dateEnd - dateStart) / 86400000;
+    console.log(diff);
+    if (totalShedule.length !== diff) {
+      return NotificationManager.warning(
+        "Số ngày được thay đổi, vui lòng generate lịch trình tour",
+        "Warning!",
+        2500
+      );
+    }
+    //#endregion
 
     //#region  array tạm check shedule
     var arrtemp = [
@@ -460,6 +494,7 @@ function TourUpdateOrCreate(props) {
         .getElementById(`${totalShedule[index].title}`)
         .value.trim();
       if (title === "" || arrtemp[index].Shedule.length <= 20) {
+        setStatus({ success: false });
         return NotificationManager.warning(
           `Vui lòng nhập lịch trình ngày ${index + 1}`,
           "Warning!",
@@ -470,11 +505,32 @@ function TourUpdateOrCreate(props) {
       }
     }
 
+    //#region check điều kiện về lịch trình
     let SheduleAll = "";
     for (let index = 0; index < arrShedule.length; index++) {
       SheduleAll += `${arrShedule[index].title} ^||^ ${arrShedule[index].Shedule} ^||||^`;
     }
-    console.log(SheduleAll);
+    //#endregion
+
+    //#region  check điều kiện nếu là tour gia đình
+    if (tourFamily === true) {
+      if (Number(values.QuanityMax) % Number(values.GroupNumber) !== 0) {
+        return NotificationManager.warning(
+          `Số lượng tối đa chia hết cho nhóm khách`,
+          "Warning!",
+          2500
+        );
+      }
+      if (Number(values.QuanityMin) % Number(values.GroupNumber) !== 0) {
+        return NotificationManager.warning(
+          `Số lượng tối thiểu chia hết cho  nhóm khách`,
+          "Warning!",
+          2500
+        );
+      }
+    }
+    //#endregion
+
     //#region  submit
     let formData = new FormData();
     formData.append("file", imageUpload);
@@ -511,6 +567,7 @@ function TourUpdateOrCreate(props) {
                   };
                   return await dispatch(Adm_InsertTourDetails(tourDetails));
                 } catch (err) {
+                  setStatus({ success: false });
                   return NotificationManager.error(
                     `${err.error}`,
                     "Error!",
@@ -518,6 +575,16 @@ function TourUpdateOrCreate(props) {
                   );
                 }
               });
+              setStatus({ success: true });
+              if (submitAction === "SaveAndCreated") {
+                setTotalShedule([]);
+                setImageDefault(`${imageDefaultPNG}`);
+                setInitialValues(initialValuesInsert);
+                resetForm();
+              }
+              if (submitAction === "SaveAndClosed") {
+                history.push("/admin/TourManager");
+              }
               return NotificationManager.success(
                 `Thêm thành công!`,
                 "Success!",
@@ -526,9 +593,17 @@ function TourUpdateOrCreate(props) {
             }
           })
           .catch((err) => {
+            setStatus({ success: false });
             if (err.status === 401) {
               localStorage.removeItem("accessTokenEmp");
               return history.push("/admin/login");
+            }
+            if (err.status === 409) {
+              return NotificationManager.warning(
+                "Chọn một ngày bắt đầu hoặc địa điểm x/phát khác!",
+                `${err.message}`,
+                2500
+              );
             }
             return NotificationManager.error(
               `${err.error}`,
@@ -538,6 +613,7 @@ function TourUpdateOrCreate(props) {
           });
       })
       .catch((err) => {
+        setStatus({ success: false });
         if (err.status === 401) {
           localStorage.removeItem("accessTokenEmp");
           return history.push("/admin/login");
@@ -551,10 +627,11 @@ function TourUpdateOrCreate(props) {
     //#endregion
   };
 
-  // cập nhật
-  const onEdtiTour = async (tour, values) => {
+  //#region cập nhật
+  const onEdtiTour = async (tour, values, { resetForm }) => {
     let tourImageEdit = "";
     try {
+      //#region  check điều kiện
       const dateStart = new Date(document.getElementById("DateStart").value);
       const dateEnd = new Date(document.getElementById("DateEnd").value);
       const diff = Math.floor(dateEnd - dateStart) / 86400000;
@@ -566,6 +643,7 @@ function TourUpdateOrCreate(props) {
           2500
         );
       }
+      //#endregion
 
       //#region  array tạm check shedule
       var arrtemp = [
@@ -605,6 +683,7 @@ function TourUpdateOrCreate(props) {
 
       //#endregion end
 
+      //#region  check điều kiện về lịch trình tour
       var arrShedule = [];
       for (let index = 0; index < totalShedule.length; index++) {
         var title = document
@@ -625,6 +704,26 @@ function TourUpdateOrCreate(props) {
       for (let index = 0; index < arrShedule.length; index++) {
         SheduleAll += `${arrShedule[index].title} ^||^ ${arrShedule[index].Shedule} ^||||^`;
       }
+      //#endregion
+
+      //#region  check điều kiện nếu là tour gia đình
+      if (tourFamily === true) {
+        if (Number(values.QuanityMax) % Number(values.GroupNumber) !== 0) {
+          return NotificationManager.warning(
+            `Số lượng tối đa chia hết cho nhóm khách`,
+            "Warning!",
+            2500
+          );
+        }
+        if (Number(values.QuanityMin) % Number(values.GroupNumber) !== 0) {
+          return NotificationManager.warning(
+            `Số lượng tối thiểu chia hết cho  nhóm khách`,
+            "Warning!",
+            2500
+          );
+        }
+      }
+      //#endregion
       if (values.TourImg !== "") {
         let formData = new FormData();
         formData.append("file", imageUpload);
@@ -653,6 +752,16 @@ function TourUpdateOrCreate(props) {
           };
           await dispatch(Adm_UpdateTourDetails(params))
             .then(() => {
+              if (submitAction === "SaveAndCreated") {
+                setIsAddMode(true);
+                setImageDefault(`${imageDefaultPNG}`);
+                setTotalShedule([]);
+                setInitialValues(initialValuesInsert);
+                resetForm();
+              }
+              if (submitAction === "SaveAndClosed") {
+                history.push("/admin/TourManager");
+              }
               return NotificationManager.success(
                 `Cập nhật thành công`,
                 "Success!!!",
@@ -694,8 +803,9 @@ function TourUpdateOrCreate(props) {
       );
     }
   };
+  //#endregion
   // handle SubmitForm
-  const handelClickOnSubmitForm = async (values, type) => {
+  const handelClickOnSubmitForm = async (values, { setStatus, resetForm }) => {
     //thực hiện call dữ liệu
     const tour = {
       // thông tin cơ bản
@@ -707,6 +817,7 @@ function TourUpdateOrCreate(props) {
       dateStart: values.DateStart,
       dateEnd: values.DateEnd,
       rating: rating,
+      groupNumber: values.GroupNumber,
       adultUnitPrice: values.AdultUnitPrice,
       childrenUnitPrice: values.ChildrenUnitPrice,
       babyUnitPrice: values.BabyUnitPrice,
@@ -730,17 +841,12 @@ function TourUpdateOrCreate(props) {
 
     if (values.TourID !== "") {
       // edti here
-      onEdtiTour(tour, values);
-      if (type === "reset") {
-        setInitialValues(initialValuesInsert);
-      }
+      onEdtiTour(tour, values, { resetForm });
     } else {
-      onInsertTour(tour, values);
-      if (type === "reset") {
-        setInitialValues(initialValuesInsert);
-      }
+      onInsertTour(tour, values, { setStatus, resetForm });
     }
   };
+
   //#endregion
 
   //====================
@@ -763,9 +869,6 @@ function TourUpdateOrCreate(props) {
     const dateEnd = new Date(document.getElementById("DateEnd").value);
     const currentDate = new Date();
     if (!isValidDate(dateStart) || dateStart < currentDate) {
-      if (isAddMode) {
-        setTotalShedule([]);
-      }
       return NotificationManager.warning(
         "Ngày bắt đầu không hợp lệ!",
         "warning!!!",
@@ -773,9 +876,6 @@ function TourUpdateOrCreate(props) {
       );
     }
     if (!isValidDate(dateEnd) || +dateEnd <= +dateStart) {
-      if (isAddMode) {
-        setTotalShedule([]);
-      }
       return NotificationManager.warning(
         "Ngày kết thúc không hợp lệ!",
         "warning!!!",
@@ -793,7 +893,6 @@ function TourUpdateOrCreate(props) {
         day: index + 1,
       });
     }
-    console.log(initialValues);
     setTotalShedule(arrayShedule);
   };
   const isValidDate = (d) => {
@@ -840,6 +939,8 @@ function TourUpdateOrCreate(props) {
       });
   };
   //==
+
+  //=======
   return (
     <>
       <div className="animate__animated animate__slideInUp animate__delay-0.5s">
@@ -863,19 +964,21 @@ function TourUpdateOrCreate(props) {
             initialValues={initialValues}
             enableReinitialize={true}
             validationSchema={validationShema}
-            onSubmit={(values, { resetForm }) => {
+            onSubmit={(values, { setStatus, resetForm }) => {
               if (submitAction === "Save") {
-                handelClickOnSubmitForm(values, "");
+                handelClickOnSubmitForm(values, { setStatus });
                 return;
               }
               if (submitAction === "SaveAndCreated") {
-                handelClickOnSubmitForm(values, "reset");
-                resetForm();
+                handelClickOnSubmitForm(values, { setStatus, resetForm });
                 return;
               }
               if (submitAction === "SaveAndClosed") {
-                handelClickOnSubmitForm(values, "");
-                history.push("/admin/TourManager");
+                handelClickOnSubmitForm(values, { setStatus });
+                return;
+              }
+              if (submitAction === "AddNewTourDateDiff") {
+                handelClickOnSubmitForm(values, { setStatus, resetForm });
                 return;
               }
               submitAction = undefined;
@@ -1019,7 +1122,37 @@ function TourUpdateOrCreate(props) {
                                 }}
                               >
                                 <Field
+                                  isClearable={false}
                                   className="h-textbox"
+                                  handleChange={(e) => {
+                                    if (e === null) {
+                                      setValidationShema(
+                                        validationSchema.TourManagerAdd.concat(
+                                          validateNotTourFamily
+                                        )
+                                      );
+                                      setTourFamily(false);
+                                      return;
+                                    }
+                                    if (
+                                      e.value ===
+                                      "8f64fb01-91fe-4850-a004-35cf26a1c1ef"
+                                    ) {
+                                      setValidationShema(
+                                        validationSchema.TourManagerAdd.concat(
+                                          validateIsTourFamily
+                                        )
+                                      );
+                                      setTourFamily(true);
+                                    } else {
+                                      setValidationShema(
+                                        validationSchema.TourManagerAdd.concat(
+                                          validateNotTourFamily
+                                        )
+                                      );
+                                      setTourFamily(false);
+                                    }
+                                  }}
                                   isLoading={
                                     stateTravelType?.loading === "loaded"
                                       ? false
@@ -1049,6 +1182,7 @@ function TourUpdateOrCreate(props) {
                                       }}
                                     >
                                       <Field
+                                        isClearable={false}
                                         disable={!isAddMode}
                                         className="h-textbox"
                                         isLoading={
@@ -1077,7 +1211,39 @@ function TourUpdateOrCreate(props) {
                                       }}
                                     >
                                       <Field
+                                        isClearable={false}
                                         disable={!isAddMode}
+                                        handleChange={async (e) => {
+                                          try {
+                                            let regionsTemp = 1;
+                                            //#region  call dữ liệu
+                                            if (e.value <= 25) {
+                                              regionsTemp = 1;
+                                            }
+                                            if (e.value <= 44 && e.value > 25) {
+                                              regionsTemp = 2;
+                                            }
+                                            if (e.value <= 63 && e.value > 44) {
+                                              regionsTemp = 3;
+                                            }
+                                            //#endregion
+                                            formikProps.setFieldValue(
+                                              "Regions",
+                                              regionsTemp
+                                            );
+                                            const params = {
+                                              regions: regionsTemp,
+                                            };
+                                            await dispatch(
+                                              Adm_GetProvinceByRegions(params)
+                                            );
+                                            await dispatch(
+                                              Adm_GetTouristAttByRegions(params)
+                                            );
+                                          } catch (err) {
+                                            console.log(err.error);
+                                          }
+                                        }}
                                         className="h-textbox"
                                         isLoading={
                                           stateAddress?.loading === "loaded"
@@ -1105,11 +1271,6 @@ function TourUpdateOrCreate(props) {
                                       style={{ width: "calc(100% - 153px)" }}
                                     >
                                       <FastField
-                                        handleChange={() => {
-                                          if (isAddMode) {
-                                            setTotalShedule([]);
-                                          }
-                                        }}
                                         type="date"
                                         name="DateStart"
                                         className="h-textbox"
@@ -1129,11 +1290,6 @@ function TourUpdateOrCreate(props) {
                                       style={{ width: "calc(100% - 153px)" }}
                                     >
                                       <FastField
-                                        handleChange={() => {
-                                          if (isAddMode) {
-                                            setTotalShedule([]);
-                                          }
-                                        }}
                                         type="date"
                                         name="DateEnd"
                                         className="h-textbox"
@@ -1144,11 +1300,37 @@ function TourUpdateOrCreate(props) {
                                 </Col>
                               </Row>
                               <Row>
+                                <Col
+                                  xl={6}
+                                  lg={12}
+                                  className={tourFamily ? "d-block" : "d-none"}
+                                >
+                                  <FormGroup style={styles}>
+                                    <div style={{ width: "153px" }}>
+                                      <label className="h-label h-lable-Obligatory">
+                                        Nhóm khách
+                                      </label>
+                                    </div>
+                                    <div
+                                      style={{ width: "calc(100% - 153px)" }}
+                                    >
+                                      <FastField
+                                        type="number"
+                                        name="GroupNumber"
+                                        placeholder="Số lượng khách"
+                                        className="h-textbox"
+                                        component={InputField}
+                                      />
+                                    </div>
+                                  </FormGroup>
+                                </Col>
                                 <Col xl={6} lg={12}>
                                   <FormGroup style={styles}>
                                     <div style={{ width: "153px" }}>
                                       <label className="h-label h-lable-Obligatory">
-                                        Đơn giá người lớn
+                                        {tourFamily
+                                          ? "Đơn giá TB/khách"
+                                          : "Đơn giá người lớn"}
                                       </label>
                                     </div>
                                     <div
@@ -1163,7 +1345,11 @@ function TourUpdateOrCreate(props) {
                                     </div>
                                   </FormGroup>
                                 </Col>
-                                <Col xl={6} lg={12}>
+                                <Col
+                                  xl={6}
+                                  lg={12}
+                                  className={tourFamily ? "d-none" : "d-block"}
+                                >
                                   <FormGroup style={styles}>
                                     <div style={{ width: "153px" }}>
                                       <label className="h-label h-lable-Obligatory">
@@ -1182,12 +1368,10 @@ function TourUpdateOrCreate(props) {
                                     </div>
                                   </FormGroup>
                                 </Col>
-                              </Row>
-                              <Row>
                                 <Col
                                   xl={6}
                                   lg={12}
-                                  style={{ display: "block" }}
+                                  className={tourFamily ? "d-none" : "d-block"}
                                 >
                                   <FormGroup style={styles}>
                                     <div style={{ width: "153px" }}>
@@ -1207,11 +1391,7 @@ function TourUpdateOrCreate(props) {
                                     </div>
                                   </FormGroup>
                                 </Col>
-                                <Col
-                                  xl={6}
-                                  lg={12}
-                                  style={{ display: "block" }}
-                                >
+                                <Col xl={6} lg={12}>
                                   <FormGroup style={styles}>
                                     <div style={{ width: "153px" }}>
                                       <label className="h-label">
@@ -1415,9 +1595,9 @@ function TourUpdateOrCreate(props) {
                                   </label>
                                 </div>
                                 <div style={{ width: "calc(100% - 153px)" }}>
-                                  <FastField
-                                    disable={!isAddMode}
-                                    handleChange={handleChangeRegions}
+                                  <Field
+                                    isClearable={false}
+                                    disable={true}
                                     className="h-textbox"
                                     placeholder="Chọn Vùng miền"
                                     name="Regions"

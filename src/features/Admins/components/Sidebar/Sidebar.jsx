@@ -46,7 +46,12 @@ const sidebarBackground = {
 };
 
 const navItems = [
-  { to: "/admin/a", name: "dashboard", exact: true, Icon: MdDashboard },
+  {
+    to: "/admin/BookingManager",
+    name: "Quản lý booking",
+    exact: true,
+    Icon: MdDashboard,
+  },
   {
     to: "/admin/Employee",
     name: "Quản lý nhân viên",

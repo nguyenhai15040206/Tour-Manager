@@ -31,6 +31,7 @@ import {
 import { Adm_DeleteTourDetailsByTourIds } from "../../Slices/SliceTourDetails";
 import { Adm_GetTravelTypeCbo } from "../../Slices/SliceTravelType";
 import { useHistory } from "react-router-dom";
+import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
 
 const initialValuesSearch = {
   TourName: "",
@@ -46,11 +47,13 @@ function TourManager(props) {
   // state in components
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedTourByIds, setSelectedTourByIds] = useState([]);
+  const [paramsSearch, setParamsSearch] = useState(initialValuesSearch);
   //end
   //state in redux
   const { tourList } = useSelector((state) => state?.tour);
   const stateAddress = useSelector((state) => state.address);
   const stateTravelType = useSelector((state) => state?.travelType);
+
   //end
   const gridRef = useRef(null);
   const dispatch = useDispatch();
@@ -68,6 +71,8 @@ function TourManager(props) {
     };
     fetchApiDepacturePlace();
   }, [dispatch]);
+
+  //#region click chọn dòng để xóa
   const onButtonClick = (e) => {
     e.preventDefault();
     const selectedNodes = gridRef.current.api.getSelectedNodes();
@@ -83,9 +88,13 @@ function TourManager(props) {
     setShowConfirm(true);
   };
 
+  //#endregion
+
   const onGridReady = async () => {
     try {
-      await dispatch(Adm_GetTourList(initialValuesSearch));
+      await dispatch(
+        Adm_GetTourList(Object.assign(paramsSearch, { tourIsExpired: false }))
+      );
     } catch (err) {
       console.log(err);
     }
@@ -107,8 +116,11 @@ function TourManager(props) {
   //search
   const handleClickSearchTour = async (values) => {
     try {
+      setParamsSearch(values);
       console.log(values);
-      await dispatch(Adm_GetTourList(values));
+      await dispatch(
+        Adm_GetTourList(Object.assign(values, { tourIsExpired: false }))
+      );
     } catch (err) {
       console.log(err);
     }
@@ -145,14 +157,13 @@ function TourManager(props) {
       SelectByIds: selectedTourByIds,
       EmpId: "29da46c9-df68-4eb3-9b6a-f80a77cf2a98",
     };
-    console.log(DeleteModels);
     dispatch(Adm_DeleteTourByIds(DeleteModels))
       .then(unwrapResult)
       .then(() => {
         dispatch(Adm_DeleteTourDetailsByTourIds(DeleteModels))
           .then(unwrapResult)
           .then(async () => {
-            await dispatch(Adm_GetTourList({}));
+            await onGridReady();
             setShowConfirm(false);
             return NotificationManager.success(
               `Xóa thành công!`,
@@ -161,12 +172,35 @@ function TourManager(props) {
             );
           })
           .catch((err) => {
-            return NotificationManager.error(`${err}!`, "Error!", 1500);
+            if (err.status === 401) {
+              localStorage.removeItem("accessTokenEmp");
+              return history.push("/admin/login");
+            }
+            return NotificationManager.error(
+              `${err.error}`,
+              "Xóa thất bại!",
+              1500
+            );
           });
       })
       .catch((err) => {
-        return NotificationManager.error(`${err}!`, "Error!", 1500);
+        if (err.status === 401) {
+          localStorage.removeItem("accessTokenEmp");
+          return history.push("/admin/login");
+        }
+        return NotificationManager.error(`${err.error}`, "Xóa thất bại!", 1500);
       });
+  };
+
+  //===
+  const handleClickGetTourIsExpired = async () => {
+    try {
+      await dispatch(
+        Adm_GetTourList(Object.assign(paramsSearch, { tourIsExpired: true }))
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
   //-==========================
   return (
@@ -189,12 +223,12 @@ function TourManager(props) {
                   {/* Begin sitemap */}
                   <Breadcrumb>
                     <BreadcrumbItem active>
-                      <a href="/admin">Home</a>
+                      <a href="/admin">Trang chủ</a>
                     </BreadcrumbItem>
                     <BreadcrumbItem active>
-                      <a href="/admin">Library</a>
+                      <a href="/admin">Danh mục travel</a>
                     </BreadcrumbItem>
-                    <BreadcrumbItem active>Data</BreadcrumbItem>
+                    <BreadcrumbItem active>Quản lý tour du lịch</BreadcrumbItem>
                     <li className="breadcrumb-item">
                       <FormGroup
                         style={{
@@ -363,14 +397,33 @@ function TourManager(props) {
                                     <div style={{ float: "right" }}>
                                       <button
                                         type="button"
+                                        onClick={() => {
+                                          handleClickGetTourIsExpired();
+                                        }}
                                         className="h-button"
+                                      >
+                                        <FaSearch
+                                          color="rgb(180 173 30)"
+                                          size={15}
+                                        />{" "}
+                                        Lọc tour sắp đến hạn
+                                      </button>
+
+                                      {/* <button
+                                        type="button"
+                                        className="h-button"
+                                        style={{ marginLeft: "3px" }}
                                       >
                                         <RiFileExcel2Fill
                                           color="#2b6e44"
                                           size={15}
                                         />{" "}
                                         Xuất Excel
-                                      </button>
+                                      </button> */}
+                                      <ExportDataToExcel
+                                        apiData={tourList}
+                                        fileName="DanhSachTourDulich"
+                                      />
                                       <button
                                         type="button"
                                         onClick={onButtonClick}

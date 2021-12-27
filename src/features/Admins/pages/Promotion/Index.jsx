@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,6 +18,7 @@ import PromotionAddEdit from "./PromotionAddEdit";
 import { useDispatch } from "react-redux";
 import {
   Adm_DeletePromotionByIds,
+  Adm_DeletePromotionExpired,
   Adm_GetPromotionById,
   Adm_GetPromotionList,
   Adm_InsertPromotion,
@@ -28,6 +29,10 @@ import { NotificationManager } from "react-notifications";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
+import { Adm_GetTourList } from "../../Slices/SliceTour";
+import { Adm_GetProvince } from "../../Slices/SliceAddress";
+import { Adm_GetTravelTypeCbo } from "../../Slices/SliceTravelType";
+import tourApi from "../../../../apis/TourApi";
 
 const initialValuesSearh = {
   PromotionName: "",
@@ -41,6 +46,7 @@ const initialValuesInsert = {
   DateStart: "",
   DateEnd: "",
   PromotionName: "",
+  TourList: [],
 };
 function Promotion(props) {
   document.title = "Khuyến mãi";
@@ -48,12 +54,18 @@ function Promotion(props) {
   const [showModal, setShowModal] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isDeleteTourExpried, setDeleteTourExpried] = useState(false);
+  const [showSupportSearchTour, setShowSupportSearchTour] = useState(false);
+  const [tourListSupport, setTourListSupport] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
   const gridRef = useRef(null);
+  const gridRefTour = useRef(null);
   const dispatch = useDispatch();
   const history = useHistory();
 
   /// state in store
   const { promotionList } = useSelector((state) => state.promotion);
+
   //end state
 
   // state in componnet
@@ -64,6 +76,7 @@ function Promotion(props) {
   // Chọn khuyến mãi để xóa
   const handelClickDelete = (event) => {
     try {
+      setDeleteTourExpried(false);
       const selectedNodes = gridRef.current.api.getSelectedNodes();
       const selectedData = selectedNodes.map((node) => node.data);
       const selectedDataStringPresentation = selectedData
@@ -83,6 +96,14 @@ function Promotion(props) {
       setShowConfirm(true);
     } catch (err) {}
   };
+  const handleClickDeleteTourExpired = () => {
+    try {
+      setDeleteTourExpried(true);
+      setShowConfirm(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   // load grid
   const onGridReady = async () => {
     try {
@@ -94,9 +115,23 @@ function Promotion(props) {
       console.log(err.message);
     }
   };
-  const handleClickShowModal = () => {
-    setInitialValues(initialValuesInsert);
-    setShowModal(true);
+  const handleClickShowModal = async () => {
+    try {
+      setInitialValues(initialValuesInsert);
+      await dispatch(
+        Adm_GetTourList({
+          TourName: "",
+          DateStart: "",
+          DateEnd: "",
+          Suggest: false,
+          TravelTypeID: null,
+          DeparturePlace: [],
+        })
+      );
+      setShowModal(true);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const toggle = () => {
@@ -104,51 +139,122 @@ function Promotion(props) {
     setShowConfirm(false);
   };
 
-  const handleClickEditPromotionFromGrid = (promotionId) => {
-    const params = {
-      pID: promotionId,
-    };
-    dispatch(Adm_GetPromotionById(params))
-      .then(unwrapResult)
-      .then((payload) => {
-        setInitialValues({
-          promotionId: payload.promotionId,
-          Discount: payload.discount,
-          PromotionID: payload.promotionId,
-          IsAppyAll: payload.isApplyAll,
-          DateEnd: payload.dateEnd.slice(0, 10),
-          DateStart: payload.dateStart.slice(0, 10),
-          PromotionName: payload.promotionName,
+  const handleClickEditPromotionFromGrid = async (promotionId) => {
+    try {
+      await dispatch(
+        Adm_GetTourList({
+          TourName: "",
+          DateStart: "",
+          DateEnd: "",
+          Suggest: false,
+          TravelTypeID: null,
+          DeparturePlace: [],
+        })
+      );
+      const params = {
+        pID: promotionId,
+      };
+      dispatch(Adm_GetPromotionById(params))
+        .then(unwrapResult)
+        .then((payload) => {
+          setIsChecked(Boolean(payload.isApplyAll));
+          setInitialValues({
+            Discount: payload.discount,
+            PromotionID: payload.promotionId,
+            IsAppyAll: payload.isApplyAll,
+            DateEnd: payload.dateEnd.slice(0, 10),
+            DateStart: payload.dateStart.slice(0, 10),
+            PromotionName: payload.promotionName,
+            TourList: payload.tourList,
+          });
+          // dispatch(Adm_GetTour)
+          setShowModal(true);
+        })
+        .catch((err) => {
+          return NotificationManager.error(
+            `${err.error}`,
+            "Vui lòng kiểm tra lại"
+          );
         });
-        setShowModal(true);
-      })
-      .catch((err) => {
-        return NotificationManager.error(
-          `${err.error}`,
-          "Vui lòng kiểm tra lại"
-        );
-      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   /// Submit form Update or Created
-  const onInsertPromotion = (promotion) => {
-    dispatch(Adm_InsertPromotion(promotion))
-      .then(unwrapResult)
-      .then(() => {
-        onGridReady();
-        return NotificationManager.success(
-          "Tạo khuyến mãi thành công!",
-          "Success!",
-          1500
-        );
-      })
-      .catch((err) => {
-        if (err.status === 401) {
-          localStorage.removeItem("accessTokenEmp");
-          return history.push("/admin/login");
-        }
-        return NotificationManager.error(`${err.error}`, "Error!", 1500);
-      });
+  const onInsertPromotion = (promotion, values) => {
+    if (values.IsAppyAll === true) {
+      const ask = window.confirm(
+        "Bạn có muốn replaces các tour đã có khuyến mãi không?"
+      );
+      if (ask) {
+        dispatch(
+          Adm_InsertPromotion(
+            Object.assign(promotion, { isApplyAll: true, tourList: [] })
+          )
+        )
+          .then(unwrapResult)
+          .then(() => {
+            onGridReady();
+            return NotificationManager.success(
+              "Tạo khuyến mãi thành công!",
+              "Success!",
+              1500
+            );
+          })
+          .catch((err) => {
+            if (err.status === 401) {
+              localStorage.removeItem("accessTokenEmp");
+              return history.push("/admin/login");
+            }
+            if (err.status === 409) {
+              return NotificationManager.warning(
+                `${err.message}`,
+                "Vui lòng kiểm tra lại!",
+                1500
+              );
+            }
+            return NotificationManager.error(`${err.error}`, "Error!", 1500);
+          });
+      }
+    } else {
+      const ask = window.confirm(
+        "Bạn có muốn replaces các tour đã có khuyến mãi không?"
+      );
+      if (ask) {
+        dispatch(
+          Adm_InsertPromotion(
+            Object.assign(promotion, {
+              isApplyAll: false,
+              tourList: values.TourList,
+            })
+          )
+        )
+          .then(unwrapResult)
+          .then(() => {
+            onGridReady();
+            return NotificationManager.success(
+              "Tạo khuyến mãi thành công!",
+              "Success!",
+              1500
+            );
+          })
+          .catch((err) => {
+            if (err.status === 401) {
+              localStorage.removeItem("accessTokenEmp");
+              return history.push("/admin/login");
+            }
+            if (err.status === 409) {
+              return NotificationManager.warning(
+                `${err.message}`,
+                "Vui lòng kiểm tra lại!",
+                1500
+              );
+            }
+            return NotificationManager.error(`${err.error}`, "Error!", 1500);
+          });
+      }
+    }
   };
 
   const onUpdatePromotion = (promotion, values) => {
@@ -178,22 +284,52 @@ function Promotion(props) {
       dateStart: values.DateStart,
       dateEnd: values.DateEnd,
       discount: values.Discount,
-      isApplyAll: values.IsAppyAll,
+
       empIDInsert: JSON.parse(localStorage.getItem("accessTokenEmp")).data
         .empId,
       empIDUpdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
         .empId,
     };
-    console.log(promotion);
 
+    //
     if (values.PromotionID !== "") {
       onUpdatePromotion(promotion, values);
     } else {
-      onInsertPromotion(promotion);
+      onInsertPromotion(promotion, Object(values));
     }
   };
   // // handel click Delete MultiRow
   const handleClickDeleteMultiRow = () => {
+    //#region  Xóa khuyến mãi hết hạn
+    if (isDeleteTourExpried === true) {
+      setShowConfirm(false);
+      dispatch(Adm_DeletePromotionExpired())
+        .then(() => {
+          // handle here
+          onGridReady();
+          return NotificationManager.success(
+            "Xóa thành công!!!",
+            "Success!!",
+            1500
+          );
+        })
+        .catch((err) => {
+          if (err.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            return history.push("/admin/login");
+          }
+          if (err.state === 404)
+            return NotificationManager.warning(
+              `Warning!!!`,
+              "Không có dữ liệu để xóa",
+              1500
+            );
+        });
+
+      return;
+    }
+    //#endregion
+    //#region  Xóa khuyến mãi
     let DeleteModels = {
       SelectByIds: selectedIds,
       EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
@@ -216,6 +352,7 @@ function Promotion(props) {
           1500
         );
       });
+    //#endregion
   };
 
   const handleClickSearch = async (values) => {
@@ -226,13 +363,78 @@ function Promotion(props) {
       return NotificationManager.error(`${err.message}!`, "Error!", 1500);
     }
   };
+
+  // chọn tour ở component hỗ trợ tìm kiếm
+  const handleChoseTourID = (e) => {
+    e.preventDefault();
+    const selectedNodes = gridRefTour.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+    const selectedDataStringPresentation = selectedData
+      .map((node) => `${node.tourId}`)
+      .join(",");
+    if (selectedDataStringPresentation === "") {
+      return NotificationManager.warning(
+        "Chưa có dòng được chọn!",
+        "warning!!!",
+        1500
+      );
+    }
+    const Ids = selectedDataStringPresentation.split(",").map(String);
+    const stateOld = initialValues;
+    setInitialValues({
+      Discount: stateOld.Discount,
+      PromotionID: stateOld.PromotionID,
+      IsAppyAll: stateOld.IsAppyAll,
+      DateEnd: stateOld.DateEnd.slice(0, 10),
+      DateStart: stateOld.DateStart.slice(0, 10),
+      PromotionName: stateOld.PromotionName,
+      TourList: Ids,
+    });
+    setShowSupportSearchTour(false);
+  };
+
+  const handleClickShowSupportSearch = async () => {
+    try {
+      await dispatch(Adm_GetProvince({}));
+      await dispatch(Adm_GetTravelTypeCbo());
+      setShowSupportSearchTour(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSumitSearchTour = (values) => {
+    tourApi
+      .Adm_GetTourList(values)
+      .then((res) => {
+        setTourListSupport(res);
+      })
+      .catch((err) => {
+        setTourListSupport([]);
+      });
+  };
+
+  const toggleSuportSearch = () => {
+    setShowSupportSearchTour(false);
+  };
+
+  const handleClickChangeApplyAll = (e) => {
+    if (e.target.checked) {
+      setIsChecked(true);
+    } else {
+      setIsChecked(false);
+    }
+  };
+
+  //
+
   //==============
   return (
     <>
       <ConfirmControl
         showModal={showConfirm}
         toggle={toggle}
-        count={selectedIds.length}
+        count={isDeleteTourExpried === false ? selectedIds.length : ""}
         ConfirmDelete={handleClickDeleteMultiRow}
       />
       <PromotionAddEdit
@@ -242,7 +444,17 @@ function Promotion(props) {
         onSubmitForm={(values) => {
           handleClickOnSubmitForm(values);
         }}
-        className="modal-md"
+        className="modal-lg"
+        //
+        gridRef={gridRefTour}
+        onChoseTourID={handleChoseTourID}
+        isOpenSupportSearch={showSupportSearchTour}
+        onOpenSearchTour={handleClickShowSupportSearch}
+        onSubmitSearchTour={handleSumitSearchTour}
+        tourListSupportSearch={tourListSupport}
+        toggleSupport={toggleSuportSearch}
+        isChecked={isChecked}
+        onCheckedApplyAll={handleClickChangeApplyAll}
       />
       <Container
         fluid
@@ -377,6 +589,17 @@ function Promotion(props) {
                                       Tìm kiếm
                                     </button>
                                     <div style={{ float: "right" }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          handleClickDeleteTourExpired();
+                                        }}
+                                        className="h-button"
+                                        style={{ marginLeft: "3px" }}
+                                      >
+                                        <RiDeleteBin6Line size={15} /> Xóa
+                                        Khuyến mãi hết hạn
+                                      </button>
                                       <button
                                         type="button"
                                         className="h-button"

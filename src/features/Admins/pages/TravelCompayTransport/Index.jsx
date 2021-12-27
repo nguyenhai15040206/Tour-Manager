@@ -167,7 +167,6 @@ function Transport(props) {
 
   const handleChangeDistrict = async (event) => {
     try {
-      console.log(event);
       if (event === null || event === "") {
         const params = {
           districtIDs: ":(",

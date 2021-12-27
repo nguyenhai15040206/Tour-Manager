@@ -30,12 +30,37 @@
     }
 
     &__item{
-        height: 492px;
+        height: auto;
         background-color: #fff;
         border: none;
         border-radius: 6px;
         box-shadow: 1px 5px 5px #999;
-        
+        position: relative;
+        overflow: hidden;
+        .sale{
+            position:absolute;
+            top: -35px;
+            left: -23px;
+            background-color: #ff3366;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            &__title{
+                margin-top: 43px;
+                
+                margin-left: 36px;
+                position:   absolute;
+                font-weight: 600;
+                line-height: 21px;
+                align-items: center;
+                span{
+                    color: #fff;
+                }
+                span:after{
+                    content: "%";
+                }
+            }
+        }
         img{
             height: 250px;
             border-top-left-radius: 6px;
@@ -73,7 +98,7 @@
             }
 
             .rating{
-                margin-bottom: 20px;
+                margin-bottom: 5px;
                 color: orange;
             }
 
@@ -105,7 +130,7 @@
 
         .bottom{
             position: relative;
-            height: 5rem;
+            height: auto;
             color: black;
             background-color: #f2f2f2;
             border-radius: 0 0 4px 4px;

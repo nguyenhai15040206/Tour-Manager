@@ -6,7 +6,7 @@ import tourReducer from "../features/Admins/Slices/SliceTour";
 import tourDetailsReducer from "../features/Admins/Slices/SliceTourDetails";
 import touristAttrReducer from "../features/Admins/Slices/SliceTouristAttraction";
 import travelTypeReducer from "../features/Admins/Slices/SliceTravelType";
-import customerReducer from "../features/Clients/Customers/SliceCustomer";
+import customerReducer from "../features/Admins/Slices/SliceCustomer";
 import districtReducer from "../features/Admins/Slices/SliceDistrict";
 import wardsReducer from "../features/Admins/Slices/SliceWards";
 import tourGuideReducer from "../features/Admins/Slices/SliceTourGuide";

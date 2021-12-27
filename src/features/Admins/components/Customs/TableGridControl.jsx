@@ -48,24 +48,27 @@ function TableGridControl(props) {
           rowHeight={35}
           resizable={true}
         >
-          <AgGridColumn
-            headerName=""
-            cellClass="h-cell-editform"
-            field={`${fieldValues}`}
-            minWidth={30}
-            maxWidth={30}
-            cellRendererFramework={(field) => {
-              return (
-                <FcEditImage
-                  style={{ marginBottom: "10px" }}
-                  size={20}
-                  onClick={() => {
-                    handleClickEdit(field.value);
-                  }}
-                />
-              );
-            }}
-          ></AgGridColumn>
+          {fieldValues !== "" && (
+            <AgGridColumn
+              headerName=""
+              cellClass="h-cell-editform"
+              field={`${fieldValues}`}
+              minWidth={30}
+              maxWidth={30}
+              cellRendererFramework={(field) => {
+                return (
+                  <FcEditImage
+                    style={{ marginBottom: "10px" }}
+                    size={20}
+                    onClick={() => {
+                      handleClickEdit(field.value);
+                    }}
+                  />
+                );
+              }}
+            ></AgGridColumn>
+          )}
+
           {tableColoumn.map((item, index) => (
             <AgGridColumn
               key={index}

@@ -31,6 +31,9 @@ const Transport = React.lazy(() =>
 const LoginAdmin = React.lazy(() =>
   import("../Admins/components/LoginAdmin/Index")
 );
+const BookingManager = React.lazy(() =>
+  import("../Admins/pages/BookingManager/Index")
+);
 
 const Promotion = React.lazy(() => import("../Admins/pages/Promotion/Index"));
 
@@ -38,7 +41,7 @@ function Admin(props) {
   const match = useRouteMatch();
   return (
     <>
-      {localStorage.getItem("accessTokenEmp") == null ? (
+      {localStorage.getItem("accessTokenEmp") === null ? (
         <>
           <Redirect from="/admin" to="/admin/login" />
           <Route exact={true} path="/admin/login" component={LoginAdmin} />
@@ -65,6 +68,10 @@ function Admin(props) {
                 <Route path={`${match.url}/Village`} component={Wards} />
                 <Route path={`${match.url}/Tourguide`} component={TourGuide} />
                 <Route path={`${match.url}/Transport`} component={Transport} />
+                <Route
+                  path={`${match.url}/BookingManager`}
+                  component={BookingManager}
+                />
               </Switch>
             </Suspense>
           </MainLayout>
