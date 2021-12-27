@@ -1,6 +1,6 @@
 import { FastField, Field, Form, Formik } from "formik";
 import React, { useEffect } from "react";
-import { Col, Input, Row } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import Banner from "../../../../components/Banner";
 import Destination from "../../../../components/Destination/DestinationList/Index";
 import HotelsList from "../../../../components/Hotels/HotelsList/Index";
@@ -12,6 +12,7 @@ import { NotificationManager } from "react-notifications";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Adm_GetProvince } from "../../../Admins/Slices/SliceAddress";
+import TourFamily from "../../../../components/Tours/TourList/TourFamily";
 
 const optionDays = [
   { value: 1, label: "Từ 1-3 ngày" },
@@ -150,6 +151,7 @@ function HomePages(props) {
       </Banner>
       <Introdce />
       <TourList />
+      <TourFamily />
       <HotelsList />
       <Destination />
     </>

@@ -9,7 +9,11 @@ export const Adm_GetTourList = createAsyncThunk(
       const response = await tourApi.Adm_GetTourList(values);
       return response;
     } catch (error) {
-      return thunkApi.rejectWithValue(error.response.data);
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
     }
   }
 );
@@ -77,6 +81,23 @@ export const GetTourTourIsSuggest = createAsyncThunk(
     }
   }
 );
+
+export const GetTourTourIsSuggestFamily = createAsyncThunk(
+  "api/Tour/GetTourTourIsSuggestFamily",
+  async (values, thunkApi) => {
+    try {
+      const response = await tourApi.GetTourTourIsSuggest(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
+
 export const Adm_GetTourById = createAsyncThunk(
   "api/Tour/Adm_GetTourDetails",
   async (params, thunkApi) => {
@@ -130,6 +151,7 @@ const tourSlice = createSlice({
   name: "Tour",
   initialState: {
     tourSuggest: [],
+    tourSuggestFamily: [],
     tourByID: {},
     dataInsert: {},
     tourList: null,
@@ -141,6 +163,26 @@ const tourSlice = createSlice({
   },
 
   extraReducers: (builder) => {
+    // laays duwx lieu tour được đề xuất
+    builder.addCase(GetTourTourIsSuggestFamily.pending, (state) => {
+      state.tourSuggestFamily = [];
+      state.loading = "loading";
+    });
+
+    builder.addCase(
+      GetTourTourIsSuggestFamily.fulfilled,
+      (state, { payload }) => {
+        state.tourSuggestFamily = payload;
+        state.loading = "loaded";
+      }
+    );
+
+    builder.addCase(GetTourTourIsSuggestFamily.rejected, (state, action) => {
+      state.tourSuggestFamily = [];
+      state.loading = "error";
+      state.error = action.payload?.error;
+    });
+
     // laays duwx lieu tour search ở cli
     builder.addCase(Cli_GetDataTourSearch.pending, (state) => {
       state.Cli_DataSearch = [];

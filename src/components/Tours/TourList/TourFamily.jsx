@@ -2,19 +2,22 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { Col, Row } from "reactstrap";
-import { GetTourTourIsSuggest } from "../../../features/Admins/Slices/SliceTour";
+import { GetTourTourIsSuggestFamily } from "../../../features/Admins/Slices/SliceTour";
 import { formatCash } from "../../../utils/format";
 import Loading from "../../Loading/Index";
 import TourItem from "../TourItem";
 import "./styles.scss";
 
-function TourList(props) {
-  const { tourSuggest, loading } = useSelector((state) => state.tour);
+function TourFamily(props) {
+  const { tourSuggestFamily, loading } = useSelector((state) => state.tour);
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchApi = async () => {
       try {
-        await dispatch(GetTourTourIsSuggest());
+        const params = {
+          tourFamily: "8F64FB01-91FE-4850-A004-35CF26A1C1EF",
+        };
+        await dispatch(GetTourTourIsSuggestFamily(params));
       } catch (err) {
         console.log(err);
       }
@@ -27,25 +30,27 @@ function TourList(props) {
       <section className="promotion-tour">
         <div className="container">
           <div className="promotion-tour__title">
-            <span>Chúng tôi giới thiệu đến bạn</span>
-            <h2>TOUR ĐANG HOT</h2>
+            {/* <span>Chúng tôi giới thiệu đến bạn</span> */}
+            <h2>TOUR GIA ĐÌNH</h2>
           </div>
           <Row>
-            {tourSuggest.map((item, index) => (
+            {tourSuggestFamily.map((item, index) => (
               <Col xl={4} lg={6} className="mb-5" key={index}>
                 <TourItem
                   key={index}
                   tourHot={true}
                   title={item.tourName}
                   image={item.tourImg}
-                  travelTypeFamily={false}
+                  travelTypeFamily={true}
                   travelTypeName={item.enumerationTranslate}
                   href={`/my-tour/tour-details/tourID=${item.tourId}`}
                   dateStart={item.dateStart.slice(0, 10)}
                   provinceName={item.provinceName}
-                  promotion={item.promotion === null ? 0 : item.promotion}
+                  groupNumber={item.groupNumber}
                   rating={item.rating}
-                  unitPrice={formatCash(`${item.adultUnitPrice}`)}
+                  unitPrice={formatCash(
+                    `${item.adultUnitPrice * item.groupNumber}`
+                  )}
                 />
               </Col>
             ))}
@@ -56,6 +61,6 @@ function TourList(props) {
   );
 }
 
-TourList.propTypes = {};
+TourFamily.propTypes = {};
 
-export default TourList;
+export default TourFamily;

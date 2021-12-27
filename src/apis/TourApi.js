@@ -12,8 +12,11 @@ const tourApi = {
   },
 
   // Lấy danh sách các tour được đề xuất
-  GetTourTourIsSuggest: () => {
-    return axiosClient.get(`${url}/TourIsSuggest`);
+  GetTourTourIsSuggest: (params) => {
+    return axiosClient.get(`${url}/TourIsSuggest`, { params });
+  },
+  GetTourTourIsSuggestFamily: (params) => {
+    return axiosClient.get(`${url}/TourIsSuggest`, { params });
   },
 
   getTourDetails: (params) => {
@@ -32,6 +35,15 @@ const tourApi = {
   },
   Adm_DeleteTourByIds: (DeleteModels) => {
     return axiosClient.put(`${url}/Adm_DeleteTourByIds`, DeleteModels);
+  },
+
+  //===================
+  Adm_UpdateSuggest: (params) => {
+    return axiosClient.get(`${url}/Adm_UpdateSuggest`, { params });
+  },
+
+  SendMessageTourExpired: (params) => {
+    return axiosClient.get(`${url}/SendMessageTourExpired`, { params });
   },
 };
 

@@ -18,6 +18,10 @@ const BookingTourDetails = React.lazy(() =>
   import("../BookingTour/BookingDetails")
 );
 
+const CustomerPrfile = React.lazy(() =>
+  import("../../Clients/Customers/Index")
+);
+
 function MainClient(props) {
   const [loading, setLoading] = useState(false);
   const match = useRouteMatch();
@@ -45,6 +49,10 @@ function MainClient(props) {
           component={TourList}
         />
         <Route
+          path={`${match.url}/customer/pID=:tourID`}
+          component={CustomerPrfile}
+        />
+        <Route
           path={`${match.url}/tour-details/tourID=:tourID`}
           component={TourDetails}
         />
@@ -57,7 +65,8 @@ function MainClient(props) {
           component={BookingTourDetails}
         />
       </Switch>
-      <ReviewerList />
+      <div style={{ marginBottom: "100px", marginTop: "48px" }}></div>
+      {/* <ReviewerList /> */}
       <Footer />
       <NotificationContainer />
     </>

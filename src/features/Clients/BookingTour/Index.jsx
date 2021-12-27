@@ -38,8 +38,10 @@ function BookingTour() {
   const [quanityChildren, setQuanityChildren] = useState(0); // số lượng trẻ nhỏ
   const [quanityBaby, setQuanityBaby] = useState(0); // số lượng trẻ con
   const [quanityInfant, setQuanityInfant] = useState(0); // số lượng trẻ sơ sinh
-  const [totalMoney, setTotalMoney] = useState(null);
+  const [totalMoney, setTotalMoney] = useState(0);
   const [objBooking, setObjBooking] = useState({});
+  const [isCheckedSurcharge, setCheckedSurchage] = useState(false);
+  const [totalDiscount, setTotalDiscount] = useState(0);
   //end
   // state in store
   const { Cli_TourDetails, loading } = useSelector((state) => state?.tour);
@@ -52,7 +54,7 @@ function BookingTour() {
       top: 10,
       behavior: "smooth",
     });
-  }, [tourID, multiStep]);
+  }, [tourID, multiStep, dispatch, history]);
 
   useEffect(() => {
     const fetchDataTourDetails = async () => {
@@ -60,7 +62,28 @@ function BookingTour() {
         const params = {
           tourID: tourID,
         };
-        await dispatch(Cli_GetTourDetailsByTourID(params));
+        await dispatch(Cli_GetTourDetailsByTourID(params))
+          .then(unwrapResult)
+          .then((payload) => {
+            if (
+              payload.travelTypeId === "8f64fb01-91fe-4850-a004-35cf26a1c1ef"
+            ) {
+              setQuanityAdult(payload.groupNumber);
+              setTotalMoney(payload.adultUnitPrice * payload.groupNumber);
+            } else {
+              setTotalMoney(payload.adultUnitPrice);
+            }
+            if (payload.promotion === null) {
+              setTotalDiscount(0);
+            } else {
+              setTotalDiscount(
+                (payload.adultUnitPrice * payload.promotion) / 100
+              );
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       } catch (err) {
         console.log(err);
       }
@@ -87,6 +110,15 @@ function BookingTour() {
   //#region  xử lý thay đổi số lượng booking => thay đổi giá tiền tại tông
   const handleChangeAdult = (typeChange) => {
     const stateOld = quanityAdult;
+    if (
+      Cli_TourDetails.travelTypeId === "8f64fb01-91fe-4850-a004-35cf26a1c1ef"
+    ) {
+      return NotificationManager.warning(
+        `Tổng số lượng tối đa là ${Cli_TourDetails?.groupNumber}!`,
+        "Warning!!!",
+        2500
+      );
+    }
     if (Number(typeChange) === 1) {
       if (stateOld <= 1) {
         return NotificationManager.warning(
@@ -101,6 +133,15 @@ function BookingTour() {
             quanityChildren * Cli_TourDetails?.childrenUnitPrice +
             quanityBaby * Cli_TourDetails?.babyUnitPrice
         );
+        Cli_TourDetails.promotion === null
+          ? setTotalDiscount(0)
+          : setTotalDiscount(
+              (((stateOld - 1) * Cli_TourDetails?.adultUnitPrice +
+                quanityChildren * Cli_TourDetails?.childrenUnitPrice +
+                quanityBaby * Cli_TourDetails?.babyUnitPrice) *
+                Cli_TourDetails.promotion) /
+                100
+            );
       }
     } else {
       if (
@@ -119,11 +160,29 @@ function BookingTour() {
             quanityChildren * Cli_TourDetails?.childrenUnitPrice +
             quanityBaby * Cli_TourDetails?.babyUnitPrice
         );
+        Cli_TourDetails.promotion === null
+          ? setTotalDiscount(0)
+          : setTotalDiscount(
+              (((stateOld + 1) * Cli_TourDetails?.adultUnitPrice +
+                quanityChildren * Cli_TourDetails?.childrenUnitPrice +
+                quanityBaby * Cli_TourDetails?.babyUnitPrice) *
+                Cli_TourDetails.promotion) /
+                100
+            );
       }
     }
   };
 
   const handleChangeChildren = (typeChange) => {
+    if (
+      Cli_TourDetails.travelTypeId === "8f64fb01-91fe-4850-a004-35cf26a1c1ef"
+    ) {
+      return NotificationManager.warning(
+        `Tổng số lượng tối đa là ${Cli_TourDetails?.groupNumber}!`,
+        "Warning!!!",
+        2500
+      );
+    }
     const stateOld = quanityChildren;
     if (Number(typeChange) === 1) {
       if (stateOld < 1) {
@@ -139,6 +198,15 @@ function BookingTour() {
             quanityAdult * Cli_TourDetails?.adultUnitPrice +
             quanityBaby * Cli_TourDetails?.babyUnitPrice
         );
+        Cli_TourDetails.promotion === null
+          ? setTotalDiscount(0)
+          : setTotalDiscount(
+              (((stateOld - 1) * Cli_TourDetails?.childrenUnitPrice +
+                quanityAdult * Cli_TourDetails?.adultUnitPrice +
+                quanityBaby * Cli_TourDetails?.babyUnitPrice) *
+                Cli_TourDetails.promotion) /
+                100
+            );
       }
     } else {
       if (stateOld + quanityBaby + quanityAdult >= Cli_TourDetails?.quanity) {
@@ -154,10 +222,28 @@ function BookingTour() {
             quanityAdult * Cli_TourDetails?.adultUnitPrice +
             quanityBaby * Cli_TourDetails?.babyUnitPrice
         );
+        Cli_TourDetails.promotion === null
+          ? setTotalDiscount(0)
+          : setTotalDiscount(
+              (((stateOld + 1) * Cli_TourDetails?.childrenUnitPrice +
+                quanityAdult * Cli_TourDetails?.adultUnitPrice +
+                quanityBaby * Cli_TourDetails?.babyUnitPrice) *
+                Cli_TourDetails.promotion) /
+                100
+            );
       }
     }
   };
   const handleChangeBaby = (typeChange) => {
+    if (
+      Cli_TourDetails.travelTypeId === "8f64fb01-91fe-4850-a004-35cf26a1c1ef"
+    ) {
+      return NotificationManager.warning(
+        `Tổng số lượng tối đa là ${Cli_TourDetails?.groupNumber}!`,
+        "Warning!!!",
+        2500
+      );
+    }
     const stateOld = quanityBaby;
     if (Number(typeChange) === 1) {
       if (stateOld < 1) {
@@ -173,6 +259,15 @@ function BookingTour() {
             quanityAdult * Cli_TourDetails?.adultUnitPrice +
             quanityChildren * Cli_TourDetails?.childrenUnitPrice
         );
+        Cli_TourDetails.promotion === null
+          ? setTotalDiscount(0)
+          : setTotalDiscount(
+              (((stateOld - 1) * Cli_TourDetails?.babyUnitPrice +
+                quanityAdult * Cli_TourDetails?.adultUnitPrice +
+                quanityChildren * Cli_TourDetails?.childrenUnitPrice) *
+                Cli_TourDetails.promotion) /
+                100
+            );
       }
     } else {
       if (
@@ -180,7 +275,7 @@ function BookingTour() {
         Cli_TourDetails?.quanity
       ) {
         return NotificationManager.warning(
-          `Tổng số lượng tối đa là 2!`,
+          `Tổng số lượng tối đa là ${Cli_TourDetails?.quanity}!`,
           "Warning!!!",
           2500
         );
@@ -191,15 +286,33 @@ function BookingTour() {
             quanityAdult * Cli_TourDetails?.adultUnitPrice +
             quanityChildren * Cli_TourDetails?.childrenUnitPrice
         );
+        Cli_TourDetails.promotion === null
+          ? setTotalDiscount(0)
+          : setTotalDiscount(
+              (((stateOld + 1) * Cli_TourDetails?.babyUnitPrice +
+                quanityAdult * Cli_TourDetails?.adultUnitPrice +
+                quanityChildren * Cli_TourDetails?.childrenUnitPrice) *
+                Cli_TourDetails.promotion) /
+                100
+            );
       }
     }
   };
   const handleChangeInflant = (typeChange) => {
+    if (
+      Cli_TourDetails.travelTypeId === "8f64fb01-91fe-4850-a004-35cf26a1c1ef"
+    ) {
+      return NotificationManager.warning(
+        `Tổng số lượng tối đa là ${Cli_TourDetails?.groupNumber}!`,
+        "Warning!!!",
+        2500
+      );
+    }
     const stateOld = quanityInfant;
     if (Number(typeChange) === 1) {
       if (stateOld < 1) {
         return NotificationManager.warning(
-          `Số lượng em bé tối thiểu là 1!`,
+          `Số lượng em bé tối thiểu là ${Cli_TourDetails?.quanity}!`,
           "Warning!!!",
           2500
         );
@@ -304,8 +417,6 @@ function BookingTour() {
         adultUnitPrice: Cli_TourDetails.adultUnitPrice,
         childrenUnitPrice: Cli_TourDetails.childrenUnitPrice,
         babyUnitPrice: Cli_TourDetails.babyUnitPrice,
-        surcharge: Cli_TourDetails.surcharge,
-        totalmoneyBooking: totalMoney,
       };
       setObjBooking(obj);
       setMultiStep(2);
@@ -327,7 +438,24 @@ function BookingTour() {
 
   const onSubmitStepThree = () => {
     console.log(objBooking);
-    dispatch(Adm_BookingTour({ ...objBooking, tourId: tourID }))
+    var typepayment = document.getElementsByName("radioPayment");
+    var surchargeCheck = document.getElementById("surchargeCheckedByCustomer");
+    let typePaymentChecked = "";
+    for (let i = 0; i < typepayment.length; i++) {
+      if (typepayment[i].checked) typePaymentChecked = typepayment[i].value;
+    }
+
+    dispatch(
+      Adm_BookingTour({
+        ...objBooking,
+        tourId: tourID,
+        totalmoneyBooking: totalMoney,
+        typePayment: typePaymentChecked,
+        discount: totalDiscount,
+        totalMoney: totalMoney - totalDiscount,
+        surcharge: surchargeCheck.checked ? Cli_TourDetails.surcharge : 0,
+      })
+    )
       .then(unwrapResult)
       .then((payload) => {
         console.log(payload);
@@ -359,6 +487,11 @@ function BookingTour() {
     } else {
       return;
     }
+  };
+
+  //
+  const handleCheckedSurchage = () => {
+    setCheckedSurchage(!isCheckedSurcharge);
   };
   //=================
   return (
@@ -635,8 +768,13 @@ function BookingTour() {
                 <div className="booking-tour__ticket">
                   <h1>Tóm tắt chuyến đi</h1>
                   <h4>
-                    Tour đặt trước
-                    <span>({`${Cli_TourDetails?.quanity}`} khách)</span>
+                    {`${Cli_TourDetails?.enumerationTranslate}`}
+                    {Cli_TourDetails?.travelTypeId ===
+                    "8f64fb01-91fe-4850-a004-35cf26a1c1ef" ? (
+                      <span>({`${Cli_TourDetails?.groupNumber}`} khách)</span>
+                    ) : (
+                      <span>({`${Cli_TourDetails?.quanity}`} khách)</span>
+                    )}
                   </h4>
                   <div className="header-ticket">
                     <img src={`${Cli_TourDetails?.tourImg}`} alt="img"></img>
@@ -668,7 +806,12 @@ function BookingTour() {
                         <h4>Hành khách</h4>
                         <div className="user">
                           <FaUsers />
-                          <span>{`${quanityAdult}`}</span>
+                          <span>{`${
+                            quanityAdult +
+                            quanityBaby +
+                            quanityChildren +
+                            quanityInfant
+                          }`}</span>
                         </div>
                       </div>
                       <div className="detail-ticket__row">
@@ -690,7 +833,7 @@ function BookingTour() {
                       <div className="detail-ticket__row">
                         <p>Trẻ nhỏ</p>
                         <h4>
-                          {`${quanityBaby}`}{" "}
+                          {`${quanityBaby}`} x{" "}
                           {formatCash(`${Cli_TourDetails?.babyUnitPrice}`) +
                             "đ"}
                         </h4>
@@ -699,11 +842,34 @@ function BookingTour() {
                         <p>Em bé</p>
                         <h4>{`${quanityInfant}`} x0đ</h4>
                       </div>
+                      <hr />
+                      <div className="detail-ticket__row">
+                        <h2 style={{ fontWeight: "700", color: "#2d4271" }}>
+                          Tổng tiền:
+                        </h2>
+                        <h4>{formatCash(`${totalMoney}`) + "đ"}</h4>
+                      </div>
+                      <div className="detail-ticket__row">
+                        <h2 style={{ fontWeight: "700", color: "#2d4271" }}>
+                          Tổng giảm Giảm giá
+                        </h2>
+                        <h4>{formatCash(`${totalDiscount}`)}</h4>
+                      </div>
                       <div className="detail-ticket__row">
                         <h2 style={{ fontWeight: "700", color: "#2d4271" }}>
                           Phụ thu phòng riêng
                         </h2>
+
                         <h4>
+                          <input
+                            type={"checkbox"}
+                            onChange={() => {
+                              handleCheckedSurchage();
+                            }}
+                            id="surchargeCheckedByCustomer"
+                            style={{ marginRight: "10px" }}
+                            className="h-checkbox"
+                          />
                           {formatCash(`${Cli_TourDetails?.surcharge}`) + "đ"}
                         </h4>
                       </div>
@@ -712,10 +878,15 @@ function BookingTour() {
                       <div className="sum-money__row">
                         <h1>Tổng cộng</h1>
                         <h1 className="money">
-                          {totalMoney === null
-                            ? formatCash(`${Cli_TourDetails.adultUnitPrice}`) +
-                              "đ"
-                            : formatCash(`${totalMoney}`) + "đ"}
+                          {isCheckedSurcharge === true
+                            ? formatCash(
+                                `${
+                                  totalMoney -
+                                  totalDiscount +
+                                  Cli_TourDetails.surcharge
+                                }`
+                              ) + "đ"
+                            : formatCash(`${totalMoney - totalDiscount}`) + "đ"}
                         </h1>
                       </div>
                       <button

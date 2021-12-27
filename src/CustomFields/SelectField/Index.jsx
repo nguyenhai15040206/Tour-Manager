@@ -15,11 +15,14 @@ function SelectField(props) {
     options,
     isLoading,
     isMulti,
+    isClearable,
   } = props;
   const { name, value } = field;
   const { errors, touched } = form;
   const showError = errors[name] && touched[name];
+
   const handleSelectedOptionChange = (selectedOption) => {
+    // console.log(selectedOption.value);
     form.setFieldValue(
       name,
       isMulti
@@ -27,6 +30,7 @@ function SelectField(props) {
         : selectedOption === null
         ? ""
         : selectedOption.value
+      //
     );
   };
 
@@ -45,22 +49,27 @@ function SelectField(props) {
       handleChange(e);
     }
   };
+  const handleBlur = () => {
+    form.setFieldTouched(name);
+  };
   return (
     <FormGroup className="mt-1">
+      {/* {console.log(field)} */}
       <Select
         id={name}
-        isClearable={true}
+        isClearable={isClearable}
         {...field}
         closeMenuOnSelect={!isMulti}
         options={options}
         isLoading={isLoading}
         isMulti={isMulti}
         styles={customStyles}
-        value={getValue()}
+        value={getValue() || ""}
         onChange={(e) => {
           handleSelectedOptionChange(e);
           handleChangeClick(e);
         }}
+        onBlur={handleBlur}
         isDisabled={disable}
         placeholder={placeholder}
       ></Select>
@@ -81,6 +90,7 @@ SelectField.propTypes = {
   options: PropTypes.array,
   isLoading: PropTypes.bool,
   isMulti: PropTypes.bool,
+  isClearable: PropTypes.bool,
 };
 
 SelectField.defaultProps = {
@@ -91,6 +101,7 @@ SelectField.defaultProps = {
   options: [],
   isLoading: false,
   isMulti: false,
+  isClearable: true,
 };
 
 export default SelectField;

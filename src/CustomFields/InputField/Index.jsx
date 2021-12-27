@@ -62,6 +62,9 @@ function InputField(props) {
             if (type === "date") {
               handleOnChange(e);
             }
+            if (type === "checkbox") {
+              handleOnChange(e);
+            }
           }}
           type={type}
           placeholder={placeholder}
