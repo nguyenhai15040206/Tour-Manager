@@ -18,6 +18,7 @@ function TourItem(props) {
     travelTypeName,
     groupNumber,
     promotion,
+    hrefOrder,
   } = props;
 
   const ratingNumber = (rating) => {
@@ -77,9 +78,9 @@ function TourItem(props) {
           </small>
         )}
 
-        <a href={href} className="text-center btn-datngay">
+        <Link to={hrefOrder} className="text-center btn-datngay">
           ĐẶT NGAY
-        </a>
+        </Link>
       </div>
     </div>
   );
@@ -87,6 +88,7 @@ function TourItem(props) {
 
 TourItem.propTypes = {
   href: PropTypes.string,
+  hrefOrder: PropTypes.string,
   title: PropTypes.string,
   image: PropTypes.string,
   provinceName: PropTypes.string,
@@ -101,6 +103,7 @@ TourItem.propTypes = {
 };
 
 TourItem.defaultProps = {
+  hrefOrder: "#",
   href: "#",
   title: "",
   image: "",

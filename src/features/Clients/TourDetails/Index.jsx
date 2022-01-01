@@ -1,16 +1,16 @@
+import { unwrapResult } from "@reduxjs/toolkit";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import { Spinner } from "reactstrap";
+import ImageDefault from "../../../assets/logo/imageDefault.png";
 import Header from "../../../components/Header";
 import { formatCash } from "../../../utils/format";
-import { useDispatch, useSelector } from "react-redux";
 import {
   Cli_GetTourDetailsByTourID,
   GetTourTourIsSuggest,
 } from "../../Admins/Slices/SliceTour";
 import "./styles.scss";
-import { Col, Spinner } from "reactstrap";
-import { unwrapResult } from "@reduxjs/toolkit";
-import ImageDefault from "../../../assets/logo/imageDefault.png";
 import TourListSuggest from "./TourListSuggest";
 
 const baseURL =

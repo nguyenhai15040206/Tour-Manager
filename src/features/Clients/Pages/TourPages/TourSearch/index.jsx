@@ -1,28 +1,27 @@
-import React, { useState } from "react";
-import Header from "../../../../../components/Header";
-import Select from "react-select";
-import "./styles.scss";
-import TourItem from "../TourItem";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { FastField, Field, Form, Formik } from "formik";
+import React, { useEffect, useState } from "react";
 import {
   AiOutlineDoubleLeft,
   AiOutlineDoubleRight,
   AiOutlineSearch,
 } from "react-icons/ai";
-import { Adm_GetTravelTypeCbo } from "../../../../Admins/Slices/SliceTravelType";
-import { Adm_GetProvince } from "../../../../Admins/Slices/SliceAddress";
-import { Link, useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Col, Row } from "reactstrap";
-import { FastField, Field, Form, Formik } from "formik";
-import SelectField from "../../../../../CustomFields/SelectField/Index";
-import InputField from "../../../../../CustomFields/InputField/Index";
 import { FaSearch } from "react-icons/fa";
 import { NotificationManager } from "react-notifications";
-import { Cli_GetDataTourSearch } from "../../../../Admins/Slices/SliceTour";
-import { unwrapResult } from "@reduxjs/toolkit";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import Select from "react-select";
+import { Col, Row } from "reactstrap";
+import Header from "../../../../../components/Header";
 import Loading from "../../../../../components/Loading/Index";
+import InputField from "../../../../../CustomFields/InputField/Index";
+import SelectField from "../../../../../CustomFields/SelectField/Index";
 import { formatCash } from "../../../../../utils/format";
+import { Adm_GetProvince } from "../../../../Admins/Slices/SliceAddress";
+import { Cli_GetDataTourSearch } from "../../../../Admins/Slices/SliceTour";
+import { Adm_GetTravelTypeCbo } from "../../../../Admins/Slices/SliceTravelType";
+import TourItem from "../TourItem";
+import "./styles.scss";
 const filterMoney = [
   { value: "giathapdencao", label: "Giá thấp > cao" },
   { value: "giacaodenthap", label: "Giá cao > thấp" },
@@ -50,7 +49,7 @@ const changeDate = (number) => {
 
 function TourSearch(props) {
   const dispatch = useDispatch();
-
+  //#region  state in component
   //==
   const [totalDate1, setTotalDay1] = useState(false);
   const [totalDate2, setTotalDay2] = useState(false);
@@ -66,12 +65,13 @@ function TourSearch(props) {
   const [transportTypr1, setTransportType1] = useState(false);
   const [transportTypr2, setTransportType2] = useState(false);
   //==
-
+  //#endregion
   //==
   const [valuesSearch, setValuesSearch] = useState({});
 
   //==
-  let { DeFrom, DeTo, DateStart, TotalDays } = useParams();
+  const { DeFrom, DeTo, DateStart, TotalDays, DeparturePlaceToName } =
+    useParams();
   const stateTravelType = useSelector((state) => state?.travelType);
   const stateAddress = useSelector((state) => state.address);
   const stateTour = useSelector((state) => state.tour);
@@ -82,7 +82,7 @@ function TourSearch(props) {
       top: 10,
       behavior: "smooth",
     });
-  }, [stateTour]);
+  }, [stateTour, DeFrom, DeTo, DateStart, TotalDays, dispatch]);
 
   useEffect(() => {
     const fetchApi = async () => {
@@ -94,16 +94,13 @@ function TourSearch(props) {
       }
     };
     fetchApi();
-  }, [DeFrom, DeTo, DateStart, TotalDays]);
+  }, [DeFrom, DeTo, DateStart, TotalDays, dispatch]);
 
   useEffect(() => {
     const fetchApiTourSearch = () => {
-      const params = {
-        quantityDate1: totalDate1,
-        quantityDate2: totalDate2,
-        quantityDate3: totalDate3,
-        quantityDate4: totalDate4,
-
+      //#region  điều kiện search
+      let ObjectSearchFromMain = {
+        TravelTypeID: "",
         // number people
         quantityPeople1: totalPeople1,
         quantityPeople2: totalPeople2,
@@ -114,10 +111,62 @@ function TourSearch(props) {
         transportType1: transportTypr1,
         transportType2: transportTypr2,
       };
-      const ObjAsign = Object.assign(initialValuesSearch, params);
-      setValuesSearch(ObjAsign);
+      if (Number(DeFrom) !== 0) {
+        Object.assign(ObjectSearchFromMain, { DeparturePlaceFrom: DeFrom });
+      }
+      if (Number(DeTo)) {
+        Object.assign(ObjectSearchFromMain, { DeparturePlaceTo: DeTo });
+      }
+      if (Number(DateStart) !== 0) {
+        Object.assign(ObjectSearchFromMain, { DateStart: DateStart });
+      }
+      if (Number(TotalDays) !== 0) {
+        if (Number(TotalDays) === 1) {
+          Object.assign(ObjectSearchFromMain, {
+            quantityDate1: true,
+            quantityDate2: totalDate2,
+            quantityDate3: totalDate3,
+            quantityDate4: totalDate4,
+          });
+        }
+        if (Number(TotalDays) === 2) {
+          Object.assign(ObjectSearchFromMain, {
+            quantityDate1: totalDate1,
+            quantityDate2: true,
+            quantityDate3: totalDate3,
+            quantityDate4: totalDate4,
+          });
+        }
+        if (Number(TotalDays) === 3) {
+          Object.assign(ObjectSearchFromMain, {
+            quantityDate1: totalDate1,
+            quantityDate2: totalDate3,
+            quantityDate3: true,
+            quantityDate4: totalDate4,
+          });
+        }
+        if (Number(TotalDays) === 4) {
+          Object.assign(ObjectSearchFromMain, {
+            quantityDate1: totalDate1,
+            quantityDate2: totalDate3,
+            quantityDate3: totalDate4,
+            quantityDate4: true,
+          });
+        }
+      }
+      if (Number(DeparturePlaceToName) !== 0) {
+        Object.assign(ObjectSearchFromMain, {
+          DeparturePlaceToName: DeparturePlaceToName,
+        });
+      }
+      //#endregion
+      console.log(ObjectSearchFromMain);
+      //const ObjAsign = Object.assign(initialValuesSearch, params);
+      setValuesSearch(ObjectSearchFromMain);
       dispatch(
-        Cli_GetDataTourSearch(Object.assign(ObjAsign, { page: 1, limit: 9 }))
+        Cli_GetDataTourSearch(
+          Object.assign(ObjectSearchFromMain, { page: 1, limit: 9 })
+        )
       )
         .then(unwrapResult)
         .then(() => {})
@@ -525,7 +574,7 @@ function TourSearch(props) {
                                     handelClickTransportType(2);
                                   }}
                                   id={
-                                    transportTypr2 == true ? "btn-active" : ""
+                                    transportTypr2 === true ? "btn-active" : ""
                                   }
                                   className="btn-transport-tour"
                                   type="button"
@@ -573,6 +622,7 @@ function TourSearch(props) {
                   <Col xl={4} lg={6} key={index}>
                     <TourItem
                       href={`/my-tour/tour-details/tourID=${item.tourId}`}
+                      hrefOder={`/my-tour/booking-tour/tourID=${item.tourId}`}
                       image={`${item.tourImg}`}
                       rating={item.rating}
                       promotion={item.promotion}
@@ -580,12 +630,19 @@ function TourSearch(props) {
                       traveltypeID={`${item.travelTypeId}`}
                       date={`${item.dateStartFormat}`}
                       numberDate={changeDate(Number(item.totalDays))}
-                      time="4:30"
+                      time="00:00"
                       TravelTypeName={`${item.travelTypeName}`}
                       nameTour={`${item.tourName}`}
                       quanityCurrent={`${item.totalCurrentQuanity}`}
                       locationStart={`${item.departurePlaceFromName}`}
-                      moneyTour={formatCash(`${item.adultUnitPrice}`)}
+                      moneyTour={
+                        item.travelTypeId ===
+                        "8f64fb01-91fe-4850-a004-35cf26a1c1ef"
+                          ? formatCash(
+                              `${item.adultUnitPrice * item.groupNumber}`
+                            )
+                          : formatCash(`${item.adultUnitPrice}`)
+                      }
                     ></TourItem>
                   </Col>
                 ))}

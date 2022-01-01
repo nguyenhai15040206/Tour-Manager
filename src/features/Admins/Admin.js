@@ -36,6 +36,13 @@ const BookingManager = React.lazy(() =>
 );
 
 const Promotion = React.lazy(() => import("../Admins/pages/Promotion/Index"));
+const CustomerManager = React.lazy(() =>
+  import("../Admins/pages/CustomerManager/Index")
+);
+
+const PermissionManager = React.lazy(() =>
+  import("../Admins/pages/Permission/Index")
+);
 
 function Admin(props) {
   const match = useRouteMatch();
@@ -62,6 +69,14 @@ function Admin(props) {
                 <Route
                   path="/admin/TouristAttraction"
                   component={TouristAttr}
+                />
+                <Route
+                  path={`${match.url}/Permission`}
+                  component={PermissionManager}
+                />
+                <Route
+                  path={`${match.url}/Customer`}
+                  component={CustomerManager}
                 />
                 <Route path={`${match.url}/Province`} component={Province} />
                 <Route path={`${match.url}/District`} component={District} />

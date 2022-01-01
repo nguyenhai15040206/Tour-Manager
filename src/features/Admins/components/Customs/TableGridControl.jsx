@@ -85,6 +85,7 @@ function TableGridControl(props) {
               headerCheckboxSelection={item?.headerCheckboxSelection || false}
               minWidth={item?.minWidth}
               filterParams={item?.filterParam}
+              hide={item?.hide}
             ></AgGridColumn>
           ))}
         </AgGridReact>

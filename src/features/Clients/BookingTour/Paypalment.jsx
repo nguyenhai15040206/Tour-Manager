@@ -1,8 +1,7 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { Col, Input, Row } from "reactstrap";
 import { FaMoneyBillAlt } from "react-icons/fa";
 import { GiBank } from "react-icons/gi";
+import { Col, Input, Row } from "reactstrap";
 function Paypalment(props) {
   return (
     <div className="payment">

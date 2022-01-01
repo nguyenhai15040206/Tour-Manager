@@ -16,6 +16,8 @@ function TravelCompanyAddEdit(props) {
   const {
     initialValues,
     onSubmitForm,
+    onSubmitFormAndCreate,
+    onSubmitFormAndClose,
     onChangeImage,
     onChangeProvince,
     onChangeDistrict,
@@ -29,6 +31,17 @@ function TravelCompanyAddEdit(props) {
   const handleClickOnSubmit = async (e) => {
     if (onSubmitForm) {
       onSubmitForm(e);
+    }
+  };
+
+  const handleClickOnSubmitAndCreate = async (e) => {
+    if (onSubmitFormAndCreate) {
+      onSubmitFormAndCreate(e);
+    }
+  };
+  const handleClickOnSubmitAndClose = async (e) => {
+    if (onSubmitFormAndClose) {
+      onSubmitFormAndClose(e);
     }
   };
 
@@ -55,6 +68,7 @@ function TravelCompanyAddEdit(props) {
         stateConpany.loading === "loading" ||
         stateAddress.loading === "loading") && <Loading loading={true} />}
       <ModalControl
+        tableName="TableCompanyTransport"
         backdrop={"static"}
         toggle={props.toggle}
         showModal={props.showModal}
@@ -62,8 +76,8 @@ function TravelCompanyAddEdit(props) {
         initialValues={initialValues}
         validationSchema={props.validationShema}
         HandleClickSave={handleClickOnSubmit}
-        HandleClickSaveAndCreated={handleClickOnSubmit}
-        HandleClickSaveAndClosed={handleClickOnSubmit}
+        HandleClickSaveAndCreated={handleClickOnSubmitAndCreate}
+        HandleClickSaveAndClosed={handleClickOnSubmitAndClose}
         titlePopup={"Tạo mới hãng dịch vụ vận chuyển"}
         style={{
           justifyContent: "start",
@@ -237,6 +251,8 @@ function TravelCompanyAddEdit(props) {
 
 TravelCompanyAddEdit.propTypes = {
   onSubmitForm: PropTypes.func,
+  onSubmitFormAndCreate: PropTypes.func,
+  onSubmitFormAndClose: PropTypes.func,
   onChangeImage: PropTypes.func,
   onChangeProvince: PropTypes.func,
   onChangeDistrict: PropTypes.func,
@@ -245,6 +261,8 @@ TravelCompanyAddEdit.propTypes = {
 TravelCompanyAddEdit.defaulProps = {
   onChangeImage: null,
   onSubmitForm: null,
+  onSubmitFormAndCreate: null,
+  onSubmitFormAndClose: null,
   onChangeProvince: null,
   onChangeDistrict: null,
 };

@@ -43,7 +43,6 @@ const phoneRegExp =
 function Profile(props) {
   //#region  state in component
   const [initialvalues, setInitialvalues] = useState(initialValuesFirst);
-  const [validationShema, setValidationShema] = useState(null);
   const [editGender, setEditGener] = useState(false);
   const [editAddress, setEditAdress] = useState(false);
   const [edtiDateOfBirth, setDateOfBirth] = useState(false);
@@ -153,13 +152,6 @@ function Profile(props) {
     setDateOfBirth(false);
   };
 
-  const handleClickEditDateOfbirth = () => {
-    setDateOfBirth(!edtiDateOfBirth);
-    setEditCustomerName(false);
-    setEditAdress(false);
-    setEditGener(false);
-    setEditPhoneNumber(false);
-  };
 
   const handleClickEditCustomerName = () => {
     setEditCustomerName(!editCustomerName);
@@ -411,7 +403,6 @@ function Profile(props) {
       <Formik
         enableReinitialize={true}
         initialValues={initialvalues}
-        validationSchema={validationShema}
         onSubmit={(values) => {
           handleClickOnSubmit(values);
         }}

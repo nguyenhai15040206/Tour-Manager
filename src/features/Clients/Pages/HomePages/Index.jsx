@@ -1,18 +1,17 @@
 import { FastField, Field, Form, Formik } from "formik";
 import React, { useEffect } from "react";
+import { NotificationManager } from "react-notifications";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { Col, Row } from "reactstrap";
 import Banner from "../../../../components/Banner";
 import Destination from "../../../../components/Destination/DestinationList/Index";
-import HotelsList from "../../../../components/Hotels/HotelsList/Index";
 import Introdce from "../../../../components/Introduce";
 import TourList from "../../../../components/Tours/TourList";
+import TourFamily from "../../../../components/Tours/TourList/TourFamily";
 import InputField from "../../../../CustomFields/InputField/Index";
 import SelectField from "../../../../CustomFields/SelectField/Index";
-import { NotificationManager } from "react-notifications";
-import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { Adm_GetProvince } from "../../../Admins/Slices/SliceAddress";
-import TourFamily from "../../../../components/Tours/TourList/TourFamily";
 
 const optionDays = [
   { value: 1, label: "Từ 1-3 ngày" },
@@ -41,7 +40,7 @@ function HomePages(props) {
       }
     };
     fetchApiProvince();
-  }, []);
+  }, [dispatch]);
 
   const isValidDate = (d) => {
     return d instanceof Date && !isNaN(d);
@@ -74,7 +73,7 @@ function HomePages(props) {
         values.DeparturePlaceFrom === "" ? 0 : values.DeparturePlaceFrom
       }/${values.DeparturePlaceTo === "" ? 0 : values.DeparturePlaceTo}/${
         values.DateStart === "" ? 0 : values.DateStart
-      }/${values.TotalDays === "" ? 0 : values.TotalDays}`
+      }/${values.TotalDays === "" ? 0 : values.TotalDays}/0`
     );
   };
   return (
@@ -152,7 +151,7 @@ function HomePages(props) {
       <Introdce />
       <TourList />
       <TourFamily />
-      <HotelsList />
+      {/* <HotelsList /> */}
       <Destination />
     </>
   );

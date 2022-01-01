@@ -13,7 +13,10 @@ import { Col, Input, Row, Spinner } from "reactstrap";
 import Header from "../../../components/Header";
 import Loading from "../../../components/Loading/Index";
 import { formatCash } from "../../../utils/format";
-import { Adm_BookingTour } from "../../Admins/Slices/SliceBookingTour";
+import {
+  Adm_BookingTour,
+  Adm_SendEmailAfterBooking,
+} from "../../Admins/Slices/SliceBookingTour";
 import { Adm_GetEnumList } from "../../Admins/Slices/SliceEnumConstant";
 import { Cli_GetTourDetailsByTourID } from "../../Admins/Slices/SliceTour";
 import AcceptBooking from "./AcceptBooking";
@@ -457,11 +460,19 @@ function BookingTour() {
       })
     )
       .then(unwrapResult)
-      .then((payload) => {
-        console.log(payload);
+      .then(async (payload) => {
+        NotificationManager.success("Đặt tour thành công", "Success!!!", 2500);
         history.push(
           `/my-tour/show-customer-for-booking-tour-details/bookingID=${payload.bookingTourId}`
         );
+        const params = {
+          pID: payload.bookingTourId,
+        };
+        try {
+          await dispatch(Adm_SendEmailAfterBooking(params));
+        } catch (err) {
+          console.log(err);
+        }
       })
       .catch((err) => {
         return NotificationManager.error(

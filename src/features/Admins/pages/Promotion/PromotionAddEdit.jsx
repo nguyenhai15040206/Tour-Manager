@@ -1,21 +1,15 @@
-import React, { useState } from "react";
+import { FastField, Field } from "formik";
 import PropTypes from "prop-types";
-import ModalControl from "../../components/Customs/ModalControl";
-import { Col, FormGroup, Modal, ModalBody, ModalHeader, Row } from "reactstrap";
-import { FastField, Field, Form, Formik } from "formik";
-import InputField from "../../../../CustomFields/InputField/Index";
-import { useSelector } from "react-redux";
-import Loading from "../../../../components/Loading/Index";
-import validationSchema from "../../../../utils/ValidateShema";
-import SelectField from "../../../../CustomFields/SelectField/Index";
-import SupportSearchTour from "../../components/Customs/SupportSearchTour";
+import React from "react";
 import { FaSearch } from "react-icons/fa";
-import { Adm_GetTourList } from "../../Slices/SliceTour";
-import { useDispatch } from "react-redux";
-import { Adm_GetProvince } from "../../Slices/SliceAddress";
-import { Adm_GetTravelTypeCbo } from "../../Slices/SliceTravelType";
-import { NotificationManager } from "react-notifications";
-import { useRef } from "react";
+import { useSelector } from "react-redux";
+import { Col, FormGroup, Row } from "reactstrap";
+import Loading from "../../../../components/Loading/Index";
+import InputField from "../../../../CustomFields/InputField/Index";
+import SelectField from "../../../../CustomFields/SelectField/Index";
+import validationSchema from "../../../../utils/ValidateShema";
+import ModalControl from "../../components/Customs/ModalControl";
+import SupportSearchTour from "../../components/Customs/SupportSearchTour";
 const styles = {
   display: "flex",
   justifyContent: "flex-start",
@@ -26,7 +20,14 @@ function PromotionAddEdit(props) {
 
   const { tourList, loading } = useSelector((state) => state?.tour);
   const statePromotion = useSelector((state) => state.promotion);
-  const { initialValues, onSubmitForm, onCheckedApplyAll, isChecked } = props;
+  const {
+    initialValues,
+    onSubmitForm,
+    onSubmitFormAndCreate,
+    onSubmitFormAndClose,
+    onCheckedApplyAll,
+    isChecked,
+  } = props;
 
   const {
     onChoseTourID,
@@ -40,6 +41,16 @@ function PromotionAddEdit(props) {
   const handleClickOnSubmit = async (e) => {
     if (onSubmitForm) {
       onSubmitForm(e);
+    }
+  };
+  const handleClickOnSubmitAndCreate = async (e) => {
+    if (onSubmitFormAndCreate) {
+      onSubmitFormAndCreate(e);
+    }
+  };
+  const handleClickOnSubmitAndClose = async (e) => {
+    if (onSubmitFormAndClose) {
+      onSubmitFormAndClose(e);
     }
   };
 
@@ -81,6 +92,7 @@ function PromotionAddEdit(props) {
         <Loading loading={true} />
       )}
       <ModalControl
+        tableName="TablePromotion"
         backdrop={"static"}
         toggle={props.toggle}
         showModal={props.showModal}
@@ -88,8 +100,8 @@ function PromotionAddEdit(props) {
         initialValues={initialValues}
         validationSchema={validationSchema.PromotionManager}
         HandleClickSave={handleClickOnSubmit}
-        HandleClickSaveAndCreated={handleClickOnSubmit}
-        HandleClickSaveAndClosed={handleClickOnSubmit}
+        HandleClickSaveAndCreated={handleClickOnSubmitAndCreate}
+        HandleClickSaveAndClosed={handleClickOnSubmitAndClose}
         titlePopup={titlePopup}
         style={{
           justifyContent: "start",
@@ -172,7 +184,7 @@ function PromotionAddEdit(props) {
             </FormGroup>
             <FormGroup
               style={styles}
-              className={isChecked === true ? "d-none" : ""}
+              className={isChecked === false ? "" : "d-none"}
             >
               <div style={{ width: "140px" }}>
                 <label className="h-label h-lable-Obligatory">
@@ -260,6 +272,8 @@ function PromotionAddEdit(props) {
 
 PromotionAddEdit.propTypes = {
   onSubmitForm: PropTypes.func,
+  onSubmitFormAndCreate: PropTypes.func,
+  onSubmitFormAndClose: PropTypes.func,
   initialValues: PropTypes.object.isRequired,
   onchange: PropTypes.func,
 
@@ -275,6 +289,8 @@ PromotionAddEdit.propTypes = {
 };
 PromotionAddEdit.defaulProps = {
   onSubmitForm: null,
+  onSubmitFormAndCreate: null,
+  onSubmitFormAndClose: null,
   onchange: null,
 
   //===

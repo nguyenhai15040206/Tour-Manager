@@ -15,6 +15,7 @@ import enumConstantReducer from "../features/Admins/Slices/SliceEnumConstant";
 import travelConpanyTransportSliceReducer from "../features/Admins/Slices/SliceTravelConpanyTransport";
 import unitPriceTransportReducer from "../features/Admins/Slices/SliceUnitPriceTransport";
 import bookingTourReducer from "../features/Admins/Slices/SliceBookingTour";
+import permissionReducer from "../features/Admins/Slices/SlicePermission";
 
 export default configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export default configureStore({
     travelConpanyTransport: travelConpanyTransportSliceReducer,
     unitPriceTransport: unitPriceTransportReducer,
     bookingTour: bookingTourReducer,
+    permission: permissionReducer,
   },
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

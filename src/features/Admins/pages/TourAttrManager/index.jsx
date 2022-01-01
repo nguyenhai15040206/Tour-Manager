@@ -163,7 +163,7 @@ function TourAttrManager() {
 
   //===================
   //
-  const onInsertTouristAttr = async (touristAttr) => {
+  const onInsertTouristAttr = async (touristAttr, type) => {
     let formData = new FormData();
     imagesUpload.forEach((file) => {
       formData.append("files", file);
@@ -175,6 +175,13 @@ function TourAttrManager() {
         dispatch(Adm_CreateTourAttr({ ...touristAttr, imagesList: imagesList }))
           .then(unwrapResult)
           .then(async () => {
+            if (Number(type) === 2) {
+              setInitialValues(initialValuesInsert);
+              setSelectedImages([]);
+            }
+            if (Number(type) === 3) {
+              setShowModal(false);
+            }
             await onGridReady();
             return NotificationManager.success(
               "Thêm thành công!",
@@ -200,7 +207,7 @@ function TourAttrManager() {
       });
   };
 
-  const onUpdateTouristAttr = async (tourist, values) => {
+  const onUpdateTouristAttr = async (tourist, values, type) => {
     let imagesListTourist = "";
     try {
       if (values.TouristAttrImages !== "") {
@@ -212,7 +219,6 @@ function TourAttrManager() {
           .then(unwrapResult)
           .then((payload) => {
             imagesListTourist = payload.map((item) => item.fileName).join("||");
-            console.log(imagesListTourist);
           })
           .catch((err) => {
             if (err.status === 401) {
@@ -231,6 +237,13 @@ function TourAttrManager() {
       )
         .then(unwrapResult)
         .then(async () => {
+          if (Number(type) === 2) {
+            setInitialValues(initialValuesInsert);
+            setSelectedImages([]);
+          }
+          if (Number(type) === 3) {
+            setShowModal(false);
+          }
           await onGridReady();
           return NotificationManager.success(
             "Cập nhật thành công!",
@@ -253,7 +266,7 @@ function TourAttrManager() {
       return NotificationManager.error(`${err.message}`, "Error!", 1500);
     }
   };
-  const handleClickSubmitForm = async (values) => {
+  const handleClickSubmitForm = async (values, type) => {
     const data = {
       touristAttrName: values.TouristAttrName,
       description: values.Description,
@@ -264,9 +277,9 @@ function TourAttrManager() {
         .empId,
     };
     if (values.TouristAttrID !== "") {
-      onUpdateTouristAttr(data, values);
+      onUpdateTouristAttr(data, values, type);
     } else {
-      onInsertTouristAttr(data);
+      onInsertTouristAttr(data, type);
     }
   };
 
@@ -340,7 +353,13 @@ function TourAttrManager() {
         onChangeImages={handleClickChangeImages}
         imagesList={selectedImages}
         onSubmitForm={(values) => {
-          handleClickSubmitForm(values);
+          handleClickSubmitForm(values, 1);
+        }}
+        onSubmitFormAndCreate={(values) => {
+          handleClickSubmitForm(values, 2);
+        }}
+        onSubmitFormAndClose={(values) => {
+          handleClickSubmitForm(values, 3);
         }}
       />
       <Container

@@ -53,7 +53,7 @@ export const Adm_GetProvinceAndSearch = createAsyncThunk(
 const addressSlice = createSlice({
   name: "Address",
   initialState: {
-    data: null,
+    data: [],
     ProvinceByRegions: [],
     dataSearch: [],
     loading: "idle",

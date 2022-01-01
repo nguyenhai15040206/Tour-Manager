@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import Header from "../../../components/Header";
-import logo from "../../../assets/logo/icon_logo_mytour.svg";
-import { Col, Row, Spinner } from "reactstrap";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
-import imageDefault from "../../../assets/logo/images.jpg";
+import React, { useEffect } from "react";
+import { FaHeart, FaUserCheck } from "react-icons/fa";
+import { SiYourtraveldottv } from "react-icons/si";
 import { useSelector } from "react-redux";
+import { Link, Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
+import { Col, Row } from "reactstrap";
+import logo from "../../../assets/logo/icon_logo_mytour.svg";
+import imageDefault from "../../../assets/logo/images.jpg";
+import Header from "../../../components/Header";
 import "./styles.scss";
 
 const Profile = React.lazy(() => import("./Profile"));
+const BookingByCustomer = React.lazy(() => import("./BookingByCustomer"));
 function Customer(props) {
   //const { children } = props;
   const match = useRouteMatch();
@@ -40,16 +42,34 @@ function Customer(props) {
                   <p>{dataCustomerInfo?.email}</p>
                 </div>
               </div>
-              <div className="">
+              <div className="mt-3">
                 <ul>
                   <li>
-                    <a>Thông tin cá nhân</a>
+                    <Link
+                      to={`/my-tour/customer/pID=${
+                        JSON.parse(localStorage.getItem("accessTokenCustomer"))
+                          ?.data?.customerId
+                      }`}
+                    >
+                      <FaUserCheck /> Thông tin cá nhân
+                    </Link>
                   </li>
-                  <li>
-                    <a>Đơn đặt chỗ</a>
+                  <hr />
+                  <li className="mt-1">
+                    <Link
+                      to={`/my-tour/customer/booking-by-customer/pID=${
+                        JSON.parse(localStorage.getItem("accessTokenCustomer"))
+                          ?.data?.customerId
+                      }`}
+                    >
+                      <SiYourtraveldottv /> Đơn đặt chỗ
+                    </Link>
                   </li>
-                  <li>
-                    <a>Tour yêu thích</a>
+                  <hr />
+                  <li className="mt-1">
+                    <Link to={`/`}>
+                      <FaHeart /> Tour yêu thích
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -59,7 +79,23 @@ function Customer(props) {
             {/* {loading === "loading" && <Spinner color="primary" />} */}
             <div className="h-profile--right">
               <Switch>
-                <Route exact path={match.url} component={Profile} />
+                <Redirect
+                  exact
+                  from={`${match.url}`}
+                  to={`${match.url}/Profile/pID=${
+                    JSON.parse(localStorage.getItem("accessTokenCustomer"))
+                      ?.data?.customerId
+                  }`}
+                />
+                <Route
+                  exact
+                  path={`${match.url}/Profile/pID:pID`}
+                  component={Profile}
+                />
+                <Route
+                  path={`${match.url}/booking-by-customer/pID:pID`}
+                  component={BookingByCustomer}
+                />
               </Switch>
             </div>
           </Col>

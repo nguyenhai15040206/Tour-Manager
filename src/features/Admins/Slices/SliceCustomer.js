@@ -48,17 +48,104 @@ export const Cli_UpdateCustomer = createAsyncThunk(
     }
   }
 );
+/// Admin
+export const Adm_GetDataCustomerList = createAsyncThunk(
+  "api/Customer/Adm_GetDataCustomerList",
+  async (values, thunkApi) => {
+    try {
+      const response = await customerApi.Adm_GetDataCustomerList(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
+export const Adm_DeleteCustomer = createAsyncThunk(
+  "api/Customer/Adm_DeleteCustomer",
+  async (values, thunkApi) => {
+    try {
+      const response = await customerApi.Adm_DeleteCustomer(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
+export const Adm_RegisterCustomer = createAsyncThunk(
+  "api/Customer/Adm_RegisterCustomer",
+  async (values, thunkApi) => {
+    try {
+      const response = await customerApi.Adm_RegisterCustomer(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
 
 const customerSlice = createSlice({
   name: "Customer",
   initialState: {
     dataCustomer: {},
     dataCustomerInfo: {},
+    dataCustomer: null,
     loading: "idle",
     error: "",
   },
   reducers: {},
   extraReducers: (builder) => {
+    //
+    builder.addCase(Adm_DeleteCustomer.pending, (state) => {
+      state.loading = "loading";
+    });
+    builder.addCase(Adm_DeleteCustomer.fulfilled, (state, { payload }) => {
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Adm_DeleteCustomer.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.message;
+    });
+    //
+    builder.addCase(Adm_RegisterCustomer.pending, (state) => {
+      state.loading = "loading";
+    });
+    builder.addCase(Adm_RegisterCustomer.fulfilled, (state, { payload }) => {
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Adm_RegisterCustomer.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.message;
+    });
+    //
+    builder.addCase(Adm_GetDataCustomerList.pending, (state) => {
+      state.dataCustomer = null;
+      state.loading = "loading";
+    });
+    builder.addCase(Adm_GetDataCustomerList.fulfilled, (state, { payload }) => {
+      state.dataCustomer = payload;
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Adm_GetDataCustomerList.rejected, (state, action) => {
+      state.dataCustomer = [];
+      state.loading = "error";
+      state.error = action.error.message;
+    });
+    //
     builder.addCase(Cli_UpdateCustomer.pending, (state) => {
       state.loading = "loading";
     });

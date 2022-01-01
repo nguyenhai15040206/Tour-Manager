@@ -5,6 +5,7 @@ import Footer from "../../../components/Footer/Index";
 import Loading from "../../../components/Loading/Index";
 import HomePages from "../Pages/HomePages/Index";
 import { NotificationContainer } from "react-notifications";
+import MessengerCustomerChat from "react-messenger-customer-chat";
 
 const HotelBanner = React.lazy(() =>
   import("../../../components/Hotels/HotelBanner/Index")
@@ -21,6 +22,8 @@ const BookingTourDetails = React.lazy(() =>
 const CustomerPrfile = React.lazy(() =>
   import("../../Clients/Customers/Index")
 );
+
+const HotelManager = React.lazy(() => import("../Pages/HotelsPages/Index"));
 
 function MainClient(props) {
   const [loading, setLoading] = useState(false);
@@ -45,13 +48,11 @@ function MainClient(props) {
         <Route exact path={match.url} component={HomePages} />
         <Route path={`${match.url}/khach-san`} component={HotelBanner} />
         <Route
-          path={`${match.url}/danh-sach-tim-kiem-tour/params=:DeFrom/:DeTo/:DateStart/:TotalDays`}
+          path={`${match.url}/danh-sach-tim-kiem-tour/params=:DeFrom/:DeTo/:DateStart/:TotalDays/:DeparturePlaceToName`}
           component={TourList}
         />
-        <Route
-          path={`${match.url}/customer/pID=:tourID`}
-          component={CustomerPrfile}
-        />
+        <Route path={`${match.url}/Customer`} component={CustomerPrfile} />
+        <Route path={`${match.url}/HotelManager/`} component={HotelManager} />
         <Route
           path={`${match.url}/tour-details/tourID=:tourID`}
           component={TourDetails}
@@ -66,9 +67,14 @@ function MainClient(props) {
         />
       </Switch>
       <div style={{ marginBottom: "100px", marginTop: "48px" }}></div>
-      {/* <ReviewerList /> */}
+      <ReviewerList />
       <Footer />
       <NotificationContainer />
+      {/* <MessengerCustomerChat
+        pageId="107547915136175"
+        appId="437075137880479"
+        //htmlRef="<REF_STRING>"
+      /> */}
     </>
   );
 }

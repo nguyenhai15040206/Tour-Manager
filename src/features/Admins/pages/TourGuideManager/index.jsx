@@ -9,7 +9,10 @@ import { tableColumnTourGuide } from "../../../../utils/Columns";
 import { useDispatch } from "react-redux";
 import {
   Adm_CreateTourGuide,
+  Adm_DeleteTourGuide,
   Adm_GetDataTourGuide,
+  Adm_GetTourGuideByID,
+  Adm_UpdateTourGuide,
 } from "./../../Slices/SliceTourGuide";
 import { useSelector } from "react-redux";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -21,11 +24,18 @@ import { Adm_GetProvince } from "./../../Slices/SliceAddress";
 import { Adm_GetDistrictByProvinceCBB } from "../../Slices/SliceDistrict";
 import { NotificationManager } from "react-notifications";
 import { Adm_GetWardsByIdDistrictCbb } from "../../Slices/SliceWards";
+import ImageDefault from "../../../../assets/logo/imageDefault.png";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { Adm_UploadImageTourGuide } from "../../Slices/SliceImagesUpload";
+import { useHistory } from "react-router-dom";
+import ConfirmControl from "../../components/Customs/ConfirmControl";
 
 const initialValuesTourGuide = {
+  tourGuideId: "",
   tourGuideName: "",
   phoneNumber: "",
   email: "",
+  avatar: "",
   gender: "",
   provinceId: "",
   districtId: "",
@@ -33,31 +43,55 @@ const initialValuesTourGuide = {
   dateOfBirth: "",
   address: "",
 };
+
+const initialValuesSearch = {
+  tourGuideName: "",
+  phoneNumber: "",
+  email: "",
+};
 function TourGuideManager(props) {
   const stateTourGuide = useSelector((state) => state?.tourGuide);
 
   ///
   const [initialValues, setInitialValues] = useState(initialValuesTourGuide);
+  const [valueSearch, setValuesSearch] = useState(initialValuesSearch);
+  const [imageDefault, setImageDefault] = useState(`${ImageDefault}`);
+  const [imageUpload, setImageUpload] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [showModal, setShowModal] = useState(false);
   ///
   const gridRef = useRef(null);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   ///
   const handleClickShowModal = async () => {
-    try {
-      await dispatch(Adm_GetProvince());
-    } catch (err) {}
-    setInitialValues(initialValuesTourGuide);
-    setShowModal(true);
+    dispatch(Adm_GetProvince())
+      .then(unwrapResult)
+      .then(() => {
+        setInitialValues(initialValuesTourGuide);
+        setImageDefault(`${ImageDefault}`);
+        setShowModal(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
   ///
+  const handleChoseImage = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      setImageUpload(event.target.files[0]);
+      setImageDefault(URL.createObjectURL(event.target.files[0]));
+    }
+  };
   const toggle = () => {
     setShowModal(false);
+    setShowConfirm(false);
   };
   const onGridReady = async () => {
     try {
-      await dispatch(Adm_GetDataTourGuide({}));
+      await dispatch(Adm_GetDataTourGuide(valueSearch));
     } catch (error) {
       console.log(error);
     }
@@ -65,6 +99,7 @@ function TourGuideManager(props) {
   ///search
   const handelSubmitSearch = async (values) => {
     try {
+      setValuesSearch(values);
       await dispatch(Adm_GetDataTourGuide(values));
     } catch (error) {
       console.log(error);
@@ -72,29 +107,111 @@ function TourGuideManager(props) {
   };
 
   //thực hiện thêm
-  const handleClickSubmitForm = async (values) => {
+  const onInsertData = async (tourGuid, values) => {
+    let imageAvata = "";
+    try {
+      if (values.avatar !== "") {
+        let formData = new FormData();
+        formData.append("file", imageUpload);
+        imageAvata = unwrapResult(
+          await dispatch(Adm_UploadImageTourGuide(formData))
+        ).fileName;
+      }
+      await dispatch(
+        Adm_CreateTourGuide({
+          ...tourGuid,
+          avatar: imageAvata,
+        })
+      )
+        .then(unwrapResult)
+        .then(() => {
+          onGridReady();
+          return NotificationManager.success(
+            "Thêm mới thành công!",
+            "Success!",
+            1500
+          );
+        })
+        .catch((err) => {
+          if (err.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            return history.push("/admin/login");
+          }
+          return NotificationManager.error(`${err.error}`, "Error!", 1500);
+        });
+    } catch (err) {
+      if (err.status === 401) {
+        localStorage.removeItem("accessTokenEmp");
+        return history.push("/admin/login");
+      }
+      return NotificationManager.error(`${err.error}`, "Error!", 1500);
+    }
+  };
+
+  const onUpdateData = async (tourGuid, values) => {
+    let imageAvata = "";
+    try {
+      if (values.avatar !== "") {
+        let formData = new FormData();
+        formData.append("file", imageUpload);
+        imageAvata = unwrapResult(
+          await dispatch(Adm_UploadImageTourGuide(formData))
+        ).fileName;
+      }
+      await dispatch(
+        Adm_UpdateTourGuide({
+          ...tourGuid,
+          avatar: imageAvata,
+          tourGuideId: values.tourGuideId,
+        })
+      )
+        .then(unwrapResult)
+        .then(() => {
+          onGridReady();
+          return NotificationManager.success(
+            "Cập nhật thành công!",
+            "Success!",
+            1500
+          );
+        })
+        .catch((err) => {
+          if (err.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            return history.push("/admin/login");
+          }
+          return NotificationManager.error(`${err.error}`, "Error!", 1500);
+        });
+    } catch (err) {
+      if (err.status === 401) {
+        localStorage.removeItem("accessTokenEmp");
+        return history.push("/admin/login");
+      }
+      return NotificationManager.error(`${err.error}`, "Error!", 1500);
+    }
+  };
+  const handleClickSubmitForm = (values) => {
     const TourGiudObj = {
       //tourGuidID: values.tourGuidID
       tourGuideName: values.tourGuideName,
       phoneNumber: values.phoneNumber,
       email: values.email,
       gender: values.gender,
-      address: `${values.address} , ${values.wardId} , ${values.districtId} , ${values.provinceId}`,
+      address: `${values.address} || ${values.wardId} || ${values.districtId} || ${values.provinceId}`,
       dateOfBirth: values.dateOfBirth,
-      empIDInsert: "ed763673-e493-4edd-bfda-dc910d16cba1",
-      empIDUpdate: "ed763673-e493-4edd-bfda-dc910d16cba1",
+      empIDInsert: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+        .empId,
+      empIDUpdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+        .empId,
     };
-    try {
-      await dispatch(Adm_CreateTourGuide(TourGiudObj));
-      return NotificationManager.success("Thêm thành công!", "Success!", 1500);
-    } catch (err) {
-      return NotificationManager.error(`${err}`, "Error!", 1500);
+    if (values.tourGuideId !== "") {
+      onUpdateData(TourGiudObj, values);
+    } else {
+      onInsertData(TourGiudObj, values);
     }
   };
 
   //
   const handelChangeProvice = async (e) => {
-    // onChange thi chan chan kohng null roi em
     try {
       const params = {
         provinceID: e.value,
@@ -115,8 +232,116 @@ function TourGuideManager(props) {
     }
   };
 
+  //
+  const handleClickEditCompanyFromGrid = async (tourGuideId) => {
+    console.log(tourGuideId);
+    dispatch(Adm_GetTourGuideByID({ TourGuideId: tourGuideId }))
+      .then(unwrapResult)
+      .then(async (payload) => {
+        try {
+          const arrAddress = payload.address.split("||");
+          setImageDefault(`${payload.avatar}`);
+          await dispatch(Adm_GetProvince());
+          if (arrAddress[3] !== undefined) {
+            await dispatch(
+              Adm_GetDistrictByProvinceCBB({
+                provinceID: Number(arrAddress[3].trim()),
+              })
+            );
+          }
+          if (arrAddress[2] !== undefined) {
+            await dispatch(
+              Adm_GetWardsByIdDistrictCbb({
+                districtID: Number(arrAddress[2].trim()),
+              })
+            );
+          }
+
+          setInitialValues({
+            tourGuideId: payload.tourGuideId,
+            tourGuideName: payload.tourGuideName,
+            phoneNumber: payload.phoneNumber,
+            email: payload.email,
+            avatar: "",
+            gender: `${payload.gender}`,
+            provinceId:
+              arrAddress[3] === undefined ? "" : Number(arrAddress[3].trim()),
+            districtId:
+              arrAddress[2] === undefined ? "" : Number(arrAddress[2].trim()),
+            wardId:
+              arrAddress[1] === undefined ? "" : Number(arrAddress[1].trim()),
+            dateOfBirth: String(payload?.dateOfBirth).slice(0, 10),
+            address: arrAddress[0],
+          });
+          setShowModal(true);
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  //
+  const handelClickDelete = (event) => {
+    try {
+      event.preventDefault();
+      const selectedNodes = gridRef.current.api.getSelectedNodes();
+      const selectedData = selectedNodes.map((node) => node.data);
+      const selectedDataStringPresentation = selectedData
+        .map((node) => `${node.tourGuideId}`)
+        .join(",");
+      const Ids = selectedDataStringPresentation.split(",").map(String);
+      // nếu là chưa chọn => vui lòng chọn dòng cần xóa
+      if (Ids[0] === "") {
+        return NotificationManager.warning(
+          "Chọn một dòng để xóa!!!",
+          "Warning!",
+          1500
+        );
+      }
+      setSelectedIds(Ids);
+      setShowConfirm(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //
+  const handleClickDeleteMultiRow = () => {
+    let DeleteModels = {
+      SelectByIds: selectedIds,
+      EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
+    };
+    dispatch(Adm_DeleteTourGuide(DeleteModels))
+      .then(unwrapResult)
+      .then(() => {
+        onGridReady();
+        setShowConfirm(false);
+        return NotificationManager.success(`Xóa thành công!`, "Success!", 1500);
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          localStorage.removeItem("accessTokenEmp");
+          return history.push("/admin/login");
+        }
+        return NotificationManager.error(
+          `${err.message}!`,
+          "Xóa thất bại!",
+          1500
+        );
+      });
+  };
+
   return (
     <>
+      <ConfirmControl
+        showModal={showConfirm}
+        toggle={toggle}
+        count={selectedIds.length}
+        ConfirmDelete={handleClickDeleteMultiRow}
+      />
       <TourGuideAddEdit
         toggle={toggle}
         showModal={showModal}
@@ -127,10 +352,13 @@ function TourGuideManager(props) {
         }}
         onChangeProvince={handelChangeProvice}
         onChangeDistrict={handleChangeDistrict}
+        //
+        imageDefault={imageDefault}
+        onChangeImage={handleChoseImage}
       />
       <Container
         fluid
-        className="animate__animated animate_slideInUp animate__delay-0.5s "
+        className="animate__animated animate__slideInUp animate__delay-0.5s"
       >
         <Row>
           <Col>
@@ -168,7 +396,7 @@ function TourGuideManager(props) {
                 <Col lg={12}>
                   <div id="showSearch" className="collapse show">
                     <Formik
-                      initialValues={initialValues}
+                      initialValues={valueSearch}
                       onSubmit={handelSubmitSearch}
                     >
                       {(formilk) => {
@@ -179,7 +407,7 @@ function TourGuideManager(props) {
                                 <Col xl={4} lg={6}>
                                   <FormGroup className="row">
                                     <label className="col-lg-3 h-label">
-                                      Tên nhân viên
+                                      Tên HDV
                                     </label>
                                     <div className="col-lg-8">
                                       <FastField
@@ -258,6 +486,7 @@ function TourGuideManager(props) {
                                         Xuất Excel
                                       </button>
                                       <button
+                                        onClick={handelClickDelete}
                                         type="button"
                                         className="h-button"
                                         style={{ marginLeft: "3px" }}
@@ -286,8 +515,10 @@ function TourGuideManager(props) {
               onGridReady={onGridReady}
               gridRef={gridRef}
               //
-              tableHeight="450px"
+              tableHeight="360px"
+              fieldValues="tourGuideId"
               tableColoumn={tableColumnTourGuide}
+              onEditForm={handleClickEditCompanyFromGrid}
             ></TableGridControl>
           </Col>
         </Row>

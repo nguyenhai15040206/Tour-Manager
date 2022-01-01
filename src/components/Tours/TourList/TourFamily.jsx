@@ -27,7 +27,10 @@ function TourFamily(props) {
   return (
     <>
       {loading === "loading" && <Loading loading={true} />}
-      <section className="promotion-tour">
+      <section
+        className="promotion-tour"
+        style={{ backgroundColor: "#EDF6F9" }}
+      >
         <div className="container">
           <div className="promotion-tour__title">
             {/* <span>Chúng tôi giới thiệu đến bạn</span> */}
@@ -44,9 +47,11 @@ function TourFamily(props) {
                   travelTypeFamily={true}
                   travelTypeName={item.enumerationTranslate}
                   href={`/my-tour/tour-details/tourID=${item.tourId}`}
+                  hrefOrder={`/my-tour/booking-tour/tourID=${item.tourId}`}
                   dateStart={item.dateStart.slice(0, 10)}
                   provinceName={item.provinceName}
                   groupNumber={item.groupNumber}
+                  promotion={item.promotion === null ? 0 : item.promotion}
                   rating={item.rating}
                   unitPrice={formatCash(
                     `${item.adultUnitPrice * item.groupNumber}`

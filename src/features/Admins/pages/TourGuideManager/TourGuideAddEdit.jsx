@@ -24,6 +24,8 @@ function TourGuideAddEdit(props) {
     onChangeProvince,
     onChangeDistrict,
     onChangeWards,
+    onChangeImage,
+    imageDefault,
   } = props;
   ///
   const stateProvince = useSelector((state) => state?.address);
@@ -57,6 +59,11 @@ function TourGuideAddEdit(props) {
     // kiem tra khac null ms handle  su kien, khong laf ben kia no ms vao nhan func null => errr
     if (onChangeWards) {
       onChangeWards(e);
+    }
+  };
+  const handleChangeImage = (e) => {
+    if (onChangeImage) {
+      onChangeImage(e);
     }
   };
 
@@ -93,10 +100,16 @@ function TourGuideAddEdit(props) {
     email: yup.string().email().required("[Email] không để trống"),
     gender: yup.string().trim().required("[Giới tính] không được để trống"),
   });
+
+  const title =
+    initialValues?.tourGuideId !== ""
+      ? "Cập nhật thông tin hướng dẫn viên"
+      : "Thêm mới hướng dẫn viên";
   return (
     <>
       {stateTourGuide.loading === "loading" && <Loading loading={true} />}
       <ModalControl
+      tableName="TabdleTourGuide"
         backdrop={"static"}
         style={{
           justifyContent: "start",
@@ -111,10 +124,10 @@ function TourGuideAddEdit(props) {
         HandleClickSave={handleClickOnSubmit}
         HandleClickSaveAndCreated={handleClickOnSubmit}
         HandleClickSaveAndClosed={handleClickOnSubmit}
-        titlePopup="Thêm mới một nhân viên"
+        titlePopup={title}
       >
         <Row>
-          <Col xl={9} lg={12}>
+          <Col xl={8} lg={12}>
             <Row>
               <FormGroup style={styles}>
                 <div style={{ width: "150px" }}>
@@ -163,7 +176,6 @@ function TourGuideAddEdit(props) {
                         styles={{ width: "15px", height: "15px" }}
                         name="gender"
                         id="true"
-                        defaultChecked="true"
                         className="h-textbox"
                         component={RadioField}
                       />
@@ -201,6 +213,7 @@ function TourGuideAddEdit(props) {
                 <div style={{ width: "calc(100% - 150px)" }}>
                   <FastField
                     component={InputField}
+                    handleChange={handleChangeImage}
                     name="avatar"
                     className="h-textbox form-control"
                     type="file"
@@ -223,42 +236,75 @@ function TourGuideAddEdit(props) {
                   />
                 </div>
               </FormGroup>
+              <FormGroup style={styles}>
+                <div style={{ width: "150px" }}>
+                  <label className="h-label h-lable-Obligatory">Địa chỉ</label>
+                </div>
+                <div style={{ width: "calc(100% - 150px)" }}>
+                  <Field
+                    component={InputField}
+                    className="h-textbox"
+                    name="address"
+                  />
+                </div>
+              </FormGroup>
             </Row>
           </Col>
-          <Col xl={3} lg={12}>
-            <Card style={{ height: "159px" }} inverse>
+          <Col xl={4} lg={12}>
+            <Card style={{ height: "197px" }} inverse>
               <CardImg
-                style={{ height: "158px", objectfic: "cover" }}
+                src={imageDefault}
+                style={{ objectfic: "cover" }}
                 alt="avatar"
               ></CardImg>
             </Card>
           </Col>
           <FormGroup style={styles}>
-            <div style={{ width: "150px" }}>
-              <label className="h-label h-lable-Obligatory">
-                Tên tỉnh thành
-              </label>
-            </div>
-            <div style={{ width: "calc(100% - 150px" }}>
-              <Field
-                className="h-textbox"
-                component={SelectField}
-                name="provinceId"
-                handleChange={handleChangeProvince}
-                isLoading={stateProvince?.loading === "loaded" ? false : true}
-                options={stateProvince?.data}
-              />
-            </div>
-          </FormGroup>
-          <Col xl={6} lg={12}>
-            <FormGroup style={styles}>
-              <div style={{ width: "150px" }}>
-                <label className="h-label h-lable-Obligatory">
-                  Tên Quận/ Huyện
+            <div style={{ width: "150px" }}></div>
+            <div
+              className="row"
+              style={{
+                width: "calc(100% - 150px",
+              }}
+            >
+              <Col xl={4} lg={12}>
+                <label
+                  style={{
+                    marginLeft: "10px !important",
+                    marginTop: "4.5px",
+                    color: "#333 !important",
+                    fontWeight: "400",
+                    fontSize: "13px",
+                  }}
+                  className=" h-lable-Obligatory"
+                >
+                  Tỉnh thành
                 </label>
-              </div>
-              <div style={{ width: "calc(100% - 150px" }}>
                 <Field
+                  isClearable={false}
+                  className="h-textbox"
+                  component={SelectField}
+                  name="provinceId"
+                  handleChange={handleChangeProvince}
+                  isLoading={stateProvince?.loading === "loaded" ? false : true}
+                  options={stateProvince.data}
+                />
+              </Col>
+              <Col xl={4} lg={12}>
+                <label
+                  style={{
+                    marginLeft: "10px !important",
+                    marginTop: "4.5px",
+                    color: "#333 !important",
+                    fontWeight: "400",
+                    fontSize: "13px",
+                  }}
+                  className="h-lable-Obligatory"
+                >
+                  Quận huyện
+                </label>
+                <Field
+                  isClearable={false}
                   className="h-textbox"
                   component={SelectField}
                   name="districtId"
@@ -266,18 +312,22 @@ function TourGuideAddEdit(props) {
                   isLoading={stateDistrict?.loading === "loaded" ? false : true}
                   options={stateDistrict?.dataDistrictCbb}
                 />
-              </div>
-            </FormGroup>
-          </Col>
-          <Col xl={6} lg={12}>
-            <FormGroup style={styles}>
-              <div style={{ width: "150px" }}>
-                <label className="h-label h-lable-Obligatory">
-                  Tên Phường/ Xã
+              </Col>
+              <Col xl={4} lg={12}>
+                <label
+                  style={{
+                    marginLeft: "10px !important",
+                    marginTop: "4.5px",
+                    color: "#333 !important",
+                    fontWeight: "400",
+                    fontSize: "13px",
+                  }}
+                  className=" h-lable-Obligatory"
+                >
+                  Phường xã
                 </label>
-              </div>
-              <div style={{ width: "calc(100% - 150px" }}>
                 <Field
+                  isClearable={false}
                   handleChange={handleChangeWards}
                   className="h-textbox"
                   component={SelectField}
@@ -285,21 +335,10 @@ function TourGuideAddEdit(props) {
                   isLoading={stateWards?.loading === "loaded" ? false : true}
                   options={stateWards?.dataWardsCbb}
                 />
-              </div>
-            </FormGroup>
-          </Col>
-          <FormGroup style={styles}>
-            <div style={{ width: "150px" }}>
-              <label className="h-label h-lable-Obligatory">Địa chỉ</label>
-            </div>
-            <div style={{ width: "calc(100% - 150px)" }}>
-              <Field
-                component={InputField}
-                className="h-textbox"
-                name="address"
-              />
+              </Col>
             </div>
           </FormGroup>
+
           <FormGroup style={styles}>
             <div style={{ width: "150px" }}>
               <label className="h-label h-lable-Obligatory">
@@ -335,16 +374,19 @@ function TourGuideAddEdit(props) {
 TourGuideAddEdit.propTypes = {
   initialValues: PropTypes.object.isRequired,
   onSubmitForm: PropTypes.func,
-  // kieu func laf null nha em,l
   onChangeProvince: PropTypes.func,
   onChangeDistrict: PropTypes.func,
   onChangeWards: PropTypes.func,
+  onChangeImage: PropTypes.func,
+  imageDefault: PropTypes.string,
 };
 TourGuideAddEdit.defaultProps = {
   onSubmitForm: null,
   onChangeProvince: null,
   onChangeDistrict: null,
   onChangeWards: null,
+  onChangeImage: null,
+  imageDefault: "",
 };
 
 export default TourGuideAddEdit;

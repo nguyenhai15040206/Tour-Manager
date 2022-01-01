@@ -1,8 +1,264 @@
 //==
 
 import { NotificationManager } from "react-notifications";
+import permisstionApi from "../apis/PermissionApi";
 import tourApi from "../apis/TourApi";
 
+//#region  phân quyền màn hình
+export const tableColumnEmployeeUserGroup = [
+  {
+    field: `empId`,
+    headerName: "Mã nhân viên",
+    sortTable: true,
+    unSortIcon: true,
+    filter: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    minWidth: 180,
+  },
+  {
+    field: `empName`,
+    headerName: "Tên nhân viên",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 150,
+  },
+  {
+    field: `gender`,
+    headerName: "Giới tính",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 100,
+  },
+  {
+    field: `dateOfBirth`,
+    headerName: "Ngày sinh",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 170,
+  },
+  {
+    field: `workingDate`,
+    headerName: "Ngày vào làm",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 170,
+  },
+  {
+    field: `phoneNumber`,
+    headerName: "Số điện thoại",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 170,
+  },
+  {
+    field: `email`,
+    headerName: "Email",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+];
+export const tableUserGroup = [
+  {
+    field: `userGroupId`,
+    headerName: "Mã nhóm quyền",
+    sortTable: true,
+    unSortIcon: true,
+    filter: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    minWidth: 200,
+  },
+  {
+    field: `userGroupName`,
+    headerName: "Tên nhóm quyền",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+];
+export const tableCatScreen = [
+  {
+    field: `userGroupID`,
+    headerName: "Mã Nhóm",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+    hide: true,
+  },
+  {
+    field: `screenID`,
+    headerName: "Mã màn hình",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `screenName`,
+    headerName: "Tên màn hình",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: "status",
+    headerName: "Quyền",
+    sortTable: true,
+    unSortIcon: true,
+    cellRenderer: (values) => {
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.readOnly = true;
+      input.checked = values.value;
+      input.addEventListener("click", () => {
+        permisstionApi
+          .Adm_ChangePermissionStatus({
+            pScreenID: values.data.screenID,
+            pUserGroupID: values.data.userGroupID,
+          })
+          .then(() => {})
+          .catch(async (err) => {
+            if (err.response.status === 401) {
+              localStorage.removeItem("accessTokenEmp");
+              await NotificationManager.warning(
+                "Vui lòng đăng nhập lại",
+                `Phiên bản đăng nhập hết hạn!`,
+                2500
+              );
+              window.location.href = "http://localhost:3000/admin/login";
+              return;
+            }
+          });
+      });
+      return input;
+    },
+    minWidth: 130,
+  },
+];
+//#endregion
+export const tableColumnCustomer = [
+  {
+    field: `customerId`,
+    headerName: "Mã khách hàng",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    minWidth: 200,
+  },
+  {
+    field: `customerName`,
+    headerName: "Tên khách hàng",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `gender`,
+    headerName: "Giới tính",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 100,
+  },
+  {
+    field: `phoneNumber`,
+    headerName: "Số điện thoại",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 150,
+  },
+  {
+    field: `address`,
+    headerName: "Địa chỉ",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
+    field: `empIdUpdate`,
+    headerName: "Nhân viên cập nhật",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 180,
+  },
+  {
+    field: `dateUpdate`,
+    headerName: "Ngày cập nhật",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+  },
+];
+
+//
 export const tableColumnTourGuidSupportSearch = [
   {
     field: `tourGuideId`,
@@ -700,7 +956,7 @@ export const tableColumnEmployee = [
     headerName: "Mã nhân viên",
     sortTable: true,
     unSortIcon: true,
-    filter: false,
+    filter: true,
     headerSelect: true,
     checkboxSelection: true,
     headerCheckboxSelection: true,
@@ -715,7 +971,7 @@ export const tableColumnEmployee = [
     headerSelect: true,
     checkboxSelection: false,
     headerCheckboxSelection: false,
-    minWidth: 250,
+    minWidth: 170,
   },
   {
     field: `gender`,
@@ -726,7 +982,7 @@ export const tableColumnEmployee = [
     headerSelect: true,
     checkboxSelection: false,
     headerCheckboxSelection: false,
-    minWidth: 170,
+    minWidth: 130,
   },
   {
     field: `dateOfBirth`,
@@ -737,7 +993,7 @@ export const tableColumnEmployee = [
     headerSelect: true,
     checkboxSelection: false,
     headerCheckboxSelection: false,
-    minWidth: 170,
+    minWidth: 150,
   },
   {
     field: `workingDate`,
@@ -748,7 +1004,7 @@ export const tableColumnEmployee = [
     headerSelect: true,
     checkboxSelection: false,
     headerCheckboxSelection: false,
-    minWidth: 170,
+    minWidth: 150,
   },
   {
     field: `phoneNumber`,
@@ -773,6 +1029,17 @@ export const tableColumnEmployee = [
     minWidth: 200,
   },
   {
+    field: `address`,
+    headerName: "Địa chỉ",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 200,
+  },
+  {
     field: `dateUpdate`,
     headerName: "Ngày cập nhật",
     sortTable: false,
@@ -781,7 +1048,7 @@ export const tableColumnEmployee = [
     headerSelect: true,
     checkboxSelection: false,
     headerCheckboxSelection: false,
-    minWidth: 200,
+    minWidth: 150,
   },
 ];
 

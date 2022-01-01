@@ -21,6 +21,7 @@ function TourItem(props) {
     traveltypeID,
     groupNumber,
     promotion,
+    hrefOder,
   } = props;
   const ratingNumber = (rating) => {
     var indents = [];
@@ -71,10 +72,12 @@ function TourItem(props) {
           </p>
         </div>
         <div className="card-tour-item__group-btn mb-3">
-          <button className="custom-btn-red">
-            <BsCart3 className="icon-cart" />
-            <span>Đặt ngay</span>
-          </button>
+          <Link to={hrefOder}>
+            <button className="custom-btn-red">
+              <BsCart3 className="icon-cart" />
+              <span>Đặt ngay</span>
+            </button>
+          </Link>
           <Link to={href}>
             <button className="custom-btn-out-light">Xem chi tiết</button>
           </Link>

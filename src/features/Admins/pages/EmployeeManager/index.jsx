@@ -28,9 +28,14 @@ import EmployeeAddEdit from "./EmployeeAddEdit";
 import { Adm_GetEmployeeById } from "./../../Slices/SliceEmployee";
 import { unwrapResult } from "@reduxjs/toolkit";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
-
+import imageDefaultPNG from "../../../../assets/logo/imageDefault.png";
+import { Adm_UploadImageEmployee } from "../../Slices/SliceImagesUpload";
+import { useHistory } from "react-router-dom";
+import { Adm_GetWardsByIdDistrictCbb } from "../../Slices/SliceWards";
+import { Adm_GetDistrictByProvinceCBB } from "../../Slices/SliceDistrict";
+import { Adm_GetProvince } from "../../Slices/SliceAddress";
 // Thái Trần Kiều Diễm 20211115 -xử lý employee
-const initialValuesEmp = {
+const initialValuesInsert = {
   empId: "",
   empName: "",
   gender: "",
@@ -40,13 +45,28 @@ const initialValuesEmp = {
   email: "",
   userName: "",
   passWord: "",
+  avatar: "",
+  provinceId: "",
+  districtId: "",
+  wardId: "",
+  address: "",
+  status: false,
+};
+
+const initialValuesSearch = {
+  empName: "",
+  phoneNumber: "",
+  email: "",
 };
 function EmployeeManager(props) {
   // state in component
   const [showModal, setShowModal] = useState(false);
-  const [initialValues, setInitialValues] = useState(initialValuesEmp);
+  const [initialValues, setInitialValues] = useState(initialValuesInsert);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [valuesSearch, setValuesSearch] = useState(initialValuesSearch);
   const [values, setValues] = useState([]);
+  const [imageUpload, setImageUpload] = useState(null);
+  const [imageDefault, setImageDefault] = useState(`${imageDefaultPNG}`);
   // End
 
   // state in store
@@ -54,12 +74,21 @@ function EmployeeManager(props) {
   //
   const dispatch = useDispatch();
   const gridRef = useRef(null);
+  const history = useHistory();
 
   //
 
   const handleClickShowModal = () => {
-    setInitialValues(initialValuesEmp);
-    setShowModal(true);
+    dispatch(Adm_GetProvince())
+      .then(unwrapResult)
+      .then(() => {
+        setImageDefault(`${imageDefaultPNG}`);
+        setInitialValues(initialValuesInsert);
+        setShowModal(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const toggle = () => {
@@ -70,10 +99,9 @@ function EmployeeManager(props) {
   // end
   //
   //
-  const onGridReady = async (values) => {
-    values = {};
+  const onGridReady = async () => {
     try {
-      await dispatch(Adm_GetEmployeeList(values));
+      await dispatch(Adm_GetEmployeeList(valuesSearch));
     } catch {
       console.error();
     }
@@ -112,31 +140,34 @@ function EmployeeManager(props) {
 
   //thuc hien xoa di 1 dong du lieu
   const ConfirmDelete = async () => {
-    const value = {};
-    dispatch(Adm_DeleteEmployee(values))
+    let DeleteModels = {
+      SelectByIds: values,
+      EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
+    };
+    dispatch(Adm_DeleteEmployee(DeleteModels))
       .then(unwrapResult)
-      .then((payload) => {
-        dispatch(Adm_GetEmployeeList(value))
-          .unwrap()
-          .then(() => {
-            setShowConfirm(false);
-            return NotificationManager.success("Xóa thành công", "Success!");
-          });
+      .then(() => {
+        onGridReady();
+        setShowConfirm(false);
+        return NotificationManager.success("Xóa thành công", "Success!");
       })
       .catch((err) => {
+        if (err.status === 401) {
+          localStorage.removeItem("accessTokenEmp");
+          return history.push("/admin/login");
+        }
         return NotificationManager.error(`${err}`, "Xóa thất bại");
       });
   };
 
   // tim kiem
   const handelClickSearchEmployee = async (value) => {
-    console.log(value);
+    setValuesSearch(value);
     try {
       await dispatch(Adm_GetEmployeeList(value));
     } catch (err) {
       console.log(err);
     }
-    //console.log("");
   };
   //thuc hien get dữ liệu
   const handleClickEdit = async (empID) => {
@@ -146,21 +177,47 @@ function EmployeeManager(props) {
         // neu conf tiep
       };
       const rs = await dispatch(Adm_GetEmployeeById(params));
-
       const unwrapRS = unwrapResult(rs);
-      console.log(unwrapRS);
+      unwrapRS.avatar === null
+        ? setImageDefault(`${imageDefaultPNG}`)
+        : setImageDefault(`${unwrapRS.avatar}`);
+      const arrAddress =
+        unwrapRS.address == null ? [] : unwrapRS.address.split("||");
+      await dispatch(Adm_GetProvince());
+      if (arrAddress[3] !== undefined) {
+        await dispatch(
+          Adm_GetDistrictByProvinceCBB({
+            provinceID: Number(arrAddress[3].trim()),
+          })
+        );
+      }
+      if (arrAddress[2] !== undefined) {
+        await dispatch(
+          Adm_GetWardsByIdDistrictCbb({
+            districtID: Number(arrAddress[2].trim()),
+          })
+        );
+      }
       setInitialValues({
         empId: unwrapRS.empId,
         empName: unwrapRS?.empName === null ? "" : unwrapRS.empName, // Input defaulValues là "" không bằng null check chỗ này
         gender: "true",
-        // "2021-11-20" :))
-        dateOfBirth: unwrapRS.dateOfBirth,
+        dateOfBirth:
+          unwrapRS.dateOfBirth === null
+            ? ""
+            : unwrapRS.dateOfBirth.slice(0, 10),
         phoneNumber: unwrapRS.phoneNumber,
         email: unwrapRS.email,
         userName: unwrapRS.userName,
-        avatar: unwrapRS?.avatar === null ? "" : unwrapRS.value,
-        // //avatar: "abc",
+        avatar: "",
         passWord: unwrapRS.password,
+        status: unwrapRS.status,
+        provinceId:
+          arrAddress[3] === undefined ? "" : Number(arrAddress[3].trim()),
+        districtId:
+          arrAddress[2] === undefined ? "" : Number(arrAddress[2].trim()),
+        wardId: arrAddress[1] === undefined ? "" : Number(arrAddress[1].trim()),
+        address: arrAddress[0] === undefined ? "" : arrAddress[0],
       });
       setShowModal(true);
     } catch (err) {
@@ -169,86 +226,154 @@ function EmployeeManager(props) {
   };
 
   // handleClick On submit form edit/add
-  const handleClickOnSubmitForm = async (values) => {
-    console.log(values);
+
+  const onInsertEmp = async (employee, values, type) => {
+    let imageEmp = "";
+    try {
+      if (values.avatar !== "") {
+        let formData = new FormData();
+        formData.append("file", imageUpload);
+        imageEmp = unwrapResult(
+          await dispatch(Adm_UploadImageEmployee(formData))
+        ).fileName;
+      }
+      dispatch(
+        Adm_CreateEmployee(
+          Object.assign(employee, {
+            avatar: imageEmp,
+          })
+        )
+      )
+        .then(unwrapResult)
+        .then(() => {
+          if (Number(type) === 2) {
+            setInitialValues(initialValuesInsert);
+          }
+          if (Number(type) === 3) {
+            setShowModal(false);
+          }
+          onGridReady();
+          return NotificationManager.success(
+            "Thêm thành công!",
+            "Success!",
+            1500
+          );
+        })
+        .catch((err) => {
+          if (err.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            return history.push("/admin/login");
+          }
+          return NotificationManager.error(`${err}`, "Error!", 1500);
+        });
+    } catch (err) {
+      if (err.status === 401) {
+        localStorage.removeItem("accessTokenEmp");
+        return history.push("/admin/login");
+      }
+      return NotificationManager.error(
+        `${err.message}`,
+        "Thêm thất bại!",
+        1500
+      );
+    }
+  };
+
+  const onUpdateEmp = async (employee, values, type) => {
+    let imageEmp = "";
+    try {
+      if (values.avatar !== "") {
+        let formData = new FormData();
+        formData.append("file", imageUpload);
+        imageEmp = unwrapResult(
+          await dispatch(Adm_UploadImageEmployee(formData))
+        ).fileName;
+      }
+      dispatch(
+        Adm_EditEmployee(
+          Object.assign(employee, { empId: values.empId, avatar: imageEmp })
+        )
+      )
+        .then(unwrapResult)
+        .then(() => {
+          if (Number(type) === 2) {
+            setInitialValues(initialValuesInsert);
+            setImageDefault(`${imageDefaultPNG}`);
+          }
+          if (Number(type) === 3) {
+            setShowModal(false);
+          }
+          onGridReady();
+          return NotificationManager.success(
+            "Cập nhật thành công!!",
+            "Success",
+            1500
+          );
+        })
+        .catch((err) => {
+          if (err.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            return history.push("/admin/login");
+          }
+          return NotificationManager.error(`${err}`, "Error!", 1500);
+        });
+    } catch (err) {
+      if (err.status === 401) {
+        localStorage.removeItem("accessTokenEmp");
+        return history.push("/admin/login");
+      }
+      return NotificationManager.error(`${err}`, "Error!", 1500);
+    }
+  };
+  const handleClickOnSubmitForm = async (values, type) => {
     const employee = {
       empName: values.empName === null ? "" : values.empName,
       gender: values?.gender,
       dateOfBirth: values.dateOfBirth,
       phoneNumber: values.phoneNumber,
       email: values.email,
+      address: `${values.address} || ${values.wardId} || ${values.districtId} || ${values.provinceId}`,
       userName: values.userName,
       passWord: values.passWord,
-      avatar: values.avatar,
     };
-    const params = {};
     if (values.empId !== "") {
-      dispatch(
-        Adm_EditEmployee(Object.assign({ empId: values.empId }, employee))
-      )
-        .then(unwrapResult)
-        .then((payload) => {
-          console.log(payload);
-          dispatch(Adm_GetEmployeeList(params))
-            .unwrap()
-            .then(() => {
-              return NotificationManager.success(
-                "Cập nhật thành công!!",
-                "Success",
-                1500
-              );
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-          return NotificationManager.error(`${err}`, "Error!", 1500);
-        });
+      onUpdateEmp(employee, values, type);
     } else {
-      dispatch(Adm_CreateEmployee(employee))
-        .then(unwrapResult)
-        .then((payload) => {
-          console.log(payload);
-          dispatch(Adm_GetEmployeeList(params))
-            .unwrap()
-            .then(() => {
-              return NotificationManager.success(
-                "Thêm thành công!",
-                "Success!",
-                1500
-              );
-            })
-            .catch((err) => {
-              return NotificationManager.error(`${err}`, "Error!", 1500);
-            });
-        })
-        .catch((err) => {
-          return NotificationManager.error(`${err}`, "Error!", 1500);
-        });
+      onInsertEmp(employee, values, type);
     }
   };
 
-  /*const handleClickExportExcel = () => {
-    //const data = [];
-    if (stateEmp.dataEmpList != null) {
-      return (
-        <div>
-          <DataExportExcelControl
-            columnsExport={TableColumnsEmployeeExport}
-            DataExport={stateEmp.dataEmpList}
-            button={
-              <button
-                type="button"
-                className="h-button"
-                //onClick={handleClickExportExcel()}
-              >
-                <RiFileExcel2Fill color="#2b6e44" size={15} /> Xuất Excel
-              </button>
-            }
-          />
-        </div>
-      );
+  //===========
+  // click change image
+  const handleChoseImage = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      setImageUpload(event.target.files[0]);
+      setImageDefault(URL.createObjectURL(event.target.files[0]));
     }
-  };*/
+  };
+
+  //=======
+  //
+  const handelChangeProvice = async (e) => {
+    try {
+      const params = {
+        provinceID: e.value,
+      };
+      await dispatch(Adm_GetDistrictByProvinceCBB(params));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const handleChangeDistrict = async (e) => {
+    try {
+      const params = {
+        districtID: e.value,
+      };
+      await dispatch(Adm_GetWardsByIdDistrictCbb(params));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -263,8 +388,18 @@ function EmployeeManager(props) {
         showModal={showModal}
         initialValues={initialValues}
         onSubmitForm={(values) => {
-          handleClickOnSubmitForm(values);
+          handleClickOnSubmitForm(values, 1);
         }}
+        onSubmitFormAndCreate={(values) => {
+          handleClickOnSubmitForm(values, 2);
+        }}
+        onSubmitFormAndClose={(values) => {
+          handleClickOnSubmitForm(values, 3);
+        }}
+        onChangeProvince={handelChangeProvice}
+        onChangeDistrict={handleChangeDistrict}
+        onChangeImages={handleChoseImage}
+        imageDefault={imageDefault}
       />
       <Container
         fluid
@@ -309,7 +444,7 @@ function EmployeeManager(props) {
                   {/**Begin Search */}
                   <div id="showSearch" className="collapse show">
                     <Formik
-                      initialValues={initialValues}
+                      initialValues={valuesSearch}
                       onSubmit={handelClickSearchEmployee}
                     >
                       {(formikProps) => {
@@ -327,19 +462,6 @@ function EmployeeManager(props) {
                                         className="h-textbox"
                                         name="empName"
                                         component={InputField}
-                                      ></FastField>
-                                    </div>
-                                  </FormGroup>
-                                  <FormGroup className="row">
-                                    <label className="col-lg-3 h-label">
-                                      Ngày làm việc
-                                    </label>
-                                    <div className="col-lg-8">
-                                      <FastField
-                                        className="h-textbox"
-                                        name="workingDate"
-                                        component={InputField}
-                                        type="date"
                                       ></FastField>
                                     </div>
                                   </FormGroup>

@@ -15,6 +15,20 @@ export const Adm_UploadImageTour = createAsyncThunk(
     }
   }
 );
+export const Adm_UploadImageTourGuide = createAsyncThunk(
+  "api/ImagesUpload/Adm_UploadImageTourGuide",
+  async (data, thunkApi) => {
+    try {
+      const response = await imagesUpload.Adm_UploadImageTourGuide(data);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+      });
+    }
+  }
+);
 export const UploadImageCompany = createAsyncThunk(
   "api/ImagesUpload/UploadImageCompany",
   async (data, thunkApi) => {
@@ -44,18 +58,66 @@ export const Adm_UploadImageTouristAttr = createAsyncThunk(
     }
   }
 );
+export const Adm_UploadImageEmployee = createAsyncThunk(
+  "api/ImagesUpload/Adm_UploadImageEmployee",
+  async (data, thunkApi) => {
+    try {
+      const response = await imagesUpload.Adm_UploadImageEmployee(data);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
+    }
+  }
+);
 
 const imagesUploadSlice = createSlice({
   name: "ImagesUpload",
   initialState: {
     imageTour: "",
+    imageTourGuide: "",
     imageCompany: "",
     arrayImagesTourist: [],
+    imageEmployee: "",
     loading: "idled",
     error: "",
   },
 
   extraReducers: (builder) => {
+    // upload image emp
+    builder.addCase(Adm_UploadImageEmployee.pending, (state) => {
+      state.imageEmployee = "";
+      state.loading = "loading";
+    });
+    builder.addCase(Adm_UploadImageEmployee.fulfilled, (state, { payload }) => {
+      state.imageEmployee = payload;
+      state.loading = "loaded";
+    });
+    builder.addCase(Adm_UploadImageEmployee.rejected, (state, { payload }) => {
+      state.loading = "error";
+      state.imageEmployee = "";
+    });
+    //end
+    // upload image tour
+    builder.addCase(Adm_UploadImageTourGuide.pending, (state) => {
+      state.imageTourGuide = "";
+      state.loading = "loading";
+    });
+    builder.addCase(
+      Adm_UploadImageTourGuide.fulfilled,
+      (state, { payload }) => {
+        state.imageTourGuide = payload;
+        state.loading = "loaded";
+      }
+    );
+    builder.addCase(Adm_UploadImageTourGuide.rejected, (state, { payload }) => {
+      state.loading = "error";
+      state.imageTourGuide = "";
+    });
+    //end
     // upload image tour
     builder.addCase(Adm_UploadImageTour.pending, (state) => {
       state.imageTour = "";
@@ -68,7 +130,6 @@ const imagesUploadSlice = createSlice({
     builder.addCase(Adm_UploadImageTour.rejected, (state, { payload }) => {
       state.loading = "error";
       state.imageTour = "";
-      state.error = payload;
     });
     //end
 

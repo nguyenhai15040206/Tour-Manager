@@ -5,10 +5,12 @@ import { IoMdSave } from "react-icons/io";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
 function ModalControl(props) {
-  const { showModal, children, toggle, className, titlePopup } = props;
+  const { showModal, children, toggle, className, titlePopup, tableName } =
+    props;
   let submitAction = undefined;
   return (
     <Modal
+      id={`${tableName}`}
       className={className}
       style={{ color: "#333" }}
       backdropTransition={{
@@ -40,19 +42,17 @@ function ModalControl(props) {
         enableReinitialize={true}
         initialValues={props.initialValues}
         validationSchema={props.validationSchema}
-        onSubmit={async (values, { resetForm }) => {
+        onSubmit={async (values) => {
           if (submitAction === "Save") {
-            await props.HandleClickSave(values, { resetForm });
+            await props.HandleClickSave(values);
             return;
           }
           if (submitAction === "SaveAndCreated") {
             await props.HandleClickSaveAndCreated(values);
-            resetForm();
             return;
           }
           if (submitAction === "SaveAndClosed") {
-            await props.HandleClickSaveAndClosed(values, { resetForm });
-            toggle();
+            await props.HandleClickSaveAndClosed(values);
             return;
           }
           submitAction = undefined;
@@ -66,9 +66,9 @@ function ModalControl(props) {
                 <button
                   className="h-button"
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     submitAction = "Save";
-                    formikProps.submitForm();
+                    await formikProps.submitForm();
                   }}
                 >
                   <IoMdSave size={20} color="#3664a4" />
@@ -76,9 +76,9 @@ function ModalControl(props) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     submitAction = "SaveAndCreated";
-                    formikProps.submitForm();
+                    await formikProps.submitForm();
                   }}
                   className="h-button"
                   style={{ marginLeft: "4px" }}
@@ -112,10 +112,12 @@ ModalControl.propTypes = {
   toggle: PropTypes.func,
   className: PropTypes.string,
   titlePopup: PropTypes.string,
+  tableName: PropTypes.string,
 };
 
 ModalControl.defaultProps = {
   showModal: false,
+  tableName: "",
   toggle: null,
   className: "",
   titlePopup: "Tạo mới",
