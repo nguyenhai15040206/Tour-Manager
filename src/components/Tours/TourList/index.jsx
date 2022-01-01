@@ -41,6 +41,7 @@ function TourList(props) {
                   travelTypeFamily={false}
                   travelTypeName={item.enumerationTranslate}
                   href={`/my-tour/tour-details/tourID=${item.tourId}`}
+                  hrefOrder={`/my-tour/booking-tour/tourID=${item.tourId}`}
                   dateStart={item.dateStart.slice(0, 10)}
                   provinceName={item.provinceName}
                   promotion={item.promotion === null ? 0 : item.promotion}

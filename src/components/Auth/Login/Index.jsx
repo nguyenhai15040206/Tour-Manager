@@ -6,7 +6,6 @@ import { PropagateLoader } from "react-spinners";
 import { Modal, ModalBody, ModalHeader } from "reactstrap";
 import * as yup from "yup";
 import InputField from "../../../CustomFields/InputField/Index";
-import Loading from "../../Loading/Index";
 import "./styles.scss";
 
 function Login(props) {

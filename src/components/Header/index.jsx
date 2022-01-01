@@ -13,6 +13,7 @@ import { authentication } from "../../App/FirebaseConfig";
 import imageDefault from "../../assets/logo/images.jpg";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { MdLogout } from "react-icons/md";
+import { Col, Row } from "reactstrap";
 
 function Header(props) {
   const { position, background, color, logo, boxShadow } = props;
@@ -118,7 +119,7 @@ function Header(props) {
             <ul className="header__list-menu">
               <li className="header__item"></li>
               <li className="header__item ">
-                <Link to="/my-tour/danh-sach-tim-kiem-tour/params=0/0/0/0">
+                <Link to="/my-tour/danh-sach-tim-kiem-tour/params=0/0/0/0/0">
                   Tour & Sự kiện
                 </Link>
               </li>
@@ -131,12 +132,12 @@ function Header(props) {
             </ul>
             <nav className="header__info">
               <ul className="header__info--list">
-                <li className="header__info--item">
+                {/* <li className="header__info--item">
                   <a href="index.html">
                     <i className="far fa-handshake"></i>
                     Hợp tác với chúng tôi
                   </a>
-                </li>
+                </li> */}
                 <li className="header__info--item">
                   <a href="tel:0357866848">
                     <i className="fas fa-phone-alt"></i>
@@ -189,13 +190,15 @@ function Header(props) {
                         src={
                           JSON.stringify(
                             localStorage.getItem("accessTokenCustomer")
-                          ).data
+                          )?.data?.Img
                             ? ""
                             : `${imageDefault}`
                         }
                       />
                       <span style={{ marginLeft: "3px" }}>
-                        Nguyen
+                        {JSON.parse(
+                          localStorage.getItem("accessTokenCustomer")
+                        )?.data?.customerName.slice(0, 6)}
                         <RiArrowDropDownLine size={25} />
                       </span>
                     </div>
@@ -206,19 +209,26 @@ function Header(props) {
                       <li>
                         <Link
                           className="dropdown-item"
-                          to={`/my-tour/customer/pID=${
+                          to={`/my-tour/customer/Profile/pID=${
                             JSON.parse(
                               localStorage.getItem("accessTokenCustomer")
                             )?.data?.customerId
-                          }`}
+                          }}`}
                         >
                           Tài khoản
                         </Link>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="#">
+                        <Link
+                          className="dropdown-item"
+                          to={`/my-tour/customer/booking-by-customer/pID=${
+                            JSON.parse(
+                              localStorage.getItem("accessTokenCustomer")
+                            )?.data?.customerId
+                          }`}
+                        >
                           Yêu thích
-                        </a>
+                        </Link>
                       </li>
                       <li>
                         <a className="dropdown-item" href="#">

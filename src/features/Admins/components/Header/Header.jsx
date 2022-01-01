@@ -1,8 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { MdClearAll, MdNotificationsActive } from "react-icons/md";
-import { Link } from "react-router-dom";
+import {
+  MdClearAll,
+  MdExitToApp,
+  MdNotificationsActive,
+  MdPersonPin,
+} from "react-icons/md";
+import { Link, useHistory } from "react-router-dom";
 import {
   Button,
+  Card,
+  CardBody,
+  CardSubtitle,
+  CardText,
+  CardTitle,
+  ListGroup,
+  ListGroupItem,
   Nav,
   Navbar,
   NavItem,
@@ -17,6 +29,8 @@ import "./styles.scss";
 function Header(props) {
   const [isNotificationConfirmed, setNotificationConfirmed] = useState(false);
   const [countNotifiCation, setCountNotification] = useState([]);
+
+  const history = useHistory();
   useEffect(() => {
     const fetchApi = () => {
       tourApi
@@ -120,7 +134,7 @@ function Header(props) {
                         >
                           {`Cập nhật ngày b/đầu TourID ${item.messageTour.slice(
                             0,
-                            15
+                            13
                           )}...`}
                         </Link>
                       </p>
@@ -131,13 +145,80 @@ function Header(props) {
             </UncontrolledPopover>
           </NavItem>
           <NavItem>
-            <NavLink>
+            <NavLink id="Popover2">
               <img
                 className="cr-header__avatar rounded-circle"
                 src="https://reduction-admin.github.io/react-reduction/static/media/100_4.978e51b5.jpg"
                 alt=""
               />
             </NavLink>
+            <UncontrolledPopover
+              className="p-0 border-0"
+              style={{ minWidth: 250 }}
+              placement="bottom"
+              target="Popover2"
+            >
+              <PopoverBody
+                className="p-0 border-light"
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 400,
+                }}
+              >
+                <Card
+                  inverse
+                  style={{
+                    background: "linear-gradient(180deg,#6a82fb,#fc5c7d)",
+                  }}
+                  className="border-light"
+                >
+                  <CardBody className="d-flex justify-content-center align-items-center flex-column">
+                    <img
+                      className="rounded-circle mb-2"
+                      src={
+                        JSON.parse(localStorage.getItem("accessTokenEmp")).data
+                          .avatar ||
+                        "https://reduction-admin.github.io/react-reduction/static/media/100_4.978e51b5.jpg"
+                      }
+                      alt="logo"
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        borderRadius: "50%!important",
+                      }}
+                    />
+                    <CardTitle>
+                      {
+                        JSON.parse(localStorage.getItem("accessTokenEmp")).data
+                          .empName
+                      }
+                    </CardTitle>
+                    <CardText>
+                      {
+                        JSON.parse(localStorage.getItem("accessTokenEmp")).data
+                          .email
+                      }
+                    </CardText>
+                  </CardBody>
+                  <ListGroup flush style={{ fontSize: "14px", color: "red" }}>
+                    <ListGroupItem tag="button" action className="border-light">
+                      <MdPersonPin size={21} /> Thông tin cá nhân
+                    </ListGroupItem>
+                    <ListGroupItem
+                      tag="button"
+                      onClick={() => {
+                        localStorage.removeItem("accessTokenEmp");
+                        history.push("/admin/login");
+                      }}
+                      action
+                      className="border-light"
+                    >
+                      <MdExitToApp size={20} /> Đăng xuất
+                    </ListGroupItem>
+                  </ListGroup>
+                </Card>
+              </PopoverBody>
+            </UncontrolledPopover>
           </NavItem>
         </Nav>
       </Navbar>

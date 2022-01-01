@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
   Adm_AcceptBooking,
+  Adm_BookingTourDetails,
   Adm_GetDataBooking,
   Adm_SendEmailAfterBooking,
 } from "../../Slices/SliceBookingTour";
@@ -42,6 +43,7 @@ function BookingManager(props) {
   const stateBookingTour = useSelector((state) => state?.bookingTour);
   const stateTour = useSelector((state) => state.tour);
   const [initialValues, setInitialValues] = useState(initialValuesSearch);
+  const [showModal, setShowModal] = useState(false);
   //==
   const gridRef = useRef(null);
   const dispatch = useDispatch();
@@ -197,9 +199,79 @@ function BookingManager(props) {
         }
       });
   };
+
+  const handleClickSubmitAcceptBooking = async () => {
+    const params = {
+      pID: stateBookingTour.dataDetails?.data?.bookingTourId,
+    };
+    dispatch(Adm_AcceptBooking(params))
+      .then(unwrapResult)
+      .then(async (payload) => {
+        if (Number(payload) === 204) {
+          return NotificationManager.warning(
+            `Booking này đã thanh toán!`,
+            "Warning!!!",
+            1500
+          );
+        }
+        const ask = window.confirm("Bạn có muốn gửi mail cho booking này?");
+        if (ask) {
+          try {
+            const params = {
+              pID: stateBookingTour.dataDetails?.data?.bookingTourId,
+              type: 1,
+            };
+            await dispatch(Adm_SendEmailAfterBooking(params));
+            onGridReady();
+            return NotificationManager.success(
+              `Thao tác thành thông!`,
+              "Success!!!",
+              1500
+            );
+          } catch (err) {
+            if (err.status === 401) {
+              if (err.status === 401) {
+                localStorage.removeItem("accessTokenEmp");
+                return history.push("/admin/login");
+              }
+              return NotificationManager.error(`${err.error}`, "Error!", 1500);
+            }
+          }
+        }
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          if (err.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            return history.push("/admin/login");
+          }
+          return NotificationManager.error(`${err.error}`, "Error!", 1500);
+        }
+      });
+  };
+
+  //==
+  const toggle = () => {
+    setShowModal(false);
+  };
+
+  const handleEditFromFrid = (pID) => {
+    dispatch(Adm_BookingTourDetails({ pID: pID }))
+      .then(unwrapResult)
+      .then(() => {
+        setShowModal(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return (
     <>
-      <BookingDetails isOpen={false} />
+      <BookingDetails
+        isOpen={showModal}
+        toggle={toggle}
+        onClickAcceptBooking={handleClickSubmitAcceptBooking}
+      />
       <Container
         fluid
         className="animate__animated animate__slideInUp animate__delay-0.5s"
@@ -375,8 +447,8 @@ function BookingManager(props) {
               onGridReady={onGridReady}
               //
               tableColoumn={tableColumnBooking}
-              fieldValues="tourId"
-              //onEditForm={handleEditTour}
+              fieldValues="bookingTourId"
+              onEditForm={handleEditFromFrid}
             />
           </Col>
         </Row>

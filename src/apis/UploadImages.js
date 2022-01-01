@@ -8,6 +8,12 @@ const imagesUpload = {
     };
     return axiosClient.post(`${url}/Adm_UploadImageTour`, data, config);
   },
+  Adm_UploadImageTourGuide: (data) => {
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+    };
+    return axiosClient.post(`${url}/Adm_UploadImageTourGuide`, data, config);
+  },
   UploadImageCompany: (data) => {
     const config = {
       headers: { "content-type": "multipart/form-data" },
@@ -19,6 +25,12 @@ const imagesUpload = {
       headers: { "content-type": "multipart/form-data" },
     };
     return axiosClient.post(`${url}/UploadImagesTouristAttr`, data, config);
+  },
+  Adm_UploadImageEmployee: (data) => {
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+    };
+    return axiosClient.post(`${url}/Adm_UploadImageEmployee`, data, config);
   },
 };
 

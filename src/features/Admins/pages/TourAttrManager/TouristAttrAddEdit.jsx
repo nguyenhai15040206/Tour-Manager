@@ -10,7 +10,14 @@ import TextAreaField from "./../../../../CustomFields/TextareaField/Index";
 import Loading from "./../../../../components/Loading/Index";
 
 function TouristAttrAddEdit(props) {
-  const { initialValues, onSubmitForm, onChangeImages, imagesList } = props;
+  const {
+    initialValues,
+    onSubmitForm,
+    onSubmitFormAndCreate,
+    onSubmitFormAndClose,
+    onChangeImages,
+    imagesList,
+  } = props;
 
   const stateProvince = useSelector((state) => state.address);
   const stateTouristAttr = useSelector((state) => state.touristAttraction);
@@ -25,6 +32,17 @@ function TouristAttrAddEdit(props) {
   const handleClickOnSubmit = async (e) => {
     if (onSubmitForm) {
       onSubmitForm(e);
+    }
+  };
+
+  const handleClickOnSubmitAndCreate = async (e) => {
+    if (onSubmitFormAndCreate) {
+      onSubmitFormAndCreate(e);
+    }
+  };
+  const handleClickOnSubmitAndClose = async (e) => {
+    if (onSubmitFormAndClose) {
+      onSubmitFormAndClose(e);
     }
   };
 
@@ -56,6 +74,7 @@ function TouristAttrAddEdit(props) {
         stateimagesUpload.loading === "loading" ||
         stateProvince.loading === "loading") && <Loading loading={true} />}
       <ModalControl
+        tableName="TableTouristAttraction"
         initialValues={initialValues}
         validationSchema={props.validationSchema}
         backdrop={"static"}
@@ -70,8 +89,8 @@ function TouristAttrAddEdit(props) {
         /////
         titlePopup="Thêm mới một địa điểm"
         HandleClickSave={handleClickOnSubmit}
-        HandleClickSaveAndCreated={handleClickOnSubmit}
-        HandleClickSaveAndClosed={handleClickOnSubmit}
+        HandleClickSaveAndCreated={handleClickOnSubmitAndCreate}
+        HandleClickSaveAndClosed={handleClickOnSubmitAndClose}
       >
         <Row>
           <FormGroup style={styles}>
@@ -163,12 +182,16 @@ function TouristAttrAddEdit(props) {
 
 TouristAttrAddEdit.propTypes = {
   onSubmitForm: PropTypes.func,
+  onSubmitFormAndCreate: PropTypes.func,
+  onSubmitFormAndClose: PropTypes.func,
   initialValues: PropTypes.object.isRequired,
   onChangeImages: PropTypes.func,
   imagesList: PropTypes.array,
 };
 TouristAttrAddEdit.defaultProps = {
   onSubmitForm: null,
+  onSubmitFormAndCreate: null,
+  onSubmitFormAndClose: null,
   onChangeImages: null,
   imagesList: [],
 };

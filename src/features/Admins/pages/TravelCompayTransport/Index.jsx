@@ -237,7 +237,7 @@ function Transport(props) {
   };
 
   //================
-  const onInsertCompany = (company) => {
+  const onInsertCompany = (company, type) => {
     let formData = new FormData();
     formData.append("file", imageUpload);
     dispatch(UploadImageCompany(formData))
@@ -248,6 +248,12 @@ function Transport(props) {
         )
           .then(unwrapResult)
           .then(() => {
+            if (Number(type) === 2) {
+              setInitialValues(initialValuesInsert);
+            }
+            if (Number(type) === 3) {
+              setShowModal(false);
+            }
             onGridReady();
             return NotificationManager.success(
               "Thêm mới thành công!",
@@ -272,7 +278,7 @@ function Transport(props) {
       });
   };
 
-  const onUpdateCompany = async (company, values) => {
+  const onUpdateCompany = async (company, values, type) => {
     let companyImageEdit = "";
     try {
       if (values.CompanyImage !== "") {
@@ -289,7 +295,13 @@ function Transport(props) {
           companyId: values.CompanyID,
         })
       );
-
+      if (Number(type) === 2) {
+        setInitialValues(initialValuesInsert);
+        setImageDefault(`${imageDefaultPNG}`);
+      }
+      if (Number(type) === 3) {
+        setShowModal(false);
+      }
       onGridReady();
       return NotificationManager.success(
         "Cập nhật thành công!",
@@ -297,6 +309,10 @@ function Transport(props) {
         1500
       );
     } catch (err) {
+      if (err.status === 401) {
+        localStorage.removeItem("accessTokenEmp");
+        return history.push("/admin/login");
+      }
       return NotificationManager.error(
         `${err.message}`,
         "Thêm thất bại!",
@@ -304,7 +320,7 @@ function Transport(props) {
       );
     }
   };
-  const handleClickOnSubmitForm = (values) => {
+  const handleClickOnSubmitForm = (values, type) => {
     const valuesInsert = {
       //companyID: values.CompanyID,
       companyName: values.CompanyName,
@@ -327,9 +343,9 @@ function Transport(props) {
     };
     console.log(valuesInsert);
     if (values.CompanyID !== "") {
-      onUpdateCompany(valuesInsert, values);
+      onUpdateCompany(valuesInsert, values, type);
     } else {
-      onInsertCompany(valuesInsert);
+      onInsertCompany(valuesInsert, type);
     }
   };
   //
@@ -401,7 +417,13 @@ function Transport(props) {
         initialValues={initialValues}
         validationShema={validationShema}
         onSubmitForm={(values) => {
-          handleClickOnSubmitForm(values);
+          handleClickOnSubmitForm(values, 1);
+        }}
+        onSubmitFormAndCreate={(values) => {
+          handleClickOnSubmitForm(values, 2);
+        }}
+        onSubmitFormAndClose={(values) => {
+          handleClickOnSubmitForm(values, 3);
         }}
         onChangeImage={handleChoseImage}
         onChangeProvince={handleChangeProvince}

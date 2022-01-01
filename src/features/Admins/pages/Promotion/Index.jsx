@@ -117,6 +117,7 @@ function Promotion(props) {
   };
   const handleClickShowModal = async () => {
     try {
+      setIsChecked(false);
       setInitialValues(initialValuesInsert);
       await dispatch(
         Adm_GetTourList({
@@ -182,7 +183,7 @@ function Promotion(props) {
   };
 
   /// Submit form Update or Created
-  const onInsertPromotion = (promotion, values) => {
+  const onInsertPromotion = (promotion, values, type) => {
     if (values.IsAppyAll === true) {
       const ask = window.confirm(
         "Bạn có muốn replaces các tour đã có khuyến mãi không?"
@@ -195,6 +196,12 @@ function Promotion(props) {
         )
           .then(unwrapResult)
           .then(() => {
+            if (Number(type) === 2) {
+              setInitialValues(initialValuesInsert);
+            }
+            if (Number(type) === 3) {
+              setShowModal(false);
+            }
             onGridReady();
             return NotificationManager.success(
               "Tạo khuyến mãi thành công!",
@@ -257,12 +264,18 @@ function Promotion(props) {
     }
   };
 
-  const onUpdatePromotion = (promotion, values) => {
+  const onUpdatePromotion = (promotion, values, type) => {
     dispatch(
       Adm_UpdatePromotion({ ...promotion, promotionId: values.PromotionID })
     )
       .then(unwrapResult)
       .then(() => {
+        if (Number(type) === 2) {
+          setInitialValues(initialValuesInsert);
+        }
+        if (Number(type) === 3) {
+          setShowModal(false);
+        }
         onGridReady();
         return NotificationManager.success(
           "Cập nhật khuyến mãi thành công!",
@@ -278,7 +291,7 @@ function Promotion(props) {
         return NotificationManager.error(`${err.error}`, "Error!", 1500);
       });
   };
-  const handleClickOnSubmitForm = (values) => {
+  const handleClickOnSubmitForm = (values, type) => {
     const promotion = {
       promotionName: values.PromotionName,
       dateStart: values.DateStart,
@@ -293,9 +306,9 @@ function Promotion(props) {
 
     //
     if (values.PromotionID !== "") {
-      onUpdatePromotion(promotion, values);
+      onUpdatePromotion(promotion, values, type);
     } else {
-      onInsertPromotion(promotion, Object(values));
+      onInsertPromotion(promotion, Object(values), type);
     }
   };
   // // handel click Delete MultiRow
@@ -442,7 +455,13 @@ function Promotion(props) {
         toggle={toggle}
         initialValues={initialValues}
         onSubmitForm={(values) => {
-          handleClickOnSubmitForm(values);
+          handleClickOnSubmitForm(values, 1);
+        }}
+        onSubmitFormAndCreate={(values) => {
+          handleClickOnSubmitForm(values, 2);
+        }}
+        onSubmitFormAndClose={(values) => {
+          handleClickOnSubmitForm(values, 3);
         }}
         className="modal-lg"
         //
