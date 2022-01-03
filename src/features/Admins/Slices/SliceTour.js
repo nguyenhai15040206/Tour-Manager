@@ -147,6 +147,23 @@ export const Cli_GetDataTourSearch = createAsyncThunk(
   }
 );
 
+//===================== nhân bảng tour
+export const Adm_InsertTourAvailable = createAsyncThunk(
+  "api/Tour/Adm_InsertTourAvailable",
+  async (params, thunkApi) => {
+    try {
+      const response = await tourApi.Adm_InsertTourAvailable(params);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
+
 const tourSlice = createSlice({
   name: "Tour",
   initialState: {
@@ -160,9 +177,31 @@ const tourSlice = createSlice({
     Cli_TourDetails: {},
     Cli_DataSearch: [],
     Cli_PaginationSearch: {},
+
+    // nhân bản tour
+    dataTourAvailable: {},
   },
 
   extraReducers: (builder) => {
+    // nhân bản tour
+    builder.addCase(Adm_InsertTourAvailable.pending, (state) => {
+      state.dataTourAvailable = {};
+      state.loading = "loading";
+    });
+
+    builder.addCase(Adm_InsertTourAvailable.fulfilled, (state, { payload }) => {
+      state.dataTourAvailable = payload;
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Adm_InsertTourAvailable.rejected, (state, action) => {
+      state.dataTourAvailable = {};
+      state.loading = "error";
+      state.error = action.payload?.error;
+    });
+
+    //end task
+
     // laays duwx lieu tour được đề xuất
     builder.addCase(GetTourTourIsSuggestFamily.pending, (state) => {
       state.tourSuggestFamily = [];

@@ -1,0 +1,131 @@
+.News{
+  padding: 6rem;
+  background-color: rgb(251, 243, 247);
+  border-radius: 12px;
+  width: calc(100% - 48px);
+  margin: 0 auto;
+  height: auto;
+
+  &__title{
+    font-size: 20px;
+    line-height: 40px;
+    color: #2d4271;
+    font-weight: 700;
+  }
+  &__ShowAll{
+    font-size: 20px;
+    line-height: 40px;
+    color: #1832b6;
+    font-weight: 600;
+  }
+
+
+  &__item{
+    position: relative;
+    overflow: hidden;
+    height: 260px;
+    border-radius: 10px;
+
+    img{
+      border-radius: 10px;
+      overflow: hidden;
+      
+      transition: all 200ms ease;
+    }
+    .new-overlay{
+      position: absolute;
+      background: linear-gradient(to bottom,rgba(179,171,171,0) 0%,rgba(48,48,48,0.71) 49%,rgba(19,19,19,0.8) 100%);
+      bottom: 0;
+      padding: 1rem 1rem !important;
+      width: 100% !important;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      color: white;
+      font-size: 20px;
+      overflow: hidden;
+      z-index: 5;
+      .KindOfNew{
+        padding: 2.5px 15px;
+        font-size: 13px;
+        font-weight: 400;
+        background-color: #fff;
+        opacity: 0.8;
+        border-radius: 15px;
+        color: #fd5056;
+        width: fit-content;
+      }
+      .news-name{
+        color: #fff;
+        overflow: hidden;
+        white-space: normal;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        margin-top: 8px;
+        line-height: 1.2;
+        font-weight: 500;
+        font-size: 27px;
+        a:hover{
+          color: #fff;
+        }
+      }
+      .date-update{
+        margin-top: 20px;
+        font-size: 12px;
+        font-weight: normal;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.news-details{
+  
+ img{
+   width: 100% !important;
+   height: 500px !important;
+   object-fit: unset !important;
+   border-radius: 5px !important;
+ }
+
+ &__title{
+   font-size: 20px;
+   font-weight:700;
+   line-height: 1.6;
+   margin-top: 10px;
+   color: #003d71;
+   overflow-wrap: break-word;
+ }
+
+ &__kind-of-new{
+   font-size: 16px;
+   font-weight: 500;
+   line-height: 1.6;
+   color: #003d71;
+ }
+
+ &__date-update{
+   margin-left: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #003d71;
+ }
+
+ &__content{
+   margin-top: 10px;
+  p,span, h2{
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+    color: #003d71 !important;
+    overflow-wrap: break-word;
+  }
+  h2 span{
+    font-weight: bold !important;
+    font-size: 15px !important;
+    line-height: 22px !important;
+  }
+ }
+}

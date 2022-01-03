@@ -15,7 +15,6 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import ReactRating from "react-rating";
 import InputField from "../../../../CustomFields/InputField/Index";
 import { IoMdSave } from "react-icons/io";
-import { IoAddCircleSharp } from "react-icons/io5";
 import TextAreaField from "../../../../CustomFields/TextareaField/Index";
 import SelectField from "../../../../CustomFields/SelectField/Index";
 import EditorField from "../../../../CustomFields/EditorField/Index";
@@ -39,6 +38,7 @@ import {
   Adm_InsertTour,
   Adm_GetTourById,
   Adm_UpdateTour,
+  Adm_InsertTourAvailable,
 } from "../../Slices/SliceTour";
 import { NotificationManager } from "react-notifications";
 import { Adm_InsertTourDetails } from "../../Slices/SliceTourDetails";
@@ -50,10 +50,11 @@ import {
 } from "../../Slices/SliceTravelConpanyTransport";
 import { Adm_UpdateTourDetails } from "../../Slices/SliceTourDetails";
 import { FaSearch } from "react-icons/fa";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { MdKeyboardArrowDown, MdOutlineLibraryBooks } from "react-icons/md";
 import Shedule from "./Shedule";
 import * as yup from "yup";
 import { Adm_GetDataTourGuidCondition } from "../../Slices/SliceTourGuide";
+import InsertTourAvailable from "./InsertTourAvailable";
 //
 const styles = {
   display: "flex",
@@ -200,6 +201,9 @@ function TourUpdateOrCreate(props) {
   const [validationShema, setValidationShema] = useState(
     validationSchema.TourManagerAdd.concat(validateNotTourFamily)
   );
+
+  // nhân bảng tour
+  const [showPopup, setShowPopup] = useState(false);
   //#endregion
 
   //#region Begin get state in store
@@ -938,11 +942,47 @@ function TourUpdateOrCreate(props) {
         );
       });
   };
-  //==
+
+  // nhân bảng tour
+  const toggleTourAvailable = () => {
+    setShowPopup(false);
+  };
+
+  const handleShowPopup = () => {
+    setShowPopup(true);
+  };
+
+  const handleClickSaveTourAvaliable = (values) => {
+    const params = {
+      dateStart: values.DateStartClone,
+      dateEnd: values.DateEndClone,
+      departurePlaceFrom: values.DeparturePlaceFromClone,
+      tourId: tourId,
+      suggest: values.SuggestClone,
+      EmpIDInsert: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+        .empId,
+      EmpIdupdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
+        .empId,
+    };
+    console.log(params);
+    
+    // dispatch(Adm_InsertTourAvailable(params))
+    //   .then(unwrapResult)
+    //   .then((payload) => {
+    //     console.log(payload);
+    //   })
+    //   .catch((err) => {});
+  };
+  //
 
   //=======
   return (
     <>
+      <InsertTourAvailable
+        showModal={showPopup}
+        toggle={toggleTourAvailable}
+        onSubmit={handleClickSaveTourAvaliable}
+      />
       <div className="animate__animated animate__slideInUp animate__delay-0.5s">
         <Card>
           <CardHeader
@@ -1031,6 +1071,21 @@ function TourUpdateOrCreate(props) {
                         <IoMdSave size={20} color="#3664a4" />
                         Lưu và đóng
                       </button>
+                      <div style={{ float: "right" }}>
+                        {!isAddMode && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleShowPopup();
+                            }}
+                            className="h-button"
+                            style={{ marginRight: "10px" }}
+                          >
+                            <MdOutlineLibraryBooks size={20} color="#228B22" />
+                            Nhân bản tour du lịch
+                          </button>
+                        )}
+                      </div>
                     </CardHeader>
                     <CardBody>
                       <p

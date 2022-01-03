@@ -1,6 +1,7 @@
 //==
 
 import { NotificationManager } from "react-notifications";
+import newsApi from "../apis/NewsApi";
 import permisstionApi from "../apis/PermissionApi";
 import tourApi from "../apis/TourApi";
 
@@ -179,13 +180,105 @@ export const tableCatScreen = [
   },
 ];
 //#endregion
+
+export const tableColumnNews = [
+  {
+    field: `newsId`,
+    headerName: "Mã tin tức",
+    sortTable: true,
+    unSortIcon: true,
+    filter: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    minWidth: 200,
+  },
+  {
+    field: `newsName`,
+    headerName: "Tên tin tức",
+    sortTable: true,
+    unSortIcon: true,
+    minWidth: 200,
+  },
+  {
+    field: `kindOfNew`,
+    headerName: "Loại tin tức",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 170,
+  },
+  {
+    field: `newsImg`,
+    headerName: "Ảnh minh họa",
+    minWidth: 200,
+  },
+  // {
+  //   field: `content`,
+  //   headerName: "Nội dung",
+  //   sortTable: true,
+  //   unSortIcon: true,
+  //   filter: false,
+  //   headerSelect: true,
+  //   checkboxSelection: false,
+  //   headerCheckboxSelection: false,
+  //   minWidth: 200,
+  // },
+  {
+    field: "dateUpdate",
+    headerName: "Ngày cập nhật",
+    minWidth: 130,
+  },
+  {
+    field: "empName",
+    headerName: "Nhân viên cập nhật",
+    minWidth: 170,
+  },
+  {
+    field: "active",
+    headerName: "Kích hoạt",
+    sortTable: true,
+    unSortIcon: true,
+    cellRenderer: (values) => {
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.readOnly = true;
+      input.checked = values.value;
+      input.addEventListener("click", () => {
+        const params = {
+          pID: values.data.newsId,
+          pEmpID: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
+        };
+        console.log(params);
+        newsApi.Adm_ActiveNews(params).catch(async (err) => {
+          if (err.response.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            await NotificationManager.warning(
+              "Vui lòng đăng nhập lại",
+              `Phiên bản đăng nhập hết hạn!`,
+              2500
+            );
+            window.location.href = "http://localhost:3000/admin/login";
+            return;
+          }
+        });
+      });
+      return input;
+    },
+    minWidth: 130,
+  },
+];
+
 export const tableColumnCustomer = [
   {
     field: `customerId`,
     headerName: "Mã khách hàng",
     sortTable: true,
     unSortIcon: true,
-    filter: false,
+    filter: true,
     headerSelect: true,
     checkboxSelection: true,
     headerCheckboxSelection: true,
@@ -793,8 +886,17 @@ export const tableColumnsTour = [
           pEmpID: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
         };
         console.log(params);
-        tourApi.Adm_UpdateSuggest(params).catch((err) => {
-          console.log(err);
+        tourApi.Adm_UpdateSuggest(params).catch(async (err) => {
+          if (err.response.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            await NotificationManager.warning(
+              "Vui lòng đăng nhập lại",
+              `Phiên bản đăng nhập hết hạn!`,
+              2500
+            );
+            window.location.href = "http://localhost:3000/admin/login";
+            return;
+          }
         });
       });
       return input;

@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { Input } from "reactstrap";
+import HotelBannerPnG from "../../assets/logo/home-banner.jpg";
 import Header from "../Header";
 import "./styles.scss";
 
 function Banner(props) {
-  const { backgroundImage, children } = props;
+  const { backgroundImage, children, disPlayNoneSearch } = props;
   // useEffect(() => {
   //   const fetchApiProvince = async () => {
   //     try {
@@ -37,11 +37,20 @@ function Banner(props) {
           }}
         ></div>
 
-        <div className="banner__search-info">
-          <div className="container">
-            <div className="form-search-tour-hotel">{children}</div>
+        {disPlayNoneSearch === "" && (
+          <div className={`banner__search-info  ${disPlayNoneSearch}`}>
+            <div className="container">
+              <div className="form-search-tour-hotel">{children}</div>
+            </div>
           </div>
-        </div>
+        )}
+        {disPlayNoneSearch === "d-none" && (
+          <div className={`banner__News-info-cli`}>
+            <div className="container">
+              <div className="news-infomation-content">{children}</div>
+            </div>
+          </div>
+        )}
       </section>
     </>
   );
@@ -49,11 +58,12 @@ function Banner(props) {
 
 Banner.propTypes = {
   backgroundImage: PropTypes.string,
+  disPlayNoneSearch: PropTypes.string,
 };
 
 Banner.defaultProps = {
-  backgroundImage:
-    "https://storage.googleapis.com/tripi-assets/mytour/banner/home-banner.jpg",
+  disPlayNoneSearch: "",
+  backgroundImage: `${HotelBannerPnG}`,
 };
 
 export default Banner;

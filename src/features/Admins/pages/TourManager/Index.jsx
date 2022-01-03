@@ -183,7 +183,7 @@ function TourManager(props) {
         history.push(editTourUrl);
       })
       .catch((err) => {
-        return NotificationManager.error(`${err}`, "Thêm thất bại!", 1500);
+        return NotificationManager.error(`${err}`, "Error!", 1500);
       });
   };
 

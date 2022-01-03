@@ -32,6 +32,12 @@ const imagesUpload = {
     };
     return axiosClient.post(`${url}/Adm_UploadImageEmployee`, data, config);
   },
+  Adm_UploadImageNews: (data) => {
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+    };
+    return axiosClient.post(`${url}/Adm_UploadImageNews`, data, config);
+  },
 };
 
 export default imagesUpload;

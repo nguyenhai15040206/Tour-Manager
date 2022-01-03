@@ -16,6 +16,7 @@ import travelConpanyTransportSliceReducer from "../features/Admins/Slices/SliceT
 import unitPriceTransportReducer from "../features/Admins/Slices/SliceUnitPriceTransport";
 import bookingTourReducer from "../features/Admins/Slices/SliceBookingTour";
 import permissionReducer from "../features/Admins/Slices/SlicePermission";
+import newsReducer from "../features/Admins/Slices/SliceNews";
 
 export default configureStore({
   reducer: {
@@ -36,6 +37,7 @@ export default configureStore({
     unitPriceTransport: unitPriceTransportReducer,
     bookingTour: bookingTourReducer,
     permission: permissionReducer,
+    news: newsReducer,
   },
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

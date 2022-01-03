@@ -44,6 +44,14 @@ const PermissionManager = React.lazy(() =>
   import("../Admins/pages/Permission/Index")
 );
 
+const NewsManager = React.lazy(() =>
+  import("../Admins/pages/NewsManager/Index")
+);
+
+const DashboardManager = React.lazy(() =>
+  import("../Admins/pages/Dashboard/Index")
+);
+
 function Admin(props) {
   const match = useRouteMatch();
   return (
@@ -58,8 +66,12 @@ function Admin(props) {
           <MainLayout>
             <Suspense fallback={<Spinner color={"secondary"} />}>
               <Switch>
-                <Redirect exact from={`/admin`} to="/admin/TourManager" />
-                <Redirect from="/admin/login" to="/admin/TourManager" />
+                <Redirect exact from={`/admin`} to="/admin/Dashboard" />
+                <Redirect from="/admin/login" to="/admin/Dashboard" />
+                <Route
+                  path={`${match.url}/Dashboard`}
+                  component={DashboardManager}
+                />
                 <Route
                   path={`${match.url}/TourManager`}
                   component={TourManagement}
@@ -70,6 +82,7 @@ function Admin(props) {
                   path="/admin/TouristAttraction"
                   component={TouristAttr}
                 />
+                <Route path={`${match.url}/News`} component={NewsManager} />
                 <Route
                   path={`${match.url}/Permission`}
                   component={PermissionManager}

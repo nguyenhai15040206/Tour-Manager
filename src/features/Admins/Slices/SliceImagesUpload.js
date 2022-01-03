@@ -73,6 +73,21 @@ export const Adm_UploadImageEmployee = createAsyncThunk(
     }
   }
 );
+export const Adm_UploadImageNews = createAsyncThunk(
+  "api/ImagesUpload/Adm_UploadImageNews",
+  async (data, thunkApi) => {
+    try {
+      const response = await imagesUpload.Adm_UploadImageNews(data);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
+    }
+  }
+);
 
 const imagesUploadSlice = createSlice({
   name: "ImagesUpload",
@@ -82,11 +97,25 @@ const imagesUploadSlice = createSlice({
     imageCompany: "",
     arrayImagesTourist: [],
     imageEmployee: "",
+    imageNews: "",
     loading: "idled",
     error: "",
   },
 
   extraReducers: (builder) => {
+    // upload image new
+    builder.addCase(Adm_UploadImageNews.pending, (state) => {
+      state.imageNews = "";
+      state.loading = "loading";
+    });
+    builder.addCase(Adm_UploadImageNews.fulfilled, (state, { payload }) => {
+      state.imageNews = payload;
+      state.loading = "loaded";
+    });
+    builder.addCase(Adm_UploadImageNews.rejected, (state, { payload }) => {
+      state.loading = "error";
+      state.imageNews = "";
+    });
     // upload image emp
     builder.addCase(Adm_UploadImageEmployee.pending, (state) => {
       state.imageEmployee = "";

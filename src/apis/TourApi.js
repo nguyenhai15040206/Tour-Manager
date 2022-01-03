@@ -45,6 +45,11 @@ const tourApi = {
   SendMessageTourExpired: (params) => {
     return axiosClient.get(`${url}/SendMessageTourExpired`, { params });
   },
+
+  //================= nhân bản tour
+  Adm_InsertTourAvailable: (params) => {
+    return axiosClient.post(`${url}/Adm_InsertTourAvailable`, params);
+  },
 };
 
 export default tourApi;

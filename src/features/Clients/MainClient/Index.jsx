@@ -23,8 +23,12 @@ const CustomerPrfile = React.lazy(() =>
   import("../../Clients/Customers/Index")
 );
 
-const HotelManager = React.lazy(() => import("../Pages/HotelsPages/Index"));
+const Contact = React.lazy(() => import("../Pages/Contact/Index"));
 
+const NewsPages = React.lazy(() => import("../Pages/NewsPages/Index"));
+
+const NewsDetails = React.lazy(() => import("../Pages/NewsPages/NewsDetails"));
+//============
 function MainClient(props) {
   const [loading, setLoading] = useState(false);
   const match = useRouteMatch();
@@ -46,16 +50,21 @@ function MainClient(props) {
       {loading && <Loading loading={true} />}
       <Switch>
         <Route exact path={match.url} component={HomePages} />
-        <Route path={`${match.url}/khach-san`} component={HotelBanner} />
+        <Route path={`${match.url}/News`} component={NewsPages} />
         <Route
           path={`${match.url}/danh-sach-tim-kiem-tour/params=:DeFrom/:DeTo/:DateStart/:TotalDays/:DeparturePlaceToName`}
           component={TourList}
         />
+        <Route path={`${match.url}/Contact`} component={Contact} />
+
         <Route path={`${match.url}/Customer`} component={CustomerPrfile} />
-        <Route path={`${match.url}/HotelManager/`} component={HotelManager} />
         <Route
           path={`${match.url}/tour-details/tourID=:tourID`}
           component={TourDetails}
+        />
+        <Route
+          path={`${match.url}/news-details/newsID=:newsID`}
+          component={NewsDetails}
         />
         <Route
           path={`${match.url}/booking-tour/tourID=:tourID`}
@@ -67,7 +76,7 @@ function MainClient(props) {
         />
       </Switch>
       <div style={{ marginBottom: "100px", marginTop: "48px" }}></div>
-      <ReviewerList />
+      {/* <ReviewerList /> */}
       <Footer />
       <NotificationContainer />
       {/* <MessengerCustomerChat

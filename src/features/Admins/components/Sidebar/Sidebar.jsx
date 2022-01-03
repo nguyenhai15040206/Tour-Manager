@@ -6,6 +6,8 @@ import {
   FaUsersCog,
   FaUserTag,
 } from "react-icons/fa";
+import { BsUiChecks } from "react-icons/bs";
+import { IoNewspaper } from "react-icons/io5";
 import { HiOutlineSpeakerphone } from "react-icons/hi";
 import { ImUserCheck } from "react-icons/im";
 import {
@@ -44,7 +46,7 @@ const navItems = [
     key: "1e829721-3f46-4713-af29-ddeea00aedb6",
     to: "/admin/BookingManager",
     name: "Quản lý booking",
-    exact: true,
+    exact: false,
     Icon: BiCategory,
   },
   {
@@ -53,6 +55,16 @@ const navItems = [
     name: "Phương tiện di chuyển",
     exact: false,
     Icon: MdOutlineAirplaneTicket,
+  },
+];
+
+const navDashboard = [
+  {
+    key: "4fc03cf1-442e-4524-b484-1fb510498143",
+    to: "/admin/Dashboard",
+    name: "Thống kê - báo cáo",
+    exact: false,
+    Icon: BsUiChecks,
   },
 ];
 
@@ -81,6 +93,13 @@ const navItemUserManager = [
 ];
 
 const navItemUserPermision = [
+  {
+    key: "28c40fbc-b368-4aaa-868d-08aeed1ec469",
+    to: "/admin/News",
+    name: "Quản lý tin tức",
+    exact: false,
+    Icon: IoNewspaper,
+  },
   {
     key: "273eebbc-6aa0-436d-b426-66ec379080a5",
     to: "/admin/Permission",
@@ -204,7 +223,7 @@ function Sidebar(props) {
       <div className="cr-sidebar__background" style={sidebarBackground}></div>
       <div className="cr-sidebar__content">
         <Navbar>
-          <Link className="cr-background__admin" to="/admin/nht">
+          <Link className="cr-background__admin" to="/admin/Dashboard">
             <img src={logo200Image} className="pr-2" alt="" />
             <img
               alt=""
@@ -213,6 +232,7 @@ function Sidebar(props) {
           </Link>
         </Navbar>
         <Nav vertical>
+          {renderItem(navDashboard)}
           <NavItem
             className="cr-sidebar__nav-item"
             onClick={() => {
@@ -310,21 +330,6 @@ function Sidebar(props) {
 
           {/* Quản lý phân quyền */}
           {renderItem(navItemUserPermision)}
-          {/* {navItemUserPermision.map(({ to, name, exact, Icon }, index) => (
-            <NavItem key={index} className="cr-sidebar__nav-item">
-              <BsNavLink
-                id={`navItem-${name}-${index}`}
-                className=""
-                tag={NavLink}
-                to={to}
-                activeClassName="active"
-                exact={exact}
-              >
-                <Icon className="cr-sidebar__nav-item-icon" />
-                <span className="">{name}</span>
-              </BsNavLink>
-            </NavItem>
-          ))} */}
         </Nav>
       </div>
     </aside>
