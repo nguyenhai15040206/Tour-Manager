@@ -156,7 +156,7 @@ function EmployeeManager(props) {
           localStorage.removeItem("accessTokenEmp");
           return history.push("/admin/login");
         }
-        return NotificationManager.error(`${err}`, "Xóa thất bại");
+        return NotificationManager.error(`${err.error}`, "Xóa thất bại");
       });
   };
 
@@ -381,6 +381,7 @@ function EmployeeManager(props) {
         showModal={showConfirm}
         toggle={toggle}
         ConfirmDelete={ConfirmDelete}
+        count={values.length}
       />
       <EmployeeAddEdit
         className="modal-lg"

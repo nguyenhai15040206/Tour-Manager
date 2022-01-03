@@ -44,7 +44,6 @@ function BookingDetails(props) {
   }, [bookingID]);
   return (
     <>
-      {console.log(stateBookingTour.dataDetails)}
 
       <Header
         boxShadow="rgb(92 149 252) 3px -7px 20px 3px"
@@ -64,12 +63,14 @@ function BookingDetails(props) {
                 <Col xl={3} lg={6}>
                   <span className="title">Họ tên</span>
                   <p className="info">
-                    {stateBookingTour.dataDetails?.customerName}
+                    {stateBookingTour.dataDetails?.data?.customerName}
                   </p>
                 </Col>
                 <Col xl={4} lg={6}>
                   <span className="title">Email</span>
-                  <p className="info">{stateBookingTour.dataDetails?.email}</p>
+                  <p className="info">
+                    {stateBookingTour.dataDetails?.data?.email}
+                  </p>
                 </Col>
                 <Col xl={5} lg={6}>
                   <span className="title">Địa chỉ</span>
@@ -82,16 +83,20 @@ function BookingDetails(props) {
                 <Col xl={3} lg={6}>
                   <span className="title">Số điện thoại</span>
                   <p className="info">
-                    {stateBookingTour.dataDetails?.phoneNumber}
+                    {stateBookingTour.dataDetails?.data?.phoneNumber}
                   </p>
                 </Col>
                 <Col xl={9} lg={6}>
                   <span className="title">Số lượng khách</span>
                   <p className="info">
-                    {`${stateBookingTour.dataDetails?.quanityAdult}`} Người lớn,
-                    {`${stateBookingTour.dataDetails?.quanityChildren}`} Trẻ em,
-                    {`${stateBookingTour.dataDetails?.quanityBaby}`} Trẻ nhỏ,{" "}
-                    {`${stateBookingTour.dataDetails?.quanityInfant}`} Em bé
+                    {`${stateBookingTour.dataDetails?.data?.quanityAdult}`}{" "}
+                    Người lớn,
+                    {`${stateBookingTour.dataDetails?.data?.quanityChildren}`}{" "}
+                    Trẻ em,
+                    {`${stateBookingTour.dataDetails?.data?.quanityBaby}`} Trẻ
+                    nhỏ,{" "}
+                    {`${stateBookingTour.dataDetails?.data?.quanityInfant}`} Em
+                    bé
                   </p>
                 </Col>
               </Row>
@@ -116,7 +121,7 @@ function BookingDetails(props) {
                   <span
                     className="info"
                     style={{ color: "#fd5056" }}
-                  >{`${stateBookingTour.dataDetails?.bookingTourId}`}</span>{" "}
+                  >{`${stateBookingTour.dataDetails?.data?.bookingTourId}`}</span>{" "}
                   <span style={{ color: "#2d4271", fontSize: "13px" }}>
                     (Quý khách vui lòng nhớ số booking (Booking No) để thuận
                     tiện cho các giao dịch sau này)
@@ -128,8 +133,9 @@ function BookingDetails(props) {
                   Trị giá booking
                 </Col>
                 <Col className="info" style={{ fontWeight: "400" }} xl={3}>
-                  {formatCash(`${stateBookingTour.dataDetails?.totalMoney}`) +
-                    "đ"}
+                  {formatCash(
+                    `${stateBookingTour.dataDetails?.data?.totalMoney}`
+                  ) + "đ"}
                 </Col>
               </Row>
               <Row className="booking-tour-details mt-4">
@@ -137,7 +143,7 @@ function BookingDetails(props) {
                   Ngày đặt tour
                 </Col>
                 <Col className="info" style={{ fontWeight: "400" }} xl={9}>
-                  {`${stateBookingTour.dataDetails?.bookingDate}`}
+                  {`${stateBookingTour.dataDetails?.data?.bookingDate}`}
                 </Col>
               </Row>
               <Row className="booking-tour-details mt-4">
@@ -145,7 +151,7 @@ function BookingDetails(props) {
                   Hình thức thanh toán
                 </Col>
                 <Col className="info" style={{ fontWeight: "400" }} xl={9}>
-                  {stateBookingTour.dataDetails?.typePayment === 1
+                  {stateBookingTour.dataDetails?.data?.typePayment === 1
                     ? "Thanh toán tiền mặt"
                     : "Chuyển khoản"}
                 </Col>
@@ -156,13 +162,13 @@ function BookingDetails(props) {
                 </Col>
                 <Col className="info" style={{ fontWeight: "400" }} xl={9}>
                   {`${
-                    stateBookingTour.dataDetails?.status === false
+                    stateBookingTour.dataDetails?.data?.status === false
                       ? "Chưa thanh toán"
                       : "Đã thanh toán"
                   }`}
                 </Col>
               </Row>
-              {stateBookingTour.dataDetails?.status === false && (
+              {stateBookingTour.dataDetails?.data?.status === false && (
                 <Row className="booking-tour-details mt-4">
                   <Col className="info" xl={3}>
                     Thời hạn
@@ -171,7 +177,7 @@ function BookingDetails(props) {
                     <span
                       className="info"
                       style={{ color: "#fd5056" }}
-                    >{`${stateBookingTour.dataDetails?.duration}`}</span>
+                    >{`${stateBookingTour.dataDetails?.data?.duration}`}</span>
                     <span style={{ color: "#2d4271", fontSize: "13px" }}>
                       (Theo giờ Việt Nam) (Nếu quá thời hạn trên mà quý khách
                       chưa thanh toán. Vietravel sẽ hủy booking này)
@@ -179,7 +185,7 @@ function BookingDetails(props) {
                   </Col>
                 </Row>
               )}
-              {stateBookingTour.dataDetails?.isDelete === false && (
+              {stateBookingTour.dataDetails?.data?.isDelete === false && (
                 <Row className="booking-tour-details mt-4">
                   <Col className="info" style={{ fontWeight: "400" }}>
                     <p className="info" style={{ color: "red" }}>
@@ -197,11 +203,11 @@ function BookingDetails(props) {
               <div className="header-ticket">
                 <img
                   style={{ borderRadius: "5px" }}
-                  src={`${stateBookingTour.dataDetails?.tourImg}`}
+                  src={`${stateBookingTour.dataDetails?.data?.tourImg}`}
                   alt="img"
                 ></img>
                 <div className="header-title">
-                  {`${stateBookingTour.dataDetails?.tourName}`}
+                  {`${stateBookingTour.dataDetails?.data?.tourName}`}
                 </div>
               </div>
 
@@ -213,35 +219,35 @@ function BookingDetails(props) {
                     <span
                       className="info"
                       style={{ color: "#fd5056" }}
-                    >{`${stateBookingTour.dataDetails?.bookingTourId}`}</span>{" "}
+                    >{`${stateBookingTour.dataDetails?.data?.bookingTourId}`}</span>{" "}
                   </p>
                 </Col>
                 <Col xl={12} className="mt-2">
                   <span className="title">Mã tour</span>
-                  <p className="info">{`${stateBookingTour.dataDetails?.tourId}`}</p>
+                  <p className="info">{`${stateBookingTour.dataDetails?.data?.tourId}`}</p>
                 </Col>
                 <Col xl={12} className="mt-2">
                   <span className="title">Hành trình</span>
                   <p className="info">
-                    {stateBookingTour.dataDetails?.journeys}
+                    {stateBookingTour.dataDetails?.data?.journeys}
                   </p>
                 </Col>
                 <Col xl={12} className="mt-2">
                   <span className="title">Ngày đi</span>
                   <p className="info">
-                    {stateBookingTour.dataDetails?.dateStart}
+                    {stateBookingTour.dataDetails?.data?.dateStart}
                   </p>
                 </Col>
                 <Col xl={12} className="mt-2">
                   <span className="title">Ngày về</span>
                   <p className="info">
-                    {stateBookingTour.dataDetails?.dateEnd}
+                    {stateBookingTour.dataDetails?.data?.dateEnd}
                   </p>
                 </Col>
                 <Col xl={12} className="mt-2">
                   <span className="title">Nơi khởi hành</span>
                   <p className="info">
-                    {stateBookingTour.dataDetails?.departurePlaceFrom}
+                    {stateBookingTour.dataDetails?.data?.departurePlaceFrom}
                   </p>
                 </Col>
                 <Col
@@ -255,7 +261,7 @@ function BookingDetails(props) {
                 >
                   <img
                     style={{ width: "120px", height: "120px" }}
-                    src={`${stateBookingTour.dataDetails?.qrCode}`}
+                    src={`${stateBookingTour.dataDetails?.data?.qrCode}`}
                   />
                 </Col>
                 <p className="info mt-3">

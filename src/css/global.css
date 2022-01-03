@@ -189,6 +189,10 @@ input.h-textbox, textarea.h-textbox{
     font-weight: 400 !important;
 }
 
+.h-textbox.h-textarea{
+    min-height: 60px;
+}
+
 .editor-class{
     padding: 4px 7px;
     border-radius: 4px !important;
@@ -199,6 +203,12 @@ input.h-textbox, textarea.h-textbox{
 .h-editor{
     line-height: 1.6rem !important;
     height: 150px !important;
+}
+
+.h-news{
+    line-height: 1.6rem !important;
+    height: 300px !important;
+    /* min-height: 250px !important; */
 }
 
 input.form-check-input:focus{

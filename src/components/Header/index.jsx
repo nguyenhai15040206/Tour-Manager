@@ -124,10 +124,18 @@ function Header(props) {
                 </Link>
               </li>
               <li className="header__item">
-                <Link to="/my-tour/khach-san">Khách sạn</Link>
+                <Link
+                  to={"/my-tour/News"}
+                  style={{ fontFamily: "Poppins ,sans-serif" }}
+                >
+                  Tin tức
+                </Link>
               </li>
               <li className="header__item">
                 <a href="index.html">The Memory</a>
+              </li>
+              <li className="header__item">
+                <Link to="/my-tour/Contact">Liên hệ</Link>
               </li>
             </ul>
             <nav className="header__info">

@@ -315,7 +315,7 @@ function Transport(props) {
       }
       return NotificationManager.error(
         `${err.message}`,
-        "Thêm thất bại!",
+        "Cập nhật thất bại!",
         1500
       );
     }
@@ -381,7 +381,6 @@ function Transport(props) {
       SelectByIds: selectedIds,
       EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
     };
-    console.log(DeleteModels);
     dispatch(Adm_DeleteCompanyByIds(DeleteModels))
       .then(unwrapResult)
       .then(() => {

@@ -1,0 +1,73 @@
+.h-contact{
+  padding-bottom: 100px;
+  &__background{
+    position: relative;
+    background-image: url("../../../../assets/logo/contact-background-images-9.jpg");
+    background-repeat: no-repeat;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    height: 550px;
+    .content{
+      padding: 0 20px;
+      color: #003d71;
+      li span{
+        margin-left: 10px;
+        font-size: 13px;
+        font-weight: 400;
+        color: #003d71;
+        //color: rgba(0, 0, 0, 0.84);
+        
+        a:hover{
+          span{
+            color: #003d71 !important;
+          }
+        }
+      }
+    }
+    .contact-info{
+      padding: 10px 20px;
+      color: #003d71;
+      li:first-child{
+        margin-left: 0;
+      }
+      li{
+        margin-left: 10px;
+        cursor: pointer;
+        a:hover{
+          color: #003d71;
+        }
+      }
+    }
+  }
+
+  .bg-info-contact{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin-top: 50px;
+    
+  }
+
+  .form-contact{
+    position: absolute;
+    padding-bottom: 50px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .h-textbox-contact{
+    line-height: 25px !important;
+    padding: 2px 7px !important;
+    border-radius: 5px !important;
+    color: #003d71 ;
+    background: linear-gradient(rgba(65, 59, 59, 0.1) 50%, rgba(0, 0, 0, 0.02) 100%);
+    font-size: 13px;
+    &.h-textarea{
+      height: 100px;
+      min-height: 100px;
+      max-height: 100px;
+    }
+  }
+}

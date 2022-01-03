@@ -47,6 +47,18 @@ function EditorField(props) {
       draftToHtml(convertToRaw(editorState.getCurrentContent()))
     );
   };
+
+  const uploadCallback = (file) => {
+    return new Promise((resolve, reject) => {
+      if (file) {
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          resolve({ data: { link: e.target.result } });
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  };
   return (
     <>
       <FormGroup className="mt-1">
@@ -67,6 +79,19 @@ function EditorField(props) {
             onEditorStateChange(editorState)
           }
           placeholder={placeholder}
+          toolbar={{
+            image: {
+              uploadEnabled: true,
+              previewImage: true,
+              uploadCallback: uploadCallback,
+              inputAccept: "image/gif,image/jpeg,image/jpg,image/png,image/svg",
+              alt: { present: false, mandatory: false },
+              defaultSize: {
+                height: "auto",
+                width: "auto",
+              },
+            },
+          }}
         ></Editor>
         {showError && <div className="invalid-feedback">{errors[name]}</div>}
       </FormGroup>

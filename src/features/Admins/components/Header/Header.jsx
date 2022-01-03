@@ -112,7 +112,13 @@ function Header(props) {
                     alignItems: "center",
                   }}
                 >
-                  <small style={{ fontSize: "11px", fontWeight: "400" }}>
+                  <small
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: "400",
+                      marginLeft: "-3px",
+                    }}
+                  >
                     {`${countNotifiCation.length}`}
                   </small>
                 </span>
@@ -148,7 +154,11 @@ function Header(props) {
             <NavLink id="Popover2">
               <img
                 className="cr-header__avatar rounded-circle"
-                src="https://reduction-admin.github.io/react-reduction/static/media/100_4.978e51b5.jpg"
+                src={
+                  JSON.parse(localStorage.getItem("accessTokenEmp")).data
+                    .avatar ||
+                  "https://reduction-admin.github.io/react-reduction/static/media/100_4.978e51b5.jpg"
+                }
                 alt=""
               />
             </NavLink>
