@@ -33,6 +33,7 @@ import { Adm_GetTourList } from "../../Slices/SliceTour";
 import { Adm_GetProvince } from "../../Slices/SliceAddress";
 import { Adm_GetTravelTypeCbo } from "../../Slices/SliceTravelType";
 import tourApi from "../../../../apis/TourApi";
+import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
 
 const initialValuesSearh = {
   PromotionName: "",
@@ -58,6 +59,11 @@ function Promotion(props) {
   const [showSupportSearchTour, setShowSupportSearchTour] = useState(false);
   const [tourListSupport, setTourListSupport] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
+
+  // export data excel
+  const [dataExport, setDataExport] = useState([]);
+  const [showConfirmExport, setShowConfirmExport] = useState(false);
+  //
   const gridRef = useRef(null);
   const gridRefTour = useRef(null);
   const dispatch = useDispatch();
@@ -138,6 +144,7 @@ function Promotion(props) {
   const toggle = () => {
     setShowModal(false);
     setShowConfirm(false);
+    setShowConfirmExport(false);
   };
 
   const handleClickEditPromotionFromGrid = async (promotionId) => {
@@ -440,6 +447,46 @@ function Promotion(props) {
   };
 
   //
+  //=============
+  //==== export
+  const onBtnExportData = (event) => {
+    event.preventDefault();
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+
+    if (selectedData.length === 0) {
+      const arrObjExport = [];
+      promotionList.forEach((element) => {
+        const Obj = {
+          "Mã khuyến mãi": element.promotionId,
+          "Tên khuyến mãi": element.promotionName,
+          "Ngày bắt đầu": element.dateStart,
+          "Ngày kết thúc": element.dateEnd,
+          "Giảm giá (%)": element.discount,
+          "Áp dụng cho tất cả": element.isApplyAll,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    } else {
+      const arrObjExport = [];
+      selectedData.forEach((element) => {
+        const Obj = {
+          "Mã khuyến mãi": element.promotionId,
+          "Tên khuyến mãi": element.promotionName,
+          "Ngày bắt đầu": element.dateStart,
+          "Ngày kết thúc": element.dateEnd,
+          "Giảm giá (%)": element.discount,
+          "Áp dụng cho tất cả": element.isApplyAll,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    }
+    setShowConfirmExport(true);
+  };
 
   //==============
   return (
@@ -619,16 +666,13 @@ function Promotion(props) {
                                         <RiDeleteBin6Line size={15} /> Xóa
                                         Khuyến mãi hết hạn
                                       </button>
-                                      <button
-                                        type="button"
-                                        className="h-button"
-                                      >
-                                        <RiFileExcel2Fill
-                                          color="#2b6e44"
-                                          size={15}
-                                        />{" "}
-                                        Xuất Excel
-                                      </button>
+                                      <ExportDataToExcel
+                                        toggle={toggle}
+                                        showModal={showConfirmExport}
+                                        onExportData={onBtnExportData}
+                                        apiData={dataExport}
+                                        fileName="DSKhuyenMai"
+                                      />
                                       <button
                                         type="button"
                                         onClick={handelClickDelete}

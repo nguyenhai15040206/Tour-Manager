@@ -743,6 +743,7 @@ export const tableColumnsTour = [
     field: `tourId`,
     headerName: "Mã tour",
     sortTable: true,
+    filter: true,
     unSortIcon: true,
     headerSelect: true,
     checkboxSelection: true,
@@ -1151,6 +1152,20 @@ export const tableColumnEmployee = [
     checkboxSelection: false,
     headerCheckboxSelection: false,
     minWidth: 150,
+  },
+  {
+    field: "status",
+    headerName: "Kích hoạt tài khoản",
+    sortTable: true,
+    unSortIcon: true,
+    cellRenderer: (values) => {
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.readOnly = true;
+      input.checked = values.value;
+      return input;
+    },
+    minWidth: 190,
   },
 ];
 

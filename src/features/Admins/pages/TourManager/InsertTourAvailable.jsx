@@ -30,7 +30,7 @@ const initialValues = {
   DateStartClone: "",
   DateEndClone: "",
   SuggestClone: false,
-  DeparturePlaceFromClone: false,
+  DeparturePlaceFromClone: "",
 };
 
 const validattionSchema = yup.object().shape({
@@ -55,7 +55,7 @@ const validattionSchema = yup.object().shape({
     .required("[Ngày kết thúc] không được trống!"),
 });
 function InsertTourAvailable(props) {
-  const { showModal, toggle, onSubmit } = props;
+  const { showModal, toggle, onSubmit, tourId } = props;
   const stateAddress = useSelector((state) => state.address);
 
   const handleOnSubmit = (e) => {
@@ -103,15 +103,47 @@ function InsertTourAvailable(props) {
                 <Form>
                   <Row>
                     <Col>
+                      {tourId && (
+                        <div style={styles}>
+                          <span className="h-label ">
+                            <span className="h-lable-Obligatory">Mã tour:</span>
+                            <span
+                              style={{
+                                width: "calc(100% - 135px)",
+                                color: "red",
+                                marginLeft: "63px",
+                              }}
+                            >
+                              {tourId}
+                            </span>
+                          </span>
+                        </div>
+                      )}
                       <FormGroup style={styles}>
                         <div style={{ width: "135px" }}>
                           <label className="h-label  h-lable-Obligatory">
                             Ngày bắt đầu
                           </label>
                         </div>
-                        <div style={{ width: "calc(100% - 135px" }}>
+                        <div style={{ width: "calc(100% - 135px)" }}>
                           <FastField
                             className="h-textbox"
+                            handleOnBlur={(e) => {
+                              try {
+                                let date = new Date(`${e.target.value}`);
+                                var numberOfDaysToAdd =
+                                  props.totalShedule?.length;
+                                var result = date.setDate(
+                                  date.getDate() + numberOfDaysToAdd
+                                );
+                                formikProps.setFieldValue(
+                                  "DateEndClone",
+                                  new Date(result).toISOString().slice(0, 10)
+                                );
+                              } catch (err) {
+                                formikProps.setFieldValue("DateEndClone", "");
+                              }
+                            }}
                             name="DateStartClone"
                             type="date"
                             component={InputField}
@@ -126,6 +158,7 @@ function InsertTourAvailable(props) {
                         </div>
                         <div style={{ width: "calc(100% - 135px" }}>
                           <FastField
+                            disabled={true}
                             className="h-textbox"
                             name="DateEndClone"
                             type="date"

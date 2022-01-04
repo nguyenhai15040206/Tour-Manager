@@ -35,6 +35,7 @@ import { Adm_GetWardsByIdDistrictCbb } from "../../Slices/SliceWards";
 import { UploadImageCompany } from "../../Slices/SliceImagesUpload";
 import validationSchema from "../../../../utils/ValidateShema";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
+import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
 
 const initialValuesSearch = {
   TransportTypeID: "",
@@ -67,6 +68,10 @@ function Transport(props) {
   const [initialValues, setInitialValues] = useState(initialValuesInsert);
 
   //end state
+  // export data excel
+  const [dataExport, setDataExport] = useState([]);
+  const [showConfirmExport, setShowConfirmExport] = useState(false);
+  //
 
   /// state in store
   const stateEnumConstant = useSelector((state) => state.enumConstant);
@@ -136,6 +141,7 @@ function Transport(props) {
   const toggle = () => {
     setShowModal(false);
     setShowConfirm(false);
+    setShowConfirmExport(false);
   };
 
   // click change image
@@ -401,6 +407,48 @@ function Transport(props) {
       });
   };
   //
+
+  //==== export
+  const onBtnExportData = (event) => {
+    event.preventDefault();
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+
+    if (selectedData.length === 0) {
+      const arrObjExport = [];
+      stateTravelCompany.data.forEach((element) => {
+        const Obj = {
+          "Mã công ty": element.companyId,
+          "Tên công ty": element.companyName,
+          "Loại phương tiện": element.enumerationID,
+          "Số điện thoại": element.phoneNumber,
+          "Đia chỉ": element.address,
+          "Nhân viên cập nhật": element.empIDUpdate,
+          "Ngày cập nhật": element.dateUpdate,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    } else {
+      const arrObjExport = [];
+      selectedData.forEach((element) => {
+        const Obj = {
+          "Mã công ty": element.companyId,
+          "Tên công ty": element.companyName,
+          "Loại phương tiện": element.enumerationID,
+          "Số điện thoại": element.phoneNumber,
+          "Đia chỉ": element.address,
+          "Nhân viên cập nhật": element.empIDUpdate,
+          "Ngày cập nhật": element.dateUpdate,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    }
+    setShowConfirmExport(true);
+  };
   return (
     <>
       <ConfirmControl
@@ -543,16 +591,13 @@ function Transport(props) {
                                       Tìm kiếm
                                     </button>
                                     <div style={{ float: "right" }}>
-                                      <button
-                                        type="button"
-                                        className="h-button"
-                                      >
-                                        <RiFileExcel2Fill
-                                          color="#2b6e44"
-                                          size={15}
-                                        />{" "}
-                                        Xuất Excel
-                                      </button>
+                                      <ExportDataToExcel
+                                        toggle={toggle}
+                                        showModal={showConfirmExport}
+                                        onExportData={onBtnExportData}
+                                        apiData={dataExport}
+                                        fileName="DSCongTyPhuongTien"
+                                      />
                                       <button
                                         type="button"
                                         onClick={handelClickDelete}
@@ -581,7 +626,7 @@ function Transport(props) {
         <Row>
           <Col>
             <TableGridControl
-              tableHeight="360px"
+              tableHeight="450px"
               rowData={stateTravelCompany.data}
               gridRef={gridRef}
               onGridReady={onGridReady}

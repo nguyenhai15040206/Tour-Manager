@@ -29,6 +29,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { Adm_UploadImageTourGuide } from "../../Slices/SliceImagesUpload";
 import { useHistory } from "react-router-dom";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
+import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
 
 const initialValuesTourGuide = {
   tourGuideId: "",
@@ -60,6 +61,10 @@ function TourGuideManager(props) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  // export data excel
+  const [dataExport, setDataExport] = useState([]);
+  const [showConfirmExport, setShowConfirmExport] = useState(false);
+  //
   ///
   const gridRef = useRef(null);
   const dispatch = useDispatch();
@@ -88,6 +93,7 @@ function TourGuideManager(props) {
   const toggle = () => {
     setShowModal(false);
     setShowConfirm(false);
+    setShowConfirmExport(false);
   };
   const onGridReady = async () => {
     try {
@@ -334,6 +340,53 @@ function TourGuideManager(props) {
       });
   };
 
+  //============
+  //==== export
+  const onBtnExportData = (event) => {
+    event.preventDefault();
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+
+    if (selectedData.length === 0) {
+      const arrObjExport = [];
+      stateTourGuide.dataTourGuide.forEach((element) => {
+        const Obj = {
+          "Mã nhân viên": element.tourGuideId,
+          "Tên nhân viên": element.tourGuideName,
+          "Giới tính": element.gender,
+          "Ngày sinh": element.dateOfBirth,
+          "Số điện thoại": element.phoneNumber,
+          "Email ": element.email,
+          "Địa chỉ": element.address,
+          "Ngày cập nhật": element.dateUpdate,
+          "Nhân viên cập nhật": element.empName,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    } else {
+      const arrObjExport = [];
+      selectedData.forEach((element) => {
+        const Obj = {
+          "Mã nhân viên": element.tourGuideId,
+          "Tên nhân viên": element.tourGuideName,
+          "Giới tính": element.gender,
+          "Ngày sinh": element.dateOfBirth,
+          "Số điện thoại": element.phoneNumber,
+          "Email ": element.email,
+          "Địa chỉ": element.address,
+          "Ngày cập nhật": element.dateUpdate,
+          "Nhân viên cập nhật": element.empName,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    }
+    setShowConfirmExport(true);
+  };
+
   return (
     <>
       <ConfirmControl
@@ -474,17 +527,13 @@ function TourGuideManager(props) {
                                         display: "flex",
                                       }}
                                     >
-                                      <button
-                                        type="button"
-                                        className="h-button"
-                                        //onClick={() => handleClickExportExcel()}
-                                      >
-                                        <RiFileExcel2Fill
-                                          color="#2b6e44"
-                                          size={15}
-                                        />{" "}
-                                        Xuất Excel
-                                      </button>
+                                      <ExportDataToExcel
+                                        toggle={toggle}
+                                        showModal={showConfirmExport}
+                                        onExportData={onBtnExportData}
+                                        apiData={dataExport}
+                                        fileName="DSHuongDanVien"
+                                      />
                                       <button
                                         onClick={handelClickDelete}
                                         type="button"

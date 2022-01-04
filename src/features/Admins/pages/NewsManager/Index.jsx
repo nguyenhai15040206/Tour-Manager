@@ -32,6 +32,7 @@ import { Adm_GetEnumConstantCbo } from "../../Slices/SliceEnumConstant";
 import { Adm_UploadImageNews } from "../../Slices/SliceImagesUpload";
 import { unwrapResult } from "@reduxjs/toolkit";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
+import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
 
 const initialValuesSearchOld = {
   NewsName: "",
@@ -58,6 +59,9 @@ function NewManager(props) {
   const [imageUpload, setImageUpload] = useState(null);
   const [imageDefault, setImageDefault] = useState(`${imageDefaultPNG}`);
 
+  // export data excel
+  const [dataExport, setDataExport] = useState([]);
+  const [showConfirmExport, setShowConfirmExport] = useState(false);
   //
   const stateNews = useSelector((state) => state.news);
   const { dataCbo, loading } = useSelector((state) => state.enumConstant);
@@ -77,14 +81,31 @@ function NewManager(props) {
   }, []);
 
   //
-  const onGridReady = async () => {
-    try {
-      await dispatch(Adm_GetDataNewsList(initalValuesSearch));
-    } catch (err) {
-      if (err.status === 500) {
-        return NotificationManager.error(`${err.message}`, "Error!", 1500);
-      }
-    }
+  const onGridReady = () => {
+    dispatch(Adm_GetDataNewsList(initalValuesSearch))
+      .then(unwrapResult)
+      .then((payload) => {
+        // const arrObjExport = [];
+        // payload.forEach((element) => {
+        //   const Obj = {
+        //     "Mã tin tức": element.newsId,
+        //     "Tên tin tức": element.newsName,
+        //     "Loại tin tức": element.kindOfNew,
+        //     "Ảnh minh hoạ": element.newsImg,
+        //     "Ngày cập nhật": element.dateUpdate,
+        //     "Nhân viên cập nhật": element.empName,
+        //     "Tin tức được kích hoạt": element.active,
+        //     //
+        //   };
+        //   arrObjExport.push(Obj);
+        // });
+        // setDataExport(arrObjExport);
+      })
+      .catch((err) => {
+        if (err.status === 500) {
+          return NotificationManager.error(`${err.message}`, "Error!", 1500);
+        }
+      });
   };
 
   const handleClickSearchNew = async (values) => {
@@ -102,6 +123,7 @@ function NewManager(props) {
   const toggle = () => {
     setShowModal(false);
     setShowConfirm(false);
+    setShowConfirmExport(false);
   };
 
   const handleClickShowModal = async () => {
@@ -284,6 +306,7 @@ function NewManager(props) {
           1500
         );
       }
+      console.log(selectedData);
       setSelectedIds(Ids);
       setShowConfirm(true);
     } catch (err) {
@@ -311,6 +334,48 @@ function NewManager(props) {
         }
         return NotificationManager.error(`${err.error}`, "Xóa thất bại");
       });
+  };
+
+  //==== export
+  const onBtnExportData = (event) => {
+    event.preventDefault();
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+
+    if (selectedData.length === 0) {
+      const arrObjExport = [];
+      stateNews.data.forEach((element) => {
+        const Obj = {
+          "Mã tin tức": element.newsId,
+          "Tên tin tức": element.newsName,
+          "Loại tin tức": element.kindOfNew,
+          "Ảnh minh hoạ": element.newsImg,
+          "Ngày cập nhật": element.dateUpdate,
+          "Nhân viên cập nhật": element.empName,
+          "Tin tức được kích hoạt": element.active,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    } else {
+      const arrObjExport = [];
+      selectedData.forEach((element) => {
+        const Obj = {
+          "Mã tin tức": element.newsId,
+          "Tên tin tức": element.newsName,
+          "Loại tin tức": element.kindOfNew,
+          "Ảnh minh hoạ": element.newsImg,
+          "Ngày cập nhật": element.dateUpdate,
+          "Nhân viên cập nhật": element.empName,
+          "Tin tức được kích hoạt": element.active,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    }
+    setShowConfirmExport(true);
   };
 
   return (
@@ -449,13 +514,13 @@ function NewManager(props) {
                                     Tìm kiếm
                                   </button>
                                   <div style={{ float: "right" }}>
-                                    <button type="button" className="h-button">
-                                      <RiFileExcel2Fill
-                                        color="#2b6e44"
-                                        size={15}
-                                      />{" "}
-                                      Xuất Excel
-                                    </button>
+                                    <ExportDataToExcel
+                                      toggle={toggle}
+                                      showModal={showConfirmExport}
+                                      onExportData={onBtnExportData}
+                                      apiData={dataExport}
+                                      fileName="DSTinTuc"
+                                    />
                                     <button
                                       type="button"
                                       onClick={handelClickDelete}

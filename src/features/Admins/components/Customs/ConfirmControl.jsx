@@ -5,6 +5,13 @@ import { Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
 function ConfirmControl(props) {
   const { showModal, toggle, ConfirmDelete } = props;
+
+  const handleConfirm = (e) => {
+    if (ConfirmDelete) {
+      ConfirmDelete(e);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -29,13 +36,15 @@ function ConfirmControl(props) {
             borderTopLeftRadius: "4px",
             borderTopRightRadius: "4px",
           }}
+          toggle={toggle}
         >
           Thông báo
         </ModalHeader>
         <ModalBody style={{ fontSize: "12px", fontWeight: "400" }}>
           <div className="h-warning"></div>
           <div style={{ display: "inline-block", marginLeft: "45px" }}>
-            {`Bạn có chắc muốn xóa ${props.count} dòng dữ liệu?`}
+            {props.count && `Bạn có chắc muốn xóa ${props.count} dòng dữ liệu?`}
+            {props.ExportExcel && `${props.ExportExcel}`}
           </div>
         </ModalBody>
         <ModalFooter
@@ -49,7 +58,7 @@ function ConfirmControl(props) {
         >
           <button
             style={{ marginRight: "5px", width: "100px" }}
-            onClick={ConfirmDelete}
+            onClick={handleConfirm}
             className="h-button"
             type="button"
           >

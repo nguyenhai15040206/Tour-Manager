@@ -34,6 +34,7 @@ import { useHistory } from "react-router-dom";
 import { Adm_GetWardsByIdDistrictCbb } from "../../Slices/SliceWards";
 import { Adm_GetDistrictByProvinceCBB } from "../../Slices/SliceDistrict";
 import { Adm_GetProvince } from "../../Slices/SliceAddress";
+import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
 // Thái Trần Kiều Diễm 20211115 -xử lý employee
 const initialValuesInsert = {
   empId: "",
@@ -69,6 +70,10 @@ function EmployeeManager(props) {
   const [imageDefault, setImageDefault] = useState(`${imageDefaultPNG}`);
   // End
 
+  // export data excel
+  const [dataExport, setDataExport] = useState([]);
+  const [showConfirmExport, setShowConfirmExport] = useState(false);
+
   // state in store
   const stateEmp = useSelector((state) => state?.employee);
   //
@@ -94,6 +99,7 @@ function EmployeeManager(props) {
   const toggle = () => {
     setShowModal(false);
     setShowConfirm(false);
+    setShowConfirmExport(false);
   };
   //
   // end
@@ -375,6 +381,54 @@ function EmployeeManager(props) {
     }
   };
 
+  //==== export
+  const onBtnExportData = (event) => {
+    event.preventDefault();
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+
+    if (selectedData.length === 0) {
+      const arrObjExport = [];
+      stateEmp.dataEmpList.forEach((element) => {
+        const Obj = {
+          "Mã nhân viên": element.empId,
+          "Tên nhân viên": element.empName,
+          "Giới tính": element.gender,
+          "Ngày sinh": element.dateOfBirth,
+          "Ngày vào làm": element.workingDate,
+          "Số điện thoại": element.phoneNumber,
+          "Email ": element.email,
+          //
+          "Địa chỉ": element.address,
+          "Ngày cập nhật": element.dateUpdate,
+          "Kích hoạt": element.status,
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    } else {
+      const arrObjExport = [];
+      selectedData.forEach((element) => {
+        const Obj = {
+          "Mã nhân viên": element.empId,
+          "Tên nhân viên": element.empName,
+          "Giới tính": element.gender,
+          "Ngày sinh": element.dateOfBirth,
+          "Ngày vào làm": element.workingDate,
+          "Số điện thoại": element.phoneNumber,
+          "Email ": element.email,
+          //
+          "Địa chỉ": element.address,
+          "Ngày cập nhật": element.dateUpdate,
+          "Kích hoạt": element.status,
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    }
+    setShowConfirmExport(true);
+  };
+
   return (
     <>
       <ConfirmControl
@@ -525,17 +579,13 @@ function EmployeeManager(props) {
                                         display: "flex",
                                       }}
                                     >
-                                      <button
-                                        type="button"
-                                        className="h-button"
-                                        //onClick={() => handleClickExportExcel()}
-                                      >
-                                        <RiFileExcel2Fill
-                                          color="#2b6e44"
-                                          size={15}
-                                        />{" "}
-                                        Xuất Excel
-                                      </button>
+                                      <ExportDataToExcel
+                                        toggle={toggle}
+                                        showModal={showConfirmExport}
+                                        onExportData={onBtnExportData}
+                                        apiData={dataExport}
+                                        fileName="DSNhanVien"
+                                      />
                                       <button
                                         type="button"
                                         onClick={(e) => handleClickDelete(e)}
