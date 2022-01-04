@@ -32,6 +32,7 @@ import { Adm_GetDistrictByProvinceCBB } from "../../Slices/SliceDistrict";
 import { Adm_GetWardsByIdDistrictCbb } from "../../Slices/SliceWards";
 import { NotificationManager } from "react-notifications";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
+import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
 
 const initialValuesSearch = {
   Email: "",
@@ -58,6 +59,8 @@ function CustomerManager(props) {
   const [selectedIds, setSelectedIds] = useState([]);
   //
   const { dataCustomer } = useSelector((state) => state.customer);
+  const [dataExport, setDataExport] = useState([]);
+  const [showConfirmExport, setShowConfirmExport] = useState(false);
   //
   const gridRef = useRef(null);
   const dispatch = useDispatch();
@@ -67,6 +70,7 @@ function CustomerManager(props) {
   const toggle = () => {
     setShowModal(false);
     setShowConfirm(false);
+    setShowConfirmExport(false);
   };
   const onGridReady = async () => {
     try {
@@ -324,6 +328,49 @@ function CustomerManager(props) {
       });
   };
 
+  //== export
+  const onBtnExportData = (event) => {
+    event.preventDefault();
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+
+    if (selectedData.length === 0) {
+      const arrObjExport = [];
+      dataCustomer.forEach((element) => {
+        const Obj = {
+          "Mã khách hàng": element.customerId,
+          "Tên khách hàng": element.customerName,
+          "Giới tính": element.gender,
+          "Số điện thoại": element.phoneNumber,
+          "Email ": element.email,
+          "Địa chỉ": element.address,
+          "Nhân viên cập nhật": element.empIdUpdate,
+          "Ngày cập nhật": element.dateUpdate,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    } else {
+      const arrObjExport = [];
+      selectedData.forEach((element) => {
+        const Obj = {
+          "Mã khách hàng": element.customerId,
+          "Tên khách hàng": element.customerName,
+          "Giới tính": element.gender,
+          "Số điện thoại": element.phoneNumber,
+          "Email ": element.email,
+          "Địa chỉ": element.address,
+          "Nhân viên cập nhật": element.empIdUpdate,
+          "Ngày cập nhật": element.dateUpdate,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    }
+    setShowConfirmExport(true);
+  };
   //=============
   return (
     <>
@@ -456,6 +503,13 @@ function CustomerManager(props) {
                                     Tìm kiếm
                                   </button>
                                   <div style={{ float: "right" }}>
+                                    <ExportDataToExcel
+                                      toggle={toggle}
+                                      showModal={showConfirmExport}
+                                      onExportData={onBtnExportData}
+                                      apiData={dataExport}
+                                      fileName="DSThongTinKhachHang"
+                                    />
                                     <button
                                       type="button"
                                       onClick={handelClickDelete}

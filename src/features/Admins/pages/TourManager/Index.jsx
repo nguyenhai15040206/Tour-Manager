@@ -48,7 +48,11 @@ function TourManager(props) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedTourByIds, setSelectedTourByIds] = useState([]);
   const [paramsSearch, setParamsSearch] = useState(initialValuesSearch);
+
+  // export data excel
   const [dataExport, setDataExport] = useState([]);
+  const [showConfirmExport, setShowConfirmExport] = useState(false);
+  //
   //end
   //state in redux
   const { tourList } = useSelector((state) => state?.tour);
@@ -65,7 +69,6 @@ function TourManager(props) {
       try {
         await dispatch(Adm_GetProvince());
         await dispatch(Adm_GetTravelTypeCbo());
-        await dispatch(Adm_GetTourList(initialValuesSearch));
       } catch (err) {
         console.log(err);
       }
@@ -84,6 +87,7 @@ function TourManager(props) {
     if (selectedDataStringPresentation === "") {
       return NotificationManager.warning("Chọn dòng để xóa!", "", 1500);
     }
+
     const Ids = selectedDataStringPresentation.split(",").map(String);
     setSelectedTourByIds(Ids);
     setShowConfirm(true);
@@ -97,37 +101,7 @@ function TourManager(props) {
         Adm_GetTourList(Object.assign(paramsSearch, { tourIsExpired: false }))
       )
         .then(unwrapResult)
-        .then((payload) => {
-          const arrObjExport = [];
-          payload.forEach((element) => {
-            const Obj = {
-              "Mã tour": element.tourId,
-              "Tên tour": element.tourName,
-              "Đánh giá sao": element.rating,
-              "Mô tả tour": element.description,
-              "Hình ảnh tour": element.tourImg,
-              "Ngày bắt đầu": element.dateStart,
-              "Ngày kết thúc": element.dateEnd,
-              "Địa điểm đi": element.departurePlaceFrom,
-              "Địa điểm đến": element.departurePlaceTo,
-              "Số lượng nhóm": element.groupNumber,
-              "Số lượng tối đa": element.quanityMax,
-              "Số lượng tối thiểu": element.quanityMin,
-              "Số lượng hiện tại": element.currentQuanity,
-              "Đơn giá người lớn": element.adultUnitPrice,
-              "Đơn giá trẻ em": element.childrenUnitPrice,
-              "Đơn giá trẻ nhỏ": element.babyUnitPrice,
-              "Phụ thu phòng đơn": element.surcharge,
-              "Hướng dẫn viên": element.tourGuideName,
-              "Loại hình tour": element.travelTypeName,
-              "Được my tou đề xuất": element.suggest,
-
-              //
-            };
-            arrObjExport.push(Obj);
-          });
-          setDataExport(arrObjExport);
-        })
+        .then(() => {})
         .catch((err) => {
           console.log(err);
         });
@@ -169,6 +143,7 @@ function TourManager(props) {
   // closed toggle
   const toggle = () => {
     setShowConfirm(false);
+    setShowConfirmExport(false);
   };
 
   // handleClick Edit tour by Id => get tourDetails
@@ -237,6 +212,77 @@ function TourManager(props) {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  //==========
+  //==== export
+  const onBtnExportData = (event) => {
+    event.preventDefault();
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+
+    if (selectedData.length === 0) {
+      const arrObjExport = [];
+      tourList.forEach((element) => {
+        const Obj = {
+          "Mã tour": element.tourId,
+          "Tên tour": element.tourName,
+          "Đánh giá sao": element.rating,
+          "Mô tả tour": element.description,
+          "Hình ảnh tour": element.tourImg,
+          "Ngày bắt đầu": element.dateStart,
+          "Ngày kết thúc": element.dateEnd,
+          "Địa điểm đi": element.departurePlaceFrom,
+          "Địa điểm đến": element.departurePlaceTo,
+          "Số lượng nhóm": element.groupNumber,
+          "Số lượng tối đa": element.quanityMax,
+          "Số lượng tối thiểu": element.quanityMin,
+          "Số lượng hiện tại": element.currentQuanity,
+          "Đơn giá người lớn": element.adultUnitPrice,
+          "Đơn giá trẻ em": element.childrenUnitPrice,
+          "Đơn giá trẻ nhỏ": element.babyUnitPrice,
+          "Phụ thu phòng đơn": element.surcharge,
+          "Hướng dẫn viên": element.tourGuideName,
+          "Loại hình tour": element.travelTypeName,
+          "Được my tou đề xuất": element.suggest,
+
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    } else {
+      const arrObjExport = [];
+      selectedData.forEach((element) => {
+        const Obj = {
+          "Mã tour": element.tourId,
+          "Tên tour": element.tourName,
+          "Đánh giá sao": element.rating,
+          "Mô tả tour": element.description,
+          "Hình ảnh tour": element.tourImg,
+          "Ngày bắt đầu": element.dateStart,
+          "Ngày kết thúc": element.dateEnd,
+          "Địa điểm đi": element.departurePlaceFrom,
+          "Địa điểm đến": element.departurePlaceTo,
+          "Số lượng nhóm": element.groupNumber,
+          "Số lượng tối đa": element.quanityMax,
+          "Số lượng tối thiểu": element.quanityMin,
+          "Số lượng hiện tại": element.currentQuanity,
+          "Đơn giá người lớn": element.adultUnitPrice,
+          "Đơn giá trẻ em": element.childrenUnitPrice,
+          "Đơn giá trẻ nhỏ": element.babyUnitPrice,
+          "Phụ thu phòng đơn": element.surcharge,
+          "Hướng dẫn viên": element.tourGuideName,
+          "Loại hình tour": element.travelTypeName,
+          "Được my tou đề xuất": element.suggest,
+
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    }
+    setShowConfirmExport(true);
   };
   //-==========================
   return (
@@ -457,8 +503,11 @@ function TourManager(props) {
                                         Xuất Excel
                                       </button> */}
                                       <ExportDataToExcel
+                                        toggle={toggle}
+                                        showModal={showConfirmExport}
+                                        onExportData={onBtnExportData}
                                         apiData={dataExport}
-                                        fileName="DanhSachTourDulich"
+                                        fileName="DanhSachTourDuLich"
                                       />
                                       <button
                                         type="button"

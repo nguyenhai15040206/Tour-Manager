@@ -204,6 +204,9 @@ function TourUpdateOrCreate(props) {
 
   // nhân bảng tour
   const [showPopup, setShowPopup] = useState(false);
+  const [totalSheduleClone, setTotalSheduleClone] = useState([]);
+  const [tourIdAfterInsertAvailiable, setTourIdAfterInsertAvailiable] =
+    useState(null);
   //#endregion
 
   //#region Begin get state in store
@@ -305,6 +308,7 @@ function TourUpdateOrCreate(props) {
                   });
                 }
                 setTotalShedule(arrayShedule);
+                setTotalSheduleClone(arrayShedule);
                 for (let index = IndexKey; index < 30; index++) {
                   ObjectInit[`TitleDay${index + 1}`] = "";
                   ObjectInit[`Shedule${index + 1}`] = "";
@@ -639,7 +643,6 @@ function TourUpdateOrCreate(props) {
       const dateStart = new Date(document.getElementById("DateStart").value);
       const dateEnd = new Date(document.getElementById("DateEnd").value);
       const diff = Math.floor(dateEnd - dateStart) / 86400000;
-      console.log(diff);
       if (totalShedule.length !== diff) {
         return NotificationManager.warning(
           "Số ngày được thay đổi, vui lòng generate lịch trình tour",
@@ -950,6 +953,7 @@ function TourUpdateOrCreate(props) {
 
   const handleShowPopup = () => {
     setShowPopup(true);
+    setTourIdAfterInsertAvailiable(null);
   };
 
   const handleClickSaveTourAvaliable = (values) => {
@@ -964,14 +968,34 @@ function TourUpdateOrCreate(props) {
       EmpIdupdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
         .empId,
     };
-    console.log(params);
-    
-    // dispatch(Adm_InsertTourAvailable(params))
-    //   .then(unwrapResult)
-    //   .then((payload) => {
-    //     console.log(payload);
-    //   })
-    //   .catch((err) => {});
+    dispatch(Adm_InsertTourAvailable(params))
+      .then(unwrapResult)
+      .then((payload) => {
+        setTourIdAfterInsertAvailiable(payload.tourId);
+        return NotificationManager.success(
+          `Nhân bản thành công!`,
+          "Success!",
+          2500
+        );
+      })
+      .catch((err) => {
+        if (err.status === 401) {
+          localStorage.removeItem("accessTokenEmp");
+          return history.push("/admin/login");
+        }
+        if (err.status === 409) {
+          return NotificationManager.warning(
+            `${err.message}`,
+            "Trùng dữ liệu!",
+            2500
+          );
+        }
+        return NotificationManager.error(
+          `${err.error}`,
+          "Nhân bản thất bại!",
+          1500
+        );
+      });
   };
   //
 
@@ -979,6 +1003,8 @@ function TourUpdateOrCreate(props) {
   return (
     <>
       <InsertTourAvailable
+        tourId={tourIdAfterInsertAvailiable}
+        totalShedule={totalSheduleClone}
         showModal={showPopup}
         toggle={toggleTourAvailable}
         onSubmit={handleClickSaveTourAvaliable}

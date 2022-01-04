@@ -62,6 +62,11 @@ function TourAttrManager() {
     validationSchema.TouristAttractionAdd
   );
 
+  // export data excel
+  const [dataExport, setDataExport] = useState([]);
+  const [showConfirmExport, setShowConfirmExport] = useState(false);
+  //
+
   //state in store
   const stateProvince = useSelector((state) => state?.address);
   const stateTouristAtt = useSelector((state) => state?.touristAttraction);
@@ -85,6 +90,7 @@ function TourAttrManager() {
   const toggle = () => {
     setShowModal(false);
     setShowConfirm(false);
+    setShowConfirmExport(false);
   };
 
   ///lấy danh sách tỉnh thành
@@ -335,6 +341,45 @@ function TourAttrManager() {
     }
   };
 
+  //==== export
+  const onBtnExportData = (event) => {
+    event.preventDefault();
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+
+    if (selectedData.length === 0) {
+      const arrObjExport = [];
+      stateTouristAtt?.data.forEach((element) => {
+        const Obj = {
+          "Mã địa điểm": element.touristAttrId,
+          "Tên địa điểm": element.touristAttrName,
+          "Chi tiết": element.description,
+          "Tỉnh thành": element.provinceName,
+          "Ngày cập nhật": element.dateUpdate,
+          "Nhân viên cập nhật": element.empName,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    } else {
+      const arrObjExport = [];
+      selectedData.forEach((element) => {
+        const Obj = {
+          "Mã địa điểm": element.touristAttrId,
+          "Tên địa điểm": element.touristAttrName,
+          "Chi tiết": element.description,
+          "Tỉnh thành": element.provinceName,
+          "Ngày cập nhật": element.dateUpdate,
+          "Nhân viên cập nhật": element.empName,
+          //
+        };
+        arrObjExport.push(Obj);
+      });
+      setDataExport(arrObjExport);
+    }
+    setShowConfirmExport(true);
+  };
   //=======================
   return (
     <>
@@ -480,8 +525,11 @@ function TourAttrManager() {
                                     </button>
                                     <div style={{ float: "right" }}>
                                       <ExportDataToExcel
-                                        apiData={stateTouristAtt?.data}
-                                        fileName="DanhSachDiaDiemDuLich"
+                                        toggle={toggle}
+                                        showModal={showConfirmExport}
+                                        onExportData={onBtnExportData}
+                                        apiData={dataExport}
+                                        fileName="DSDiaDiemDuLich"
                                       />
                                       <button
                                         className="h-button"
