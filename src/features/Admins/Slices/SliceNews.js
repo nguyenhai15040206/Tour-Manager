@@ -82,8 +82,24 @@ export const Adm_DeleteNews = createAsyncThunk(
 
 //================== Client
 // lấy cho cẩm nang
-export const Cli_GetDataNews = createAsyncThunk(
-  "api/News/Cli_GetDataNews",
+export const Cli_GetDataNewsMainPage = createAsyncThunk(
+  "api/News/Cli_GetDataNewsMainPage",
+  async (values, thunkApi) => {
+    try {
+      const response = await newsApi.Cli_GetDataNews(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.data,
+      });
+    }
+  }
+);
+// lấy cho tuwfg loại tin tức
+export const Cli_GetDataNewsByType = createAsyncThunk(
+  "api/News/Cli_GetDataNewsByType",
   async (values, thunkApi) => {
     try {
       const response = await newsApi.Cli_GetDataNews(values);
@@ -126,6 +142,8 @@ const newsSlice = createSlice({
     loading: "idle",
     error: "",
     dataClient: [],
+    dataClientByType: [],
+    dataClientByTypePagination: {},
   },
 
   extraReducers: (builder) => {
@@ -141,20 +159,41 @@ const newsSlice = createSlice({
     });
 
     builder.addCase(Cli_GetDataNewsDetails.rejected, (state, action) => {
+      state.dataCliDetails = {};
       state.loading = "error";
     });
     //
-    builder.addCase(Cli_GetDataNews.pending, (state) => {
-      state.dataCliDetails = {};
+    builder.addCase(Cli_GetDataNewsMainPage.pending, (state) => {
+      state.dataClient = [];
       state.loading = "loading";
     });
 
-    builder.addCase(Cli_GetDataNews.fulfilled, (state, { payload }) => {
-      state.dataClient = payload?.data;
+    builder.addCase(Cli_GetDataNewsMainPage.fulfilled, (state, { payload }) => {
+      state.dataClient = payload;
       state.loading = "loaded";
     });
 
-    builder.addCase(Cli_GetDataNews.rejected, (state, action) => {
+    builder.addCase(Cli_GetDataNewsMainPage.rejected, (state, action) => {
+      state.dataClient = [];
+      state.loading = "error";
+    });
+    //
+    //
+    builder.addCase(Cli_GetDataNewsByType.pending, (state) => {
+      state.dataClientByTypePagination = {};
+      state.dataClientByType = [];
+      state.loading = "loading";
+    });
+
+    builder.addCase(Cli_GetDataNewsByType.fulfilled, (state, { payload }) => {
+      state.dataClientByType = payload?.data;
+      state.dataClientByTypePagination = payload?.pagination;
+      state.loading = "loaded";
+    });
+
+    builder.addCase(Cli_GetDataNewsByType.rejected, (state, action) => {
+      state.dataClientByType = [];
+      state.dataClientByTypePagination = {};
       state.loading = "error";
     });
     //

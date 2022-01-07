@@ -44,7 +44,6 @@ function BookingDetails(props) {
   }, [bookingID]);
   return (
     <>
-
       <Header
         boxShadow="rgb(92 149 252) 3px -7px 20px 3px"
         position="sticky"
@@ -101,7 +100,15 @@ function BookingDetails(props) {
                 </Col>
               </Row>
               <Row className="booking-tour-details">
-                <Col>
+                <Col xl={12}>
+                  <span className="title">Các ghi chú</span>
+                  <p className="info">
+                    {`${stateBookingTour.dataDetails?.optionsNote}`}
+                    {stateBookingTour?.dataDetails?.data?.note &&
+                      `, ${stateBookingTour?.dataDetails?.data?.note}`}
+                  </p>
+                </Col>
+                <Col xl={12}>
                   <span className="title">Ghi chú</span>
                   <p className="info">
                     Quý khách vui lòng kiểm tra email để nhận phiếu xác nhận

@@ -129,3 +129,82 @@
   }
  }
 }
+
+.news-type{
+  padding: 6rem;
+  background-color: rgb(237, 246, 249);
+  border-radius: 12px;
+  width: calc(100% - 48px);
+  margin: 0 auto;
+  height: auto;
+  &__title{
+    font-size: 25px;
+    line-height: 40px;
+    color: #2d4271;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0 auto;
+    text-align: center;
+  }
+  &__image{
+    width: 100%;
+    height: 250px;
+    border-radius: 10px;
+  }
+
+  &__content{
+    .content {
+      
+        margin-top: 20px;
+        background: none !important;
+        font-size: 13px !important;
+        text-align: justify;
+        line-height: 1.7;
+        font-weight: 400;
+        font-family: "Poppins", sans-serif !important;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        display: -webkit-box;
+  }
+    .content-title{
+      color: #2d4271;
+      font-size: 30px;
+      font-weight: 700;
+      overflow-wrap: break-word;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      white-space: normal;
+      text-overflow: ellipsis;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      &:hover{
+        color: #1917bc;
+      }
+    }
+    .content-type{
+      color:  red;
+      font-size: 14px;
+      font-weight: 400;
+      span{
+        margin-left: 0;
+        color: gray;
+        font-size: 13px;
+        font-weight: normal;
+      }
+      span:before{
+        content: "-";
+      }
+
+    }
+  }
+
+  &__pagination{
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+}

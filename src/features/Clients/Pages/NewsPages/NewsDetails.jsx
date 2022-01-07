@@ -5,8 +5,8 @@ import { Col, Row, Spinner } from "reactstrap";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  Cli_GetDataNews,
   Cli_GetDataNewsDetails,
+  Cli_GetDataNewsByType,
 } from "../../../Admins/Slices/SliceNews";
 import "./styles.scss";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -16,7 +16,7 @@ function NewsDetails(props) {
   document.title = "Tin chi tiết";
   let { newsID } = useParams();
   const dispatch = useDispatch();
-  const { dataCliDetails, loading, dataClient } = useSelector(
+  const { dataCliDetails, loading, dataClientByType } = useSelector(
     (state) => state.news
   );
 
@@ -35,12 +35,12 @@ function NewsDetails(props) {
   useEffect(() => {
     const fetchApi = async () => {
       const values = {
-        Page: 1,
+        Page: 2,
         Limit: 4,
         KindOfNewsID: dataCliDetails?.enumerationId,
       };
       try {
-        await dispatch(Cli_GetDataNews(values));
+        await dispatch(Cli_GetDataNewsByType(values));
       } catch (err) {
         console.log(err);
       }
@@ -82,7 +82,7 @@ function NewsDetails(props) {
           <Col xl={4} lg={12}>
             <h1 className="news-details__title">Các tin tức liên quan</h1>
             <Row>
-              {dataClient.map((item, key) => (
+              {dataClientByType.map((item, key) => (
                 <Col xl={12} className="mt-4" key={key}>
                   <Newsitem
                     NewsID={`${item.newsId}`}
