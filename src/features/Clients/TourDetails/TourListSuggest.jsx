@@ -45,6 +45,7 @@ function TourListSuggest(props) {
                 date={`${item.dateStartFormat}`}
                 numberDate={changeDate(Number(item.totalDays))}
                 time=""
+                hrefOder={`/my-tour/booking-tour/tourID=${item.tourId}`}
                 TravelTypeName={`${item.enumerationTranslate}`}
                 nameTour={`${item.tourName}`}
                 quanityCurrent={`${item.totalCurrentQuanity}`}

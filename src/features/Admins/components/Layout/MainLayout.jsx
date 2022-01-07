@@ -28,11 +28,11 @@ function MainLayout(props) {
 
   return (
     <>
-      {/* <NotificationSystem
+      <NotificationSystem
         dismissible={false}
         ref={(notificationSystem) => (notificationSystem = notificationSystem)}
         style={NOTIFICATION_SYSTEM_STYLE}
-      /> */}
+      />
       <main className="cr-app bg-light">
         <Sidebar />
         <Container fluid className="cr-content">

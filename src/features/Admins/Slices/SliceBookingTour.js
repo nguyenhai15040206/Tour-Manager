@@ -66,6 +66,22 @@ export const Adm_AcceptBooking = createAsyncThunk(
     }
   }
 );
+//================== Export booking
+export const Adm_ExportDataBookingTour = createAsyncThunk(
+  "api/BookingTour/Adm_ExportDataBookingTour",
+  async (values, thunkApi) => {
+    try {
+      const response = await bookingTourApi.Adm_ExportDataBookingTour(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
+    }
+  }
+);
 //================== Lấy danh sách booking
 export const Adm_GetDataBooking = createAsyncThunk(
   "api/BookingTour/Adm_GetDataBooking",
@@ -93,6 +109,22 @@ const bookingTourSlice = createSlice({
     error: "",
   },
   extraReducers: (builder) => {
+    // lấy danh sách booking
+    builder.addCase(Adm_ExportDataBookingTour.pending, (state) => {
+      state.loading = "loading";
+    });
+
+    builder.addCase(
+      Adm_ExportDataBookingTour.fulfilled,
+      (state, { payload }) => {
+        state.loading = "loaded";
+      }
+    );
+
+    builder.addCase(Adm_ExportDataBookingTour.rejected, (state, action) => {
+      state.loading = "error";
+      state.error = action.error.error;
+    });
     // lấy danh sách booking
     builder.addCase(Adm_GetDataBooking.pending, (state) => {
       state.dataBooking = null;

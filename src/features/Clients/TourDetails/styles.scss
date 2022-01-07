@@ -162,6 +162,15 @@
           height: calc(100% - 10px);
           border-left: 2px dashed #4d4aef;
         }
+        &--noteByMyTour{
+          position: absolute;
+          top: 2px;
+          left: 4px;
+          height: 4px;
+          background: #fff;
+          border-left: 2px dashed #4d4aef;
+          //border-radius: 100px;
+        }
 
         &--head-blue{
           color: #ec0072;

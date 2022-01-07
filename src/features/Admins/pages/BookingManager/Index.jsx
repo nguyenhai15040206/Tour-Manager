@@ -17,11 +17,11 @@ import { useHistory } from "react-router-dom";
 import {
   Adm_AcceptBooking,
   Adm_BookingTourDetails,
+  Adm_ExportDataBookingTour,
   Adm_GetDataBooking,
   Adm_SendEmailAfterBooking,
 } from "../../Slices/SliceBookingTour";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
+import { MdPictureAsPdf } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
 import { GiConfirmed } from "react-icons/gi";
 import { GrMail } from "react-icons/gr";
@@ -31,6 +31,7 @@ import { Adm_GetTourList } from "../../Slices/SliceTour";
 import BookingDetails from "./BookingDetails";
 import { NotificationManager } from "react-notifications";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { BsFillFileEarmarkWordFill } from "react-icons/bs";
 
 const initialValuesSearch = {
   TourID: "",
@@ -44,6 +45,7 @@ function BookingManager(props) {
   const stateTour = useSelector((state) => state.tour);
   const [initialValues, setInitialValues] = useState(initialValuesSearch);
   const [showModal, setShowModal] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   //==
   const gridRef = useRef(null);
   const dispatch = useDispatch();
@@ -79,6 +81,8 @@ function BookingManager(props) {
 
   const handleClickSearch = async (values) => {
     try {
+      console.log(values);
+      setShowButton(values.Status);
       setInitialValues(values);
       await dispatch(Adm_GetDataBooking(values));
     } catch (err) {
@@ -95,43 +99,45 @@ function BookingManager(props) {
       .join(",");
     const Ids = selectedDataStringPresentation.split(",").map(String);
     // nếu là chưa chọn => vui lòng chọn dòng cần xóa
-    if (Ids[0] === "" || Ids.length > 1) {
+    if (Ids[0] === "") {
       return NotificationManager.warning(
-        "Chọn một booking để gửi mail!",
+        "Chọn tối thiểu một booking để gửi mail!",
         "Warning!",
         1500
       );
     }
-    const params = {
-      pID: Ids[0],
-      type: 1,
-    };
-    dispatch(Adm_SendEmailAfterBooking(params))
-      .then(unwrapResult)
-      .then((payload) => {
-        console.log(payload);
-        if (Number(payload) === 204) {
-          return NotificationManager.warning(
-            `Booking chưa được thanh toán!`,
-            "Warning!!!",
+    for (let index = 0; index < Ids.length; index++) {
+      const params = {
+        pID: Ids[index],
+        type: 1,
+      };
+      dispatch(Adm_SendEmailAfterBooking(params))
+        .then(unwrapResult)
+        .then((payload) => {
+          console.log(payload);
+          if (Number(payload) === 204) {
+            return NotificationManager.warning(
+              `Booking chưa được thanh toán!`,
+              "Warning!!!",
+              1500
+            );
+          }
+          NotificationManager.success(
+            `Gửi mail thành thông!`,
+            "Success!!!",
             1500
           );
-        }
-        NotificationManager.success(
-          `Gửi mail thành thông!`,
-          "Success!!!",
-          1500
-        );
-      })
-      .catch((err) => {
-        if (err.status === 401) {
+        })
+        .catch((err) => {
           if (err.status === 401) {
-            localStorage.removeItem("accessTokenEmp");
-            return history.push("/admin/login");
+            if (err.status === 401) {
+              localStorage.removeItem("accessTokenEmp");
+              return history.push("/admin/login");
+            }
+            return NotificationManager.error(`${err.error}`, "Error!", 1500);
           }
-          return NotificationManager.error(`${err.error}`, "Error!", 1500);
-        }
-      });
+        });
+    }
   };
 
   //==
@@ -151,10 +157,11 @@ function BookingManager(props) {
       );
     }
 
-    const params = {
-      pID: Ids[0],
+    let Accept = {
+      SelectByIds: Ids,
+      EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
     };
-    dispatch(Adm_AcceptBooking(params))
+    dispatch(Adm_AcceptBooking(Accept))
       .then(unwrapResult)
       .then(async (payload) => {
         if (Number(payload) === 204) {
@@ -201,10 +208,11 @@ function BookingManager(props) {
   };
 
   const handleClickSubmitAcceptBooking = async () => {
-    const params = {
-      pID: stateBookingTour.dataDetails?.data?.bookingTourId,
+    let Accept = {
+      SelectByIds: [stateBookingTour.dataDetails?.data?.bookingTourId],
+      EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
     };
-    dispatch(Adm_AcceptBooking(params))
+    dispatch(Adm_AcceptBooking(Accept))
       .then(unwrapResult)
       .then(async (payload) => {
         if (Number(payload) === 204) {
@@ -265,6 +273,44 @@ function BookingManager(props) {
         console.log(err);
       });
   };
+
+  //============ Export
+  const handleClickExportDataBooking = () => {
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    const selectedData = selectedNodes.map((node) => node.data);
+    const selectedDataStringPresentation = selectedData
+      .map((node) => `${node.bookingTourId}`)
+      .join(",");
+    const Ids = selectedDataStringPresentation.split(",").map(String);
+    // nếu là chưa chọn => vui lòng chọn dòng cần xóa
+    if (Ids[0] === "") {
+      return NotificationManager.warning(
+        "Vui lòng chọn dữ liệu !!!",
+        "Warning!",
+        1500
+      );
+    }
+    for (let index = 0; index < Ids.length; index++) {
+      const params = {
+        type: 2,
+        pID: Ids[index],
+      };
+      dispatch(Adm_ExportDataBookingTour(params))
+        .then(unwrapResult)
+        .then(() => {
+          return NotificationManager.success(
+            `Thao tác thành thông!`,
+            "Success!!!",
+            1500
+          );
+        })
+        .catch((err) => {
+          return NotificationManager.error(`${err.message}`, "Error!!!", 1500);
+        });
+    }
+  };
+
+  //============
   return (
     <>
       <BookingDetails
@@ -402,27 +448,45 @@ function BookingManager(props) {
                                     <GiConfirmed color="#2b6e44" size={15} />{" "}
                                     Xác nhận thanh toán
                                   </button>
-                                  <button
-                                    type="button"
-                                    style={{ marginLeft: "3px" }}
-                                    onClick={handleClickSendEmail}
-                                    className="h-button"
-                                  >
-                                    <GrMail color="#7a8023" size={17} /> Gửi
-                                    mail
-                                  </button>
+
                                   <div style={{ float: "right" }}>
-                                    <ExportDataToExcel
-                                      apiData={[]}
-                                      fileName="DanhSachTourDulich"
-                                    />
+                                    <button
+                                      disabled={!showButton}
+                                      type="button"
+                                      style={{ marginLeft: "3px" }}
+                                      onClick={handleClickSendEmail}
+                                      className="h-button"
+                                    >
+                                      <GrMail color="#7a8023" size={17} /> Gửi
+                                      mail
+                                    </button>
+                                    <button
+                                      disabled={!showButton}
+                                      type="button"
+                                      onClick={() => {
+                                        handleClickExportDataBooking();
+                                      }}
+                                      className="h-button"
+                                      style={{ marginLeft: "3px" }}
+                                    >
+                                      <MdPictureAsPdf
+                                        size={15}
+                                        color="#FF8C00"
+                                      />{" "}
+                                      Xuất PDF
+                                    </button>
                                     <button
                                       type="button"
+                                      disabled={!showButton}
                                       //onClick={onButtonClick}
                                       className="h-button"
                                       style={{ marginLeft: "3px" }}
                                     >
-                                      <RiDeleteBin6Line size={15} /> Xóa
+                                      <BsFillFileEarmarkWordFill
+                                        color="rgb(16 136 238)"
+                                        size={15}
+                                      />{" "}
+                                      Kết xuất
                                     </button>
                                   </div>
                                 </div>

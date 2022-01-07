@@ -104,6 +104,7 @@ function TourDetails(props) {
   };
   return (
     <>
+      {console.log(Cli_TourDetails?.noteByTour)}
       <Header
         boxShadow="rgb(92 149 252) 3px -7px 20px 3px"
         position="sticky"
@@ -339,6 +340,51 @@ function TourDetails(props) {
                       </div>
                     </li>
                   ))}
+                  {Cli_TourDetails?.conditionByTour && (
+                    <li className="timeline__item" key={1}>
+                      <div className="timeline__item--tail"></div>
+                      <div className="timeline__item--noteByMyTour"></div>
+                      <div className="timeline__item--content">
+                        {/* <h5 className="title">{item.title.trim()}</h5> */}
+                        <div
+                          className="details"
+                          dangerouslySetInnerHTML={{
+                            __html: Cli_TourDetails?.conditionByTour,
+                          }}
+                        />
+                      </div>
+                    </li>
+                  )}
+                  {Cli_TourDetails?.noteByTour && (
+                    <li className="timeline__item" key={1}>
+                      <div className="timeline__item--tail"></div>
+                      <div className="timeline__item--noteByMyTour"></div>
+                      <div className="timeline__item--content">
+                        {/* <h5 className="title">{item.title.trim()}</h5> */}
+                        <div
+                          className="details"
+                          dangerouslySetInnerHTML={{
+                            __html: Cli_TourDetails?.noteByTour,
+                          }}
+                        />
+                      </div>
+                    </li>
+                  )}
+                  {Cli_TourDetails?.noteByMyTour && (
+                    <li className="timeline__item" key={1}>
+                      <div className="timeline__item--tail"></div>
+                      <div className="timeline__item--noteByMyTour"></div>
+                      <div className="timeline__item--content">
+                        {/* <h5 className="title">{item.title.trim()}</h5> */}
+                        <div
+                          className="details"
+                          dangerouslySetInnerHTML={{
+                            __html: Cli_TourDetails?.noteByMyTour,
+                          }}
+                        />
+                      </div>
+                    </li>
+                  )}
 
                   <li className="timeline__item timeline__item--last">
                     <div className="timeline__item--tail"></div>
