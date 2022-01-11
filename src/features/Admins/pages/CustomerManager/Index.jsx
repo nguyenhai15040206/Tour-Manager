@@ -517,6 +517,7 @@ function CustomerManager(props) {
                                       className="h-button"
                                       style={{ marginLeft: "3px" }}
                                     >
+                                      {/*  */}
                                       <RiDeleteBin6Line size={15} /> Xóa
                                     </button>
                                   </div>
