@@ -6,13 +6,14 @@ import {
   FaUsersCog,
   FaUserTag,
 } from "react-icons/fa";
-import { BsUiChecks } from "react-icons/bs";
+import { BsCreditCard2FrontFill, BsUiChecks } from "react-icons/bs";
 import { IoNewspaper } from "react-icons/io5";
 import { HiOutlineSpeakerphone } from "react-icons/hi";
 import { ImUserCheck } from "react-icons/im";
 import {
   MdKeyboardArrowDown,
   MdOutlineAirplaneTicket,
+  MdOutlineFactCheck,
   MdOutlineTravelExplore,
 } from "react-icons/md";
 import { RiMapPin2Fill, RiUserHeartFill } from "react-icons/ri";
@@ -45,16 +46,44 @@ const navItems = [
   {
     key: "1e829721-3f46-4713-af29-ddeea00aedb6",
     to: "/admin/BookingManager",
-    name: "Quản lý booking",
+    name: "Quản Lý Booking",
     exact: false,
     Icon: BiCategory,
   },
   {
     key: "4fc03cf1-442e-4524-b484-1fb510498143",
     to: "/admin/Transport",
-    name: "Phương tiện di chuyển",
+    name: "Phương Tiện Di Chuyển",
     exact: false,
     Icon: MdOutlineAirplaneTicket,
+  },
+  {
+    key: "28c40fbc-b368-4aaa-868d-08aeed1ec469",
+    to: "/admin/News",
+    name: "Quản Lý Tin Tức Du Lịch",
+    exact: false,
+    Icon: IoNewspaper,
+  },
+  {
+    key: "28c40fbc-b368-4aaa-868d-08aeed1ec469",
+    to: "/admin/Category",
+    name: "Quản Lý Danh Mục",
+    exact: false,
+    Icon: MdOutlineFactCheck,
+  },
+  {
+    key: "28c40fbc-b368-4aaa-868d-08aeed1ec469",
+    to: "/admin/Banner",
+    name: "Quản Lý Banner",
+    exact: false,
+    Icon: BsCreditCard2FrontFill,
+  },
+  {
+    key: "273eebbc-6aa0-436d-b426-66ec379080a5",
+    to: "/admin/Permission",
+    name: "Quản Lý Phân Quyền",
+    exact: false,
+    Icon: FaUsersCog,
   },
 ];
 
@@ -62,7 +91,7 @@ const navDashboard = [
   {
     key: "4fc03cf1-442e-4524-b484-1fb510498143",
     to: "/admin/Dashboard",
-    name: "Thống kê - báo cáo",
+    name: "Thống Kê - Báo Cáo",
     exact: false,
     Icon: BsUiChecks,
   },
@@ -72,40 +101,23 @@ const navItemUserManager = [
   {
     key: "1a0db068-98f5-451b-85fa-1fe1aa2c0891",
     to: "/admin/Employee",
-    name: "Quản lý nhân viên",
+    name: "Quản Lý Nhân Viên",
     exact: false,
     Icon: ImUserCheck,
   },
   {
     key: "d7ddf920-8f3f-4fd9-aa8b-b86a7fc2981d",
     to: "/admin/TourGuide",
-    name: "Quản lý thông tin HDV",
+    name: "Quản Lý Thông Tin HDV",
     exact: false,
     Icon: BiBrightness,
   },
   {
     key: "084f1a11-b440-4d2c-ba53-492f741cb4a5",
     to: "/admin/Customer",
-    name: "Quản lý khách hàng",
+    name: "Quản Lý Khách Hàng",
     exact: false,
     Icon: RiUserHeartFill,
-  },
-];
-
-const navItemUserPermision = [
-  {
-    key: "28c40fbc-b368-4aaa-868d-08aeed1ec469",
-    to: "/admin/News",
-    name: "Quản lý tin tức",
-    exact: false,
-    Icon: IoNewspaper,
-  },
-  {
-    key: "273eebbc-6aa0-436d-b426-66ec379080a5",
-    to: "/admin/Permission",
-    name: "Quản lý phân quyền",
-    exact: false,
-    Icon: FaUsersCog,
   },
 ];
 
@@ -113,21 +125,21 @@ const navTourManager = [
   {
     key: "5d4adb20-a61a-45e8-80e5-523b2f92e838",
     to: "/admin/TourManager",
-    name: "Quản lý tour du lịch",
+    name: "Quản Lý Tour Du Lịch",
     exact: false,
     Icon: SiYourtraveldottv,
   },
   {
     key: "bd9d4dce-2153-45b2-818c-5b9c4ca4c426",
     to: "/admin/TouristAttraction",
-    name: "DS địa điểm du lịch",
+    name: "DS Địa Điểm Du Lịch",
     exact: false,
     Icon: MdOutlineTravelExplore,
   },
   {
     key: "9ac7e8d1-03b6-4332-b46c-90f207366ebb",
     to: "/admin/Promotion",
-    name: "Khuyến mãi",
+    name: "Khuyến Mãi",
     exact: false,
     Icon: HiOutlineSpeakerphone,
   },
@@ -136,21 +148,21 @@ const navGeographySocial = [
   {
     key: "9643d286-8d04-4b67-a175-7e38fa35bc7c",
     to: "/admin/Province",
-    name: "DS Tỉnh/thành phố",
+    name: "DS Tỉnh/Thành Phố",
     exact: false,
     Icon: FaMapMarkedAlt,
   },
   {
     key: "ec753771-151f-475c-8e0d-0fe26b50d43b",
     to: "/admin/District",
-    name: "DS Quận/huyện",
+    name: "DS Quận/Huyện",
     exact: false,
     Icon: SiOpenstreetmap,
   },
   {
     key: "3d668546-7b15-48c1-af38-38b83d501123",
     to: "/admin/Village",
-    name: "DS Phường/xã",
+    name: "DS Phường/Xã",
     exact: false,
     Icon: RiMapPin2Fill,
   },
@@ -259,7 +271,6 @@ function Sidebar(props) {
           <Collapse isOpen={isOpenTourManager}>
             {renderItem(navTourManager)}
           </Collapse>
-          {renderItem(navItems)}
           <NavItem
             className="cr-sidebar__nav-item"
             onClick={() => {
@@ -285,22 +296,9 @@ function Sidebar(props) {
           </NavItem>
           <Collapse isOpen={isOpenComponents}>
             {renderItem(navItemUserManager)}
-            {/* {navItemUserManager.map(({ to, name, exact, Icon }, index) => (
-              <NavItem key={index} className="cr-sidebar__nav-item">
-                <BsNavLink
-                  id={`navItem-${name}-${index}`}
-                  //className="text-uppercase"
-                  tag={NavLink}
-                  to={to}
-                  activeClassName="active"
-                  exact={exact}
-                >
-                  <Icon className="cr-sidebar__nav-item-icon" />
-                  <span className="">{name}</span>
-                </BsNavLink>
-              </NavItem>
-            ))} */}
           </Collapse>
+          {renderItem(navItems)}
+
           <NavItem
             className="cr-sidebar__nav-item"
             onClick={() => {
@@ -327,9 +325,6 @@ function Sidebar(props) {
           <Collapse isOpen={isOpenGeographySocial}>
             {renderItem(navGeographySocial)}
           </Collapse>
-
-          {/* Quản lý phân quyền */}
-          {renderItem(navItemUserPermision)}
         </Nav>
       </div>
     </aside>

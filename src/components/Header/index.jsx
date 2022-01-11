@@ -13,16 +13,24 @@ import { authentication } from "../../App/FirebaseConfig";
 import imageDefault from "../../assets/logo/images.jpg";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { MdLogout } from "react-icons/md";
-import { Col, Row } from "reactstrap";
+import { Col, Modal, ModalBody, ModalHeader, Row } from "reactstrap";
+import { FastField, Form, Formik } from "formik";
+import InputField from "../../CustomFields/InputField/Index";
+import { GrLinkNext } from "react-icons/gr";
+import { Adm_BookingTourDetails } from "../../features/Admins/Slices/SliceBookingTour";
+import { NotificationManager } from "react-notifications";
+import { useHistory } from "react-router-dom";
 
 function Header(props) {
   const { position, background, color, logo, boxShadow } = props;
   const [open, setOpen] = useState(false);
+  const [showModalBooking, setShowModalBooking] = useState(false);
   const [active, setAtive] = useState(false);
   const [checkLogin, setCheckLogin] = useState(true);
   const [timeoutLoading, setTimeoutLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   //#region
   const handleClickShowLogin = () => {
@@ -93,6 +101,36 @@ function Header(props) {
   //   })
   // }
   //#endregion
+
+  //
+  const handleClickOnSubmitSearchBooking = (values) => {
+    console.log(values);
+    const params = {
+      pID: values.InputSearch,
+    };
+    dispatch(Adm_BookingTourDetails(params))
+      .then(unwrapResult)
+      .then((payload) => {
+        console.log(payload);
+        history.push(
+          `/my-tour/show-customer-for-booking-tour-details/bookingID=${payload?.data?.bookingTourId}`
+        );
+      })
+      .catch((err) => {
+        if (err.status === 404) {
+          return NotificationManager.warning(
+            `Không tồn tại booking này`,
+            "Vui lòng kiểm ra lại!",
+            2500
+          );
+        }
+        return NotificationManager.warning(
+          `Mã sai định dạng!!!`,
+          "Vui lòng kiểm ra lại!",
+          2500
+        );
+      });
+  };
   return (
     <header
       className="header"
@@ -132,7 +170,68 @@ function Header(props) {
                 </Link>
               </li>
               <li className="header__item">
-                <a href="index.html">The Memory</a>
+                <a
+                  onClick={() => {
+                    setShowModalBooking(true);
+                  }}
+                >
+                  Tra cứu booking
+                </a>
+                <Modal
+                  className="modal-lg modal-search-booking"
+                  style={{ marginTop: "70px", borderRadius: "15px" }}
+                  isOpen={showModalBooking}
+                  toggle={() => {
+                    setShowModalBooking(false);
+                  }}
+                >
+                  <ModalHeader
+                    toggle={() => {
+                      setShowModalBooking(false);
+                    }}
+                  ></ModalHeader>
+                  <ModalBody>
+                    <Formik
+                      onSubmit={handleClickOnSubmitSearchBooking}
+                      initialValues={{ InputSearch: "" }}
+                    >
+                      {(formolProps) => {
+                        return (
+                          <Form>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                              }}
+                            >
+                              <div style={{ width: "80%" }}>
+                                <FastField
+                                  placeholder="Nhập mã booking"
+                                  className="h-textbox-searchBooking"
+                                  name="InputSearch"
+                                  component={InputField}
+                                ></FastField>
+                              </div>
+                              <div>
+                                <button
+                                  type="submit"
+                                  className="h-button-search-booking"
+                                >
+                                  <i
+                                    className="fa fa-search h-btn-search"
+                                    aria-hidden="true"
+                                  ></i>
+                                </button>
+                              </div>
+                            </div>
+                            <button></button>
+                          </Form>
+                        );
+                      }}
+                    </Formik>
+                  </ModalBody>
+                </Modal>
               </li>
               <li className="header__item">
                 <Link to="/my-tour/Contact">Liên hệ</Link>

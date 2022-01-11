@@ -23,6 +23,11 @@ const bookingTour = {
   Adm_GetDataBooking: (params) => {
     return axiosClient.post(`${url}/Adm_GetDataBooking`, params);
   },
+
+  //====
+  Cli_GetDataBookingByCusomer: (params) => {
+    return axiosClient.get(`${url}/Cli_GetBookingByCustomer`, { params });
+  },
 };
 
 export default bookingTour;

@@ -98,6 +98,21 @@ export const Adm_GetDataBooking = createAsyncThunk(
     }
   }
 );
+export const Cli_GetDataBookingByCusomer = createAsyncThunk(
+  "api/BookingTour/Cli_GetDataBookingByCusomer",
+  async (values, thunkApi) => {
+    try {
+      const response = await bookingTourApi.Cli_GetDataBookingByCusomer(values);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        error: error.message,
+        status: error.response.status,
+        message: error.response.message,
+      });
+    }
+  }
+);
 
 const bookingTourSlice = createSlice({
   name: "BookingTour",
@@ -105,10 +120,29 @@ const bookingTourSlice = createSlice({
     dataInsert: {},
     dataDetails: {},
     dataBooking: [],
+    dataBookingByCustomer: [],
     loading: "idle",
     error: "",
   },
   extraReducers: (builder) => {
+    // lấy danh sách booking
+    builder.addCase(Cli_GetDataBookingByCusomer.pending, (state) => {
+      state.dataBookingByCustomer = [];
+      state.loading = "loading";
+    });
+
+    builder.addCase(
+      Cli_GetDataBookingByCusomer.fulfilled,
+      (state, { payload }) => {
+        state.dataBookingByCustomer = payload;
+        state.loading = "loaded";
+      }
+    );
+
+    builder.addCase(Cli_GetDataBookingByCusomer.rejected, (state, action) => {
+      state.dataBookingByCustomer = [];
+      state.loading = "error";
+    });
     // lấy danh sách booking
     builder.addCase(Adm_ExportDataBookingTour.pending, (state) => {
       state.loading = "loading";

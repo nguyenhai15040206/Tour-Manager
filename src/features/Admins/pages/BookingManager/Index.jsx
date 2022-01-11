@@ -179,12 +179,6 @@ function BookingManager(props) {
               type: 1,
             };
             await dispatch(Adm_SendEmailAfterBooking(params));
-            onGridReady();
-            return NotificationManager.success(
-              `Thao tác thành thông!`,
-              "Success!!!",
-              1500
-            );
           } catch (err) {
             if (err.status === 401) {
               if (err.status === 401) {
@@ -195,6 +189,12 @@ function BookingManager(props) {
             }
           }
         }
+        onGridReady();
+        return NotificationManager.success(
+          `Thao tác thành thông!`,
+          "Success!!!",
+          1500
+        );
       })
       .catch((err) => {
         if (err.status === 401) {

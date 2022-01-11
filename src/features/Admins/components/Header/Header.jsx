@@ -124,7 +124,12 @@ function Header(props) {
                 </span>
               )}
             </NavLink>
-            <UncontrolledPopover placement="bottom" target="Popover1">
+            <UncontrolledPopover
+              style={{ maxHeight: "350px", overflow: "scroll", top: "20px",  }}
+              placement="bottom"
+              className="h-scroll-popover"
+              target="Popover1"
+            >
               <PopoverHeader style={{ fontSize: "13px", fontWeight: 400 }}>
                 Thông báo
               </PopoverHeader>

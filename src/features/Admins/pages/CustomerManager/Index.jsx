@@ -52,6 +52,7 @@ const initialValuesInsert = {
   address: "",
 };
 function CustomerManager(props) {
+  document.title = "Quản lý khách hàng";
   const [valuesSearch, setValuesSearch] = useState(initialValuesSearch);
   const [initialValues, setInitialValues] = useState(initialValuesInsert);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -444,7 +445,7 @@ function CustomerManager(props) {
                               <Col xl={4} lg={6}>
                                 <FormGroup className="row">
                                   <label className="col-lg-3 h-label">
-                                    Tên nhân viên
+                                    Tên khách hàng
                                   </label>
                                   <div className="col-lg-8">
                                     <FastField

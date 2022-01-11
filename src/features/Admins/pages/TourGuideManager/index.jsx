@@ -51,6 +51,7 @@ const initialValuesSearch = {
   email: "",
 };
 function TourGuideManager(props) {
+  document.title = "Quản lý hướng dẫn viên";
   const stateTourGuide = useSelector((state) => state?.tourGuide);
 
   ///

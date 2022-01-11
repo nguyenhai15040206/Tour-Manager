@@ -49,6 +49,7 @@ const initialValuesSearch = {
   UserGroupName: "",
 };
 function PermissionManager(props) {
+  document.title = "Quản lý phân quyền";
   const [showConfirm, setShowConfirm] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showPermission, setShowPermission] = useState(false);

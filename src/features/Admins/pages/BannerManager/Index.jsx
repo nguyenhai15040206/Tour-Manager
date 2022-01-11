@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,141 +9,115 @@ import {
   Row,
 } from "reactstrap";
 import { FastField, Field, Form, Formik } from "formik";
-import InputField from "../../../../CustomFields/InputField/Index";
+import SelectField from "../../../../CustomFields/SelectField/Index";
 import { IoMdAddCircle } from "react-icons/io";
 import { FaSearch } from "react-icons/fa";
-import { RiDeleteBin6Line, RiFileExcel2Fill } from "react-icons/ri";
-import SelectField from "../../../../CustomFields/SelectField/Index";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import InputField from "../../../../CustomFields/InputField/Index";
 import TableGridControl from "../../components/Customs/TableGridControl";
-import { tableColoumnCompanyTransport } from "../../../../utils/Columns";
+import { tableColumnBanner } from "../../../../utils/Columns";
+import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Adm_GetEnumConstantCbo } from "../../Slices/SliceEnumConstant";
-import {
-  Adm_DeleteCompanyByIds,
-  Adm_GetCompanyById,
-  Adm_GetCompanyList,
-  Adm_InsertCompany,
-  Adm_UpdateCompany,
-} from "../../Slices/SliceTravelConpanyTransport";
+import { useHistory } from "react-router-dom";
+import { useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { NotificationManager } from "react-notifications";
-import { useHistory } from "react-router-dom";
-import TravelCompanyAddEdit from "./TravelCompanyAddEdit";
+import {
+  Adm_BannerDetails,
+  Adm_DeleteBanner,
+  Adm_GetDataBanner,
+  Adm_InsertBanner,
+  Adm_UpdateBanner,
+} from "../../Slices/SliceBanner";
+import BannerAddEdit from "./BannerAddEdit";
+import { useEffect } from "react";
+import { Adm_GetEnumConstantCbo } from "../../Slices/SliceEnumConstant";
 import imageDefaultPNG from "../../../../assets/logo/imageDefault.png";
-import { Adm_GetProvince } from "../../Slices/SliceAddress";
-import { Adm_GetDistrictByProvinceCBB } from "../../Slices/SliceDistrict";
-import { Adm_GetWardsByIdDistrictCbb } from "../../Slices/SliceWards";
-import { UploadImageCompany } from "../../Slices/SliceImagesUpload";
-import validationSchema from "../../../../utils/ValidateShema";
+import { Adm_UploadImageBanner } from "../../Slices/SliceImagesUpload";
 import ConfirmControl from "../../components/Customs/ConfirmControl";
-import ExportDataToExcel from "../../components/Customs/ExportDataToExcel";
 
 const initialValuesSearch = {
-  TransportTypeID: "",
-  CompanyName: "",
+  bannerType: "",
+  active: false,
 };
 
 const initialValuesInsert = {
-  CompanyID: "",
-  CompanyName: "",
-  PhoneNumber: "",
-  TravelTypeID: "",
-  CompanyImage: "",
-  ProvinceID: "",
-  DistrictID: "",
-  WardsID: "",
-  Address: "",
+  bannerID: "",
+  bannerImg: "",
+  enumerationID: "",
+  active: false,
 };
-function Transport(props) {
-  document.title = "Phương tiện di chuyển";
-  //==========================
-  // state in component
+function BannerManager(props) {
+  document.title = "Quản lý banner";
+  //
+  const [valuesSearch, setValuesSearch] = useState(initialValuesSearch);
+  const [initialValues, setInitialValues] = useState(initialValuesInsert);
   const [showModal, setShowModal] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [imageUpload, setImageUpload] = useState(null);
   const [imageDefault, setImageDefault] = useState(`${imageDefaultPNG}`);
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [validationShema, setValidationShema] = useState(
-    validationSchema.CompanyManagerAdd
-  );
-  const [initialValues, setInitialValues] = useState(initialValuesInsert);
-
-  //end state
-  // export data excel
-  const [dataExport, setDataExport] = useState([]);
-  const [showConfirmExport, setShowConfirmExport] = useState(false);
-  //
-
-  /// state in store
+  //==
+  const { data } = useSelector((state) => state.banner);
   const stateEnumConstant = useSelector((state) => state.enumConstant);
-  const stateTravelCompany = useSelector(
-    (state) => state.travelConpanyTransport
-  );
-  //end state
-  //================
+  //
   const gridRef = useRef(null);
   const dispatch = useDispatch();
   const history = useHistory();
 
-  //=================
+  //======
   useEffect(() => {
-    const fetchApi = async () => {
-      const params = {
-        enumTypeName: "TransportType",
-      };
+    const fectApi = async () => {
       try {
+        const params = {
+          enumTypeName: "BannerType",
+        };
         await dispatch(Adm_GetEnumConstantCbo(params));
       } catch (err) {
-        return NotificationManager.error(`${err.message}`, "Error!", 1500);
+        console.log(err);
       }
     };
-    fetchApi();
+    fectApi();
   }, [dispatch]);
 
-  // load grid
-  const onGridReady = () => {
+  //====
+  const toggle = () => {
+    setShowModal(false);
+    setShowConfirm(false);
+  };
+  const handleClickShowModal = async () => {
     try {
-      dispatch(Adm_GetCompanyList(initialValuesSearch));
+      const params = {
+        enumTypeName: "BannerType",
+      };
+      await dispatch(Adm_GetEnumConstantCbo(params));
+      setInitialValues(initialValuesInsert);
+      setImageDefault(`${imageDefaultPNG}`);
+      setShowModal(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  // load grid
+  const onGridReady = async () => {
+    try {
+      await dispatch(Adm_GetDataBanner(valuesSearch));
     } catch (err) {
       if (err.status === 500) {
         return NotificationManager.error(`${err.message}`, "Error!", 1500);
       }
-      console.log(err.message);
     }
   };
 
-  //======
   const handleClickSearch = async (values) => {
-    console.log(values);
     try {
-      await dispatch(Adm_GetCompanyList(values));
+      setValuesSearch(values);
+      await dispatch(Adm_GetDataBanner(values));
     } catch (err) {
-      return NotificationManager.error(`${err.message}!`, "Error!", 1500);
-    }
-  };
-
-  const handleClickShowModal = () => {
-    const params = {
-      enumTypeName: "TransportType",
-    };
-    dispatch(Adm_GetEnumConstantCbo(params))
-      .then(unwrapResult)
-      .then(async () => {
-        await dispatch(Adm_GetProvince({}));
-        setImageDefault(`${imageDefaultPNG}`);
-        setInitialValues(initialValuesInsert);
-        setValidationShema(validationSchema.CompanyManagerAdd);
-        setShowModal(true);
-      })
-      .catch((err) => {
+      if (err.status === 500) {
         return NotificationManager.error(`${err.message}`, "Error!", 1500);
-      });
-  };
-
-  const toggle = () => {
-    setShowModal(false);
-    setShowConfirm(false);
-    setShowConfirmExport(false);
+      }
+    }
   };
 
   // click change image
@@ -153,110 +128,25 @@ function Transport(props) {
     }
   };
 
-  // chọn tỉnh thành load quạn quyện
-  const handleChangeProvince = async (event) => {
-    try {
-      if (event === null || event === "") {
-        const params = {
-          provinceIDs: ":(",
-        };
-        await dispatch(Adm_GetDistrictByProvinceCBB(params));
-        return;
-      }
-      const params = {
-        provinceID: event.value,
-      };
-      await dispatch(Adm_GetDistrictByProvinceCBB(params));
-    } catch (err) {
-      return NotificationManager.error(`${err.message}`, "Error!", 1500);
-    }
-  };
-
-  const handleChangeDistrict = async (event) => {
-    try {
-      if (event === null || event === "") {
-        const params = {
-          districtIDs: ":(",
-        };
-        await dispatch(Adm_GetWardsByIdDistrictCbb(params));
-        return;
-      }
-      const params = {
-        districtID: event.value,
-      };
-      await dispatch(Adm_GetWardsByIdDistrictCbb(params));
-    } catch (err) {
-      return NotificationManager.error(`${err.message}`, "Error!", 1500);
-    }
-  };
-
-  //==================
-  const handleClickEditCompanyFromGrid = async (companyId) => {
-    try {
-      await dispatch(Adm_GetProvince({}));
-      const params = {
-        companyID: companyId,
-      };
-      dispatch(Adm_GetCompanyById(params))
-        .then(unwrapResult)
-        .then((payload) => {
-          const params = {
-            provinceID: payload.provinceID,
-          };
-          dispatch(Adm_GetDistrictByProvinceCBB(params))
-            .then(unwrapResult)
-            .then(async () => {
-              const params = {
-                districtID: payload.districtID,
-              };
-              await dispatch(Adm_GetWardsByIdDistrictCbb(params));
-              setInitialValues({
-                CompanyID: payload.companyId,
-                CompanyName: payload.companyName,
-                CompanyImage: "",
-                ProvinceID: payload.provinceID,
-                DistrictID: payload.districtID,
-                WardsID: payload.wardsID,
-                TravelTypeID: payload.enumerationID,
-                PhoneNumber: payload.phoneNumber,
-                Address: payload.address,
-              });
-              setValidationShema(validationSchema.CompanyManagerEdit);
-              setImageDefault(payload.companyImage);
-              setShowModal(true);
-            })
-            .catch((err) => {
-              return NotificationManager.error(
-                `${err.error}`,
-                "Vui lòng kiểm tra lại"
-              );
-            });
-        })
-        .catch((err) => {
-          return NotificationManager.error(
-            `${err.error}`,
-            "Vui lòng kiểm tra lại"
-          );
-        });
-    } catch (err) {
-      return NotificationManager.error(`${err.error}`, "Vui lòng kiểm tra lại");
-    }
-  };
-
-  //================
-  const onInsertCompany = (company, type) => {
+  //==========
+  //=
+  const onInsertBanner = (banner, type) => {
     let formData = new FormData();
     formData.append("file", imageUpload);
-    dispatch(UploadImageCompany(formData))
+    dispatch(Adm_UploadImageBanner(formData))
       .then(unwrapResult)
       .then((payload) => {
-        dispatch(
-          Adm_InsertCompany({ ...company, companyImage: payload.fileName })
-        )
+        dispatch(Adm_InsertBanner({ ...banner, bannerImg: payload.fileName }))
           .then(unwrapResult)
           .then(() => {
             if (Number(type) === 2) {
-              setInitialValues(initialValuesInsert);
+              setInitialValues({
+                bannerID: " ",
+                bannerImg: "",
+                enumerationID: "",
+                active: false,
+              });
+              setImageDefault(`${imageDefaultPNG}`);
             }
             if (Number(type) === 3) {
               setShowModal(false);
@@ -285,21 +175,23 @@ function Transport(props) {
       });
   };
 
-  const onUpdateCompany = async (company, values, type) => {
-    let companyImageEdit = "";
+  //===
+  const onUpdateBanner = async (banner, values, type) => {
+    console.log(values.bannerID);
+    let bannerImgEdit = "";
     try {
-      if (values.CompanyImage !== "") {
+      if (values.bannerImg !== "") {
         let formData = new FormData();
         formData.append("file", imageUpload);
-        companyImageEdit = unwrapResult(
-          await dispatch(UploadImageCompany(formData))
+        bannerImgEdit = unwrapResult(
+          await dispatch(Adm_UploadImageBanner(formData))
         ).fileName;
       }
       await dispatch(
-        Adm_UpdateCompany({
-          ...company,
-          companyImage: companyImageEdit,
-          companyId: values.CompanyID,
+        Adm_UpdateBanner({
+          ...banner,
+          bannerImg: bannerImgEdit,
+          bannerId: values.bannerID,
         })
       );
       if (Number(type) === 2) {
@@ -328,67 +220,81 @@ function Transport(props) {
     }
   };
   const handleClickOnSubmitForm = (values, type) => {
-    const valuesInsert = {
-      //companyID: values.CompanyID,
-      companyName: values.CompanyName,
-      phoneNumber: values.PhoneNumber,
-      address:
-        values.Address +
-        "||" +
-        values.WardsID +
-        "||" +
-        values.DistrictID +
-        "||" +
-        values.ProvinceID,
-      provinceID: values.ProvinceID,
-      enumerationID: values.TravelTypeID,
-
+    const banner = {
+      enumerationID: values.enumerationID,
+      active: values.active,
       empIDInsert: JSON.parse(localStorage.getItem("accessTokenEmp")).data
         .empId,
       empIDUpdate: JSON.parse(localStorage.getItem("accessTokenEmp")).data
         .empId,
     };
-    console.log(valuesInsert);
-    if (values.CompanyID !== "") {
-      onUpdateCompany(valuesInsert, values, type);
+
+    //
+    if (values.bannerID !== "") {
+      onUpdateBanner(banner, values, type);
     } else {
-      onInsertCompany(valuesInsert, type);
+      onInsertBanner(banner, type);
     }
   };
-  //
+  //==
+  //==========
+  const handleClickEditPromotionFromGrid = async (bannerID) => {
+    try {
+      const params = {
+        pID: bannerID,
+      };
+      dispatch(Adm_BannerDetails(params))
+        .then(unwrapResult)
+        .then((payload) => {
+          setImageDefault(`${payload.bannerImg}`);
+          setInitialValues({
+            bannerID: payload.bannerId,
+            bannerImg: "",
+            enumerationID: payload.enumerationId,
+            active: payload.active,
+          });
+          setShowModal(true);
+        })
+        .catch((err) => {
+          return NotificationManager.error(
+            `${err.error}`,
+            "Vui lòng kiểm tra lại"
+          );
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  //==================
-  // Chọn dòng để xóa
+  //==
   const handelClickDelete = (event) => {
     try {
-      event.preventDefault();
       const selectedNodes = gridRef.current.api.getSelectedNodes();
       const selectedData = selectedNodes.map((node) => node.data);
       const selectedDataStringPresentation = selectedData
-        .map((node) => `${node.companyId}`)
+        .map((node) => `${node.bannerId}`)
         .join(",");
       const Ids = selectedDataStringPresentation.split(",").map(String);
       // nếu là chưa chọn => vui lòng chọn dòng cần xóa
       if (Ids[0] === "") {
         return NotificationManager.warning(
-          "Chọn một dòng để xóa!!!",
+          "Chọn một dòng để xóa",
           "Warning!",
           1500
         );
       }
       setSelectedIds(Ids);
       setShowConfirm(true);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   const handleClickDeleteMultiRow = () => {
+    //#region  Xóa khuyến mãi
     let DeleteModels = {
       SelectByIds: selectedIds,
       EmpId: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
     };
-    dispatch(Adm_DeleteCompanyByIds(DeleteModels))
+    dispatch(Adm_DeleteBanner(DeleteModels))
       .then(unwrapResult)
       .then(() => {
         onGridReady();
@@ -401,55 +307,14 @@ function Transport(props) {
           return history.push("/admin/login");
         }
         return NotificationManager.error(
-          `${err.message}!`,
+          `${err.error}!`,
           "Xóa thất bại!",
           1500
         );
       });
+    //#endregion
   };
-  //
-
-  //==== export
-  const onBtnExportData = (event) => {
-    event.preventDefault();
-    const selectedNodes = gridRef.current.api.getSelectedNodes();
-    const selectedData = selectedNodes.map((node) => node.data);
-
-    if (selectedData.length === 0) {
-      const arrObjExport = [];
-      stateTravelCompany.data.forEach((element) => {
-        const Obj = {
-          "Mã công ty": element.companyId,
-          "Tên công ty": element.companyName,
-          "Loại phương tiện": element.enumerationID,
-          "Số điện thoại": element.phoneNumber,
-          "Đia chỉ": element.address,
-          "Nhân viên cập nhật": element.empIDUpdate,
-          "Ngày cập nhật": element.dateUpdate,
-          //
-        };
-        arrObjExport.push(Obj);
-      });
-      setDataExport(arrObjExport);
-    } else {
-      const arrObjExport = [];
-      selectedData.forEach((element) => {
-        const Obj = {
-          "Mã công ty": element.companyId,
-          "Tên công ty": element.companyName,
-          "Loại phương tiện": element.enumerationID,
-          "Số điện thoại": element.phoneNumber,
-          "Đia chỉ": element.address,
-          "Nhân viên cập nhật": element.empIDUpdate,
-          "Ngày cập nhật": element.dateUpdate,
-          //
-        };
-        arrObjExport.push(Obj);
-      });
-      setDataExport(arrObjExport);
-    }
-    setShowConfirmExport(true);
-  };
+  //=======
   return (
     <>
       <ConfirmControl
@@ -458,12 +323,13 @@ function Transport(props) {
         count={selectedIds.length}
         ConfirmDelete={handleClickDeleteMultiRow}
       />
-      <TravelCompanyAddEdit
+      <BannerAddEdit
+        className="modal-lg"
         showModal={showModal}
         toggle={toggle}
-        imageDefault={imageDefault}
         initialValues={initialValues}
-        validationShema={validationShema}
+        imageDefault={imageDefault}
+        onChangeImage={handleChoseImage}
         onSubmitForm={(values) => {
           handleClickOnSubmitForm(values, 1);
         }}
@@ -473,10 +339,6 @@ function Transport(props) {
         onSubmitFormAndClose={(values) => {
           handleClickOnSubmitForm(values, 3);
         }}
-        onChangeImage={handleChoseImage}
-        onChangeProvince={handleChangeProvince}
-        onChangeDistrict={handleChangeDistrict}
-        className="modal-lg"
       />
       <Container
         fluid
@@ -491,9 +353,7 @@ function Transport(props) {
                     <BreadcrumbItem active>
                       <a href="/admin">Trang chủ</a>
                     </BreadcrumbItem>
-                    <BreadcrumbItem active>
-                      Phương tiện di chuyển
-                    </BreadcrumbItem>
+                    <BreadcrumbItem active>Quản lý Banner</BreadcrumbItem>
                     <li className="breadcrumb-item">
                       <FormGroup
                         style={{
@@ -514,7 +374,7 @@ function Transport(props) {
                     </li>
                   </Breadcrumb>
                 </Col>
-                <Col lg="12">
+                <Col ls={12}>
                   {/* Begin search */}
                   <div id="showSearch" className="collapse show">
                     <Formik
@@ -527,17 +387,18 @@ function Transport(props) {
                           <>
                             <Form className="mt-1">
                               <Row className="pb-2">
-                                <Col xl={4} lg={6}>
+                                <Col xl={5} lg={6}>
                                   <FormGroup className="mt-1 row">
-                                    <label className="col-lg-4 h-label">
-                                      Loại phương tiện
+                                    <label className="col-lg-3 h-label">
+                                      Loại danh mục
                                     </label>
                                     <div
                                       className="col-lg-7"
                                       style={{ marginRight: "4px" }}
                                     >
                                       <Field
-                                        name="TransportTypeID"
+                                        isClearable={false}
+                                        name="bannerType"
                                         isLoading={
                                           stateEnumConstant?.loading ===
                                           "loading"
@@ -551,15 +412,23 @@ function Transport(props) {
                                     </div>
                                   </FormGroup>
                                   <FormGroup row>
-                                    <label className="h-label col-lg-4">
-                                      Tên hãng p/tiện
-                                    </label>
-                                    <div className="col-lg-7">
+                                    <label className="h-label col-lg-3"></label>
+                                    <div
+                                      className="col-lg-7"
+                                      style={{
+                                        display: "flex",
+                                        WebkitJustifyContent: "flex-start",
+                                      }}
+                                    >
                                       <FastField
-                                        className="h-textbox"
-                                        name="CompanyName"
+                                        name="active"
+                                        type="checkbox"
+                                        className="h-checkbox"
                                         component={InputField}
                                       />
+                                      <label className="h-label-checkbox">
+                                        Tour được kích hoạt?
+                                      </label>
                                     </div>
                                   </FormGroup>
                                 </Col>
@@ -592,13 +461,6 @@ function Transport(props) {
                                       Tìm kiếm
                                     </button>
                                     <div style={{ float: "right" }}>
-                                      <ExportDataToExcel
-                                        toggle={toggle}
-                                        showModal={showConfirmExport}
-                                        onExportData={onBtnExportData}
-                                        apiData={dataExport}
-                                        fileName="DSCongTyPhuongTien"
-                                      />
                                       <button
                                         type="button"
                                         onClick={handelClickDelete}
@@ -628,13 +490,13 @@ function Transport(props) {
           <Col>
             <TableGridControl
               tableHeight="450px"
-              rowData={stateTravelCompany.data}
-              gridRef={gridRef}
+              rowData={data}
               onGridReady={onGridReady}
+              gridRef={gridRef}
               //
-              tableColoumn={tableColoumnCompanyTransport}
-              fieldValues="companyId"
-              onEditForm={handleClickEditCompanyFromGrid}
+              tableColoumn={tableColumnBanner}
+              onEditForm={handleClickEditPromotionFromGrid}
+              fieldValues="bannerId"
             />
           </Col>
         </Row>
@@ -643,6 +505,6 @@ function Transport(props) {
   );
 }
 
-Transport.propTypes = {};
+BannerManager.propTypes = {};
 
-export default Transport;
+export default BannerManager;
