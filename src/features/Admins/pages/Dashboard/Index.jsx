@@ -12,6 +12,9 @@ import {
 } from "reactstrap";
 import { useEffect } from "react";
 import { BsCloudSunFill } from "react-icons/bs";
+import DashBoardMain from "./DashBoardMain";
+import statisticalApi from "../../../../apis/StatisticalApi";
+import { useDispatch } from "react-redux";
 
 const formatDate = (date) => {
   if (!date) return "";
@@ -22,9 +25,15 @@ const formatDate = (date) => {
 };
 function Dashboard(props) {
   const [timeString, setTimeString] = useState("");
+  const [statisticalEmployee, setStatisticalEmployee] = useState({
+    totalCustomer: 0,
+    totalCustomerNoActivity: 0,
+    totalCustomerInWorkingMonth: 0,
+  });
+  const dispatch = useDispatch();
   useEffect(() => {
     setInterval(() => {
-    const now = new Date();
+      const now = new Date();
       // HH:mm:ss
       const newTimeString = formatDate(now);
       setTimeString(newTimeString);
@@ -33,6 +42,24 @@ function Dashboard(props) {
       clearInterval();
     };
   }, []);
+
+  useEffect(() => {
+    const fetchCustomer = () => {
+      statisticalApi
+        .Adm_StatisticalEmployee()
+        .then((res) => {
+          setStatisticalEmployee({
+            totalCustomer: res.totalCustomer,
+            totalCustomerNoActivity: res.totalCustomerNoActivity,
+            totalCustomerInWorkingMonth: res.totalCustomerInWorkingMonth,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    fetchCustomer();
+  }, [dispatch]);
 
   return (
     <>
@@ -120,115 +147,112 @@ function Dashboard(props) {
                           style={{
                             border: "1px solid #e4e9f0",
                             borderRadius: "10px",
-                            background: "rgba(82,196,26,.04)",
                             height: "90px",
                           }}
                         >
                           <CardBody>
-                            Lorem ipsum dolor sit amet consectetur, adipisicing
-                            elit. Incidunt suscipit impedit rem, voluptatibus
-                            aliquid at autem laudantium eos qui, sequi dolores
-                            obcaecati debitis, repellendus ratione dignissimos
-                            culpa fugiat porro excepturi!
+                            <Row>
+                              <Col xl={4} lg={12}>
+                                <Card
+                                  style={{
+                                    border: "1px solid #e4e9f0",
+                                    borderRadius: "5px",
+                                    background: "rgba(82,196,26,.04)",
+                                  }}
+                                >
+                                  <CardBody>
+                                    <h1
+                                      style={{
+                                        fontSize: "19px",
+                                        fontWeight: "700",
+                                        color: "#003d71",
+                                        //lineHeight: "26px",
+                                      }}
+                                    >
+                                      {`${statisticalEmployee.totalCustomer}`}
+                                    </h1>
+                                    <h1
+                                      style={{
+                                        fontSize: "15px",
+                                        fontWeight: "normal",
+                                        color: "#003d71",
+                                      }}
+                                    >
+                                      Tổng nhân viên công ty
+                                    </h1>
+                                  </CardBody>
+                                </Card>
+                              </Col>
+                              <Col xl={4} lg={12}>
+                                <Card
+                                  style={{
+                                    border: "1px solid #e4e9f0",
+                                    borderRadius: "5px",
+                                    background: "rgba(82,196,26,.04)",
+                                  }}
+                                >
+                                  <CardBody>
+                                    <h1
+                                      style={{
+                                        fontSize: "19px",
+                                        fontWeight: "700",
+                                        color: "#003d71",
+                                        //lineHeight: "26px",
+                                      }}
+                                    >
+                                      {`${statisticalEmployee.totalCustomerInWorkingMonth}`}
+                                    </h1>
+                                    <h1
+                                      style={{
+                                        fontSize: "15px",
+                                        fontWeight: "normal",
+                                        color: "#003d71",
+                                      }}
+                                    >
+                                      Nhân viên mới vào trong tháng
+                                    </h1>
+                                  </CardBody>
+                                </Card>
+                              </Col>
+                              <Col xl={4} lg={12}>
+                                <Card
+                                  style={{
+                                    border: "1px solid #e4e9f0",
+                                    borderRadius: "5px",
+                                    background: "rgba(82,196,26,.04)",
+                                  }}
+                                >
+                                  <CardBody>
+                                    <h1
+                                      style={{
+                                        fontSize: "19px",
+                                        fontWeight: "700",
+                                        color: "#003d71",
+                                        //lineHeight: "26px",
+                                      }}
+                                    >
+                                      {`${statisticalEmployee.totalCustomerNoActivity}`}
+                                    </h1>
+                                    <h1
+                                      style={{
+                                        fontSize: "15px",
+                                        fontWeight: "normal",
+                                        color: "#003d71",
+                                      }}
+                                    >
+                                      Nhân viên nghỉ việc
+                                    </h1>
+                                  </CardBody>
+                                </Card>
+                              </Col>
+                            </Row>
                           </CardBody>
                         </Card>
                       </Col>
                     </Row>
-                    <Row className="py-3 px-3">
-                      <Col xl={4} lg={12}>
-                        <Card
-                          style={{
-                            border: "1px solid #e4e9f0",
-                            borderRadius: "10px",
-                            background: "#FBF3F7",
-                          }}
-                        >
-                          <CardBody>
-                            <h1
-                              style={{
-                                fontSize: "30px",
-                                fontWeight: "600",
-                                color: "#003d71",
-                                //lineHeight: "26px",
-                              }}
-                            >
-                              55
-                            </h1>
-                            <h1
-                              style={{
-                                fontSize: "15px",
-                                fontWeight: "normal",
-                                color: "#003d71",
-                              }}
-                            >
-                              Nhân viên nghỉ việc
-                            </h1>
-                          </CardBody>
-                        </Card>
-                      </Col>
-                      <Col xl={4} lg={12}>
-                        <Card
-                          style={{
-                            border: "1px solid #e4e9f0",
-                            borderRadius: "10px",
-                            background: "#FBF3F7",
-                          }}
-                        >
-                          <CardBody>
-                            <h1
-                              style={{
-                                fontSize: "30px",
-                                fontWeight: "600",
-                                color: "#003d71",
-                                //lineHeight: "26px",
-                              }}
-                            >
-                              55
-                            </h1>
-                            <h1
-                              style={{
-                                fontSize: "15px",
-                                fontWeight: "normal",
-                                color: "#003d71",
-                              }}
-                            >
-                              Nhân viên nghỉ việc
-                            </h1>
-                          </CardBody>
-                        </Card>
-                      </Col>
-                      <Col xl={4} lg={12}>
-                        <Card
-                          style={{
-                            border: "1px solid #e4e9f0",
-                            borderRadius: "10px",
-                            background: "#FBF3F7",
-                          }}
-                        >
-                          <CardBody>
-                            <h1
-                              style={{
-                                fontSize: "30px",
-                                fontWeight: "600",
-                                color: "#003d71",
-                                //lineHeight: "26px",
-                              }}
-                            >
-                              55
-                            </h1>
-                            <h1
-                              style={{
-                                fontSize: "15px",
-                                fontWeight: "normal",
-                                color: "#003d71",
-                              }}
-                            >
-                              Nhân viên nghỉ việc
-                            </h1>
-                          </CardBody>
-                        </Card>
-                      </Col>
-                    </Row>
+                    <div>
+                      <DashBoardMain />
+                    </div>
                   </div>
                 </Col>
               </Row>

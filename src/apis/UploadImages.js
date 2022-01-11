@@ -38,6 +38,12 @@ const imagesUpload = {
     };
     return axiosClient.post(`${url}/Adm_UploadImageNews`, data, config);
   },
+  Adm_UploadImageBanner: (data) => {
+    const config = {
+      headers: { "content-type": "multipart/form-data" },
+    };
+    return axiosClient.post(`${url}/Adm_UploadImageBanner`, data, config);
+  },
 };
 
 export default imagesUpload;

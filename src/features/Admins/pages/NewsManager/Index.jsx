@@ -49,6 +49,7 @@ const initialValuesInsert = {
   Active: false,
 };
 function NewManager(props) {
+  document.title = "Quản lý tin tức";
   const [initalValuesSearch, setInitalvaluesSearch] = useState(
     initialValuesSearchOld
   );

@@ -164,3 +164,23 @@
     // }
 }
 
+input.h-textbox-searchBooking{
+    border-radius: 4px !important;
+    padding: 2px 7px;
+    line-height: 29px !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    height: 40px;
+    border: 3px solid #ffc709;
+}
+
+.h-button-search-booking{
+    border-radius: 5px;
+    max-height: 41px;
+    .h-btn-search{
+        padding: 8px 40px;
+        color: #ffc709!important;
+        font-size: 26px;
+    }
+}
+

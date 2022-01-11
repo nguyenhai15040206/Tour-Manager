@@ -60,6 +60,7 @@ const initialValuesSearch = {
   email: "",
 };
 function EmployeeManager(props) {
+  document.title = "Quản lý nhân viên";
   // state in component
   const [showModal, setShowModal] = useState(false);
   const [initialValues, setInitialValues] = useState(initialValuesInsert);

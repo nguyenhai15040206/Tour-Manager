@@ -245,28 +245,32 @@ function TourSearch(props) {
   //===
   const handelClickTotalDay = (total) => {
     if (Number(total) === 1) {
-      setTotalDay1(true);
+      const stateOld = totalDate1;
+      setTotalDay1(!stateOld);
       setTotalDay2(false);
       setTotalDay3(false);
       setTotalDay4(false);
     }
     if (Number(total) === 2) {
       setTotalDay1(false);
-      setTotalDay2(true);
+      const stateOld = totalDate2;
+      setTotalDay2(!stateOld);
       setTotalDay3(false);
       setTotalDay4(false);
     }
     if (Number(total) === 3) {
       setTotalDay1(false);
       setTotalDay2(false);
-      setTotalDay3(true);
+      const stateOld = totalDate3;
+      setTotalDay3(!stateOld);
       setTotalDay4(false);
     }
     if (Number(total) === 4) {
       setTotalDay1(false);
       setTotalDay2(false);
       setTotalDay3(false);
-      setTotalDay4(true);
+      const stateOld = totalDate4;
+      setTotalDay4(!stateOld);
     }
   };
   //===

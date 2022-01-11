@@ -1,10 +1,168 @@
 //==
 
 import { NotificationManager } from "react-notifications";
+import bannerApi from "../apis/BannerApi";
 import newsApi from "../apis/NewsApi";
 import permisstionApi from "../apis/PermissionApi";
 import tourApi from "../apis/TourApi";
 
+//==
+export const tableColumnBanner = [
+  {
+    field: `bannerId`,
+    headerName: "Mã banner",
+    sortTable: true,
+    unSortIcon: true,
+    filter: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    minWidth: 180,
+  },
+  {
+    field: `enumerationTranslate`,
+    headerName: "Loại banner",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 150,
+  },
+  {
+    field: `bannerImg`,
+    headerName: "Ảnh banner",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 150,
+  },
+  {
+    field: "active",
+    headerName: "Kích hoạt",
+    sortTable: true,
+    unSortIcon: true,
+    cellRenderer: (values) => {
+      var input = document.createElement("input");
+      input.type = "checkbox";
+      input.readOnly = true;
+      input.checked = values.value;
+      input.addEventListener("click", () => {
+        const params = {
+          pID: values.data.bannerId,
+          pEmpID: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
+        };
+        bannerApi.Adm_ActiveBanner(params).catch(async (err) => {
+          if (err.response.status === 401) {
+            localStorage.removeItem("accessTokenEmp");
+            await NotificationManager.warning(
+              "Vui lòng đăng nhập lại",
+              `Phiên bản đăng nhập hết hạn!`,
+              2500
+            );
+            window.location.href = "http://localhost:3000/admin/login";
+            return;
+          }
+        });
+      });
+      return input;
+    },
+    minWidth: 130,
+  },
+  {
+    field: `empName`,
+    headerName: "Nhân viên cập nhật",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 180,
+  },
+  {
+    field: `dateUpdate`,
+    headerName: "Ngày cập nhật",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+  },
+];
+//========= màn hình danh mục
+export const tableColumnCategory = [
+  {
+    field: `enumerationId`,
+    headerName: "Mã danh mục",
+    sortTable: true,
+    unSortIcon: true,
+    filter: true,
+    headerSelect: true,
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    minWidth: 180,
+  },
+  {
+    field: `enumerationType`,
+    headerName: "Loại danh mục",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 150,
+  },
+  {
+    field: `enumerationName`,
+    headerName: "Key enum dịch",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 150,
+  },
+  {
+    field: `enumerationTranslate`,
+    headerName: "Dịch ngôn ngữ VN",
+    sortTable: true,
+    unSortIcon: true,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 150,
+  },
+  {
+    field: `empName`,
+    headerName: "Nhân viên cập nhật",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+    minWidth: 180,
+  },
+  {
+    field: `dateUpdate`,
+    headerName: "Ngày cập nhật",
+    sortTable: false,
+    unSortIcon: false,
+    filter: false,
+    headerSelect: true,
+    checkboxSelection: false,
+    headerCheckboxSelection: false,
+  },
+];
 //#region  phân quyền màn hình
 export const tableColumnEmployeeUserGroup = [
   {
@@ -252,7 +410,6 @@ export const tableColumnNews = [
           pID: values.data.newsId,
           pEmpID: JSON.parse(localStorage.getItem("accessTokenEmp")).data.empId,
         };
-        console.log(params);
         newsApi.Adm_ActiveNews(params).catch(async (err) => {
           if (err.response.status === 401) {
             localStorage.removeItem("accessTokenEmp");

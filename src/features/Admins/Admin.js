@@ -52,6 +52,14 @@ const DashboardManager = React.lazy(() =>
   import("../Admins/pages/Dashboard/Index")
 );
 
+const CategoryManager = React.lazy(() =>
+  import("../Admins/pages/CategoryManager/Index")
+);
+
+const BannerManager = React.lazy(() =>
+  import("../Admins/pages/BannerManager/Index")
+);
+
 function Admin(props) {
   const match = useRouteMatch();
   return (
@@ -82,6 +90,8 @@ function Admin(props) {
                   path="/admin/TouristAttraction"
                   component={TouristAttr}
                 />
+                <Route path="/admin/Category" component={CategoryManager} />
+                <Route path="/admin/Banner" component={BannerManager} />
                 <Route path={`${match.url}/News`} component={NewsManager} />
                 <Route
                   path={`${match.url}/Permission`}

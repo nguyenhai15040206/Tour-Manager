@@ -3,7 +3,7 @@ import { FaHeart, FaUserCheck } from "react-icons/fa";
 import { SiYourtraveldottv } from "react-icons/si";
 import { useSelector } from "react-redux";
 import { Link, Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
-import { Col, Row } from "reactstrap";
+import { Col, Row, Spinner } from "reactstrap";
 import logo from "../../../assets/logo/icon_logo_mytour.svg";
 import imageDefault from "../../../assets/logo/images.jpg";
 import Header from "../../../components/Header";
@@ -15,7 +15,7 @@ function Customer(props) {
   //const { children } = props;
   const match = useRouteMatch();
   const { loading, dataCustomerInfo } = useSelector((state) => state.customer);
-
+  const stateBooking = useSelector((state) => state?.bookingTour);
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -38,15 +38,25 @@ function Customer(props) {
               <div className="h-profile--left__header">
                 <img src={`${imageDefault}`} />
                 <div className="info">
-                  <p>{dataCustomerInfo?.customerName}</p>
-                  <p>{dataCustomerInfo?.email}</p>
+                  <p>
+                    {
+                      JSON.parse(localStorage.getItem("accessTokenCustomer"))
+                        ?.data?.customerName
+                    }
+                  </p>
+                  <p>
+                    {
+                      JSON.parse(localStorage.getItem("accessTokenCustomer"))
+                        ?.data?.email
+                    }
+                  </p>
                 </div>
               </div>
               <div className="mt-3">
                 <ul>
                   <li>
                     <Link
-                      to={`/my-tour/customer/pID=${
+                      to={`/my-tour/customer/Profile/pID=${
                         JSON.parse(localStorage.getItem("accessTokenCustomer"))
                           ?.data?.customerId
                       }`}
@@ -67,8 +77,13 @@ function Customer(props) {
                   </li>
                   <hr />
                   <li className="mt-1">
-                    <Link to={`/`}>
-                      <FaHeart /> Tour yêu thích
+                    <Link
+                      to={`/my-tour/customer/booking-by-customer/pID=${
+                        JSON.parse(localStorage.getItem("accessTokenCustomer"))
+                          ?.data?.customerId
+                      }`}
+                    >
+                      <SiYourtraveldottv /> Đăng xuất
                     </Link>
                   </li>
                 </ul>
@@ -76,7 +91,9 @@ function Customer(props) {
             </div>
           </Col>
           <Col xl={8} lg={6}>
-            {/* {loading === "loading" && <Spinner color="primary" />} */}
+            {(loading === "loading" || stateBooking.loading == "loading") && (
+              <Spinner color="primary" />
+            )}
             <div className="h-profile--right">
               <Switch>
                 <Redirect
@@ -93,7 +110,7 @@ function Customer(props) {
                   component={Profile}
                 />
                 <Route
-                  path={`${match.url}/booking-by-customer/pID:pID`}
+                  path={`${match.url}/booking-by-customer/pID=:pID`}
                   component={BookingByCustomer}
                 />
               </Switch>
